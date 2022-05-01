@@ -16,25 +16,23 @@ async def on_ready():
     os.system("cls")
     print(f"Up!10sion♪\nEverybody attention!!")
 
-# should fix load path
+@Arisa.command()
+async def load(ctx, extension):
+    await ctx.message.delete()
+    Arisa.load_extension(f"cogs.commands.{extension}")
+    await ctx.send(f"function **{extension}** loadeded.", delete_after = 5)
 
-# @Arisa.command()
-# async def load(ctx, extension):
-#     await ctx.message.delete()
-#     Arisa.load_extension(f"cogs.{extension}")
-#     await ctx.send(f"function **{extension}** loadeded.", delete_after = 5)
+@Arisa.command()
+async def unload(ctx, extension):
+    await ctx.message.delete()
+    Arisa.unload_extension(f"cogs.commands.{extension}")
+    await ctx.send(f"function **{extension}** unloaded.", delete_after = 5)
 
-# @Arisa.command()
-# async def unload(ctx, extension):
-#     await ctx.message.delete()
-#     Arisa.unload_extension(f"cogs.{extension}")
-#     await ctx.send(f"function **{extension}** unloaded.", delete_after = 5)
-
-# @Arisa.command()
-# async def reload(ctx, extension):
-#     await ctx.message.delete()
-#     Arisa.reload_extension(f"cogs.{extension}")
-#     await ctx.send(f"function **{extension}** reloaded.", delete_after = 5)
+@Arisa.command()
+async def reload(ctx, extension):
+    await ctx.message.delete()
+    Arisa.reload_extension(f"cogs.commands.{extension}")
+    await ctx.send(f"function **{extension}** reloaded.", delete_after = 5)
 
 for filename in os.listdir("./cogs/interactions"):
     if filename.endswith(".py"):
