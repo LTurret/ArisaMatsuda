@@ -9,5 +9,7 @@ Arisa-san will be the main bot and have a higher priority for maintenance.
 
 ## Roadmap
 
-- [ ] Because the aiohttp version issue, interactinos and discord.ext must be sperated by tho different port for bot services.  
-- [ ] STOP USING REPLIT, USE **REAL** HOSTING SERVICE INSTEAD.
+- [x] ~~Because the aiohttp version issue, interactinos and discord.ext must be sperated by tho different port for bot services.~~
+- [x] ~~STOP USING REPLIT, USE **REAL** HOSTING SERVICE INSTEAD.~~
+
+> _Deploy to Heroku has fixed all issues._
