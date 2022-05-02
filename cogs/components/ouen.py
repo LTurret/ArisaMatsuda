@@ -1,4 +1,11 @@
+import json
+
 import interactions
+
+with open("./configuration/scope.json") as server_scopes:
+    server_scopes = json.load(server_scopes)
+    production = server_scopes["Production"]
+    testing = server_scopes["Testing"]
 
 class ouen(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -8,7 +15,7 @@ class ouen(interactions.Extension):
     @interactions.extension_command(
         name="ouen",
         description="為杏奈寶貝應援！！！！",
-        scope=[339368837356978187, 943075990295416842]
+        scope=[production, testing]
     ) 
     async def ouen(self, ctx):
         ouen_button = interactions.Button(

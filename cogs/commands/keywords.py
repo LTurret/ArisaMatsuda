@@ -9,12 +9,15 @@ dictionary = {
 }
 
 class Keywords:
-    def search(self, content:str, category:str):
+    def stable_search(self, content:str, category:str):
         for keyword in dictionary[category]:
-            result:bool = content.upper().count(keyword)
+            result:bool = content.upper().count(keyword) # Why make this O(n)
             if result:
                 break
         return result
+    
+    # def set_search(self, content:str, category:str):
+    #     return content.count(dictionary[category])
 
 class ImagePath:
     def __init__(self):
@@ -25,13 +28,12 @@ class ImagePath:
         self.__MIRAI_GM = __FUNCTIONAL + "/mirai_gm/"
 
     def folder(self, selector:int=None, filename:str=""):
-        if not None:
-            manifest = {
-                0: self.__ANNA_SLEEP + filename,
-                1: self.__ANNA_EMOTES + filename,
-                2: self.__MIRAI_GM + filename
-            }
-            return manifest[selector]
+        manifest = {
+            0: self.__ANNA_SLEEP,
+            1: self.__ANNA_EMOTES,
+            2: self.__MIRAI_GM
+        }
+        return f"{manifest[selector]}{filename}"
 
 class keyword(commands.Cog):
     def __init__(self, Arisa):
@@ -52,16 +54,16 @@ class keyword(commands.Cog):
             await message.channel.send(message.content[24:])
 
         # [ㄤ奈] ㄤ奈可愛
-        if self.KEYWORD.search(message.content, "望月杏奈") and message.content.count("可愛") and not_bot():
+        if self.KEYWORD.stable_search(message.content, "望月杏奈") and message.content.count("可愛") and not_bot():
             MemberRoles = message.author.roles
             if str(MemberRoles).count("THE IDOLM@STER"):
-                if str(message.author) == "LTurret#0417":
+                if str(message.author) == "LTurret#3420":
                     await message.channel.send("你很噁心... <:AnnaShock:954375272390606908>")
                 else:
                     await message.channel.send("謝謝... 製作人 <:Su04:882135559043170315>💜")
 
         # [ㄤ奈] 睡覺
-        if self.KEYWORD.search(message.content, "望月杏奈") and message.content.count("睡覺"):
+        if self.KEYWORD.stable_search(message.content, "望月杏奈") and message.content.count("睡覺"):
             image_location = self.IMGPATH.folder(selector=0, filename="anna_sleep.jpg")
             image = discord.File(image_location)
             await message.channel.send(file=image)
@@ -94,8 +96,7 @@ class keyword(commands.Cog):
 
         # [ㄤ奈] 早ㄤ奈
         if message.content.count("早ㄤ奈") and not_bot():
-            toss = random.choice(range(10))
-            if toss%2 == 0:
+            if random.choice(range(2)):
                 reply = [
                     "早ㄤ~~",
                     "早安",
@@ -109,10 +110,6 @@ class keyword(commands.Cog):
                 image_location = self.IMGPATH.folder(selector=2, filename="gm.png")
                 image = discord.File(image_location)
                 await message.channel.send(file=image)
-
-        # [亞利沙] 疑惑
-        if message.content.count("亞利沙疑惑") and not_bot():
-            await message.channel.send("<:ArisaDoubt:957861166082822195>")
 
 def setup(Arisa):
     Arisa.add_cog(keyword(Arisa))

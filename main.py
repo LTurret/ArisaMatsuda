@@ -34,10 +34,10 @@ async def reload(ctx, extension):
     Arisa.reload_extension(f"cogs.commands.{extension}")
     await ctx.send(f"function **{extension}** reloaded.", delete_after = 5)
 
-for filename in os.listdir("./cogs/interactions"):
+for filename in os.listdir("./cogs/components"):
     if filename.endswith(".py"):
-        print(f"Loading interactions extension: {filename}")
-        ArisaInteractions.load(f"cogs.interactions.{filename[:-3]}")
+        print(f"Loading components/interactions extension: {filename}")
+        ArisaInteractions.load(f"cogs.components.{filename[:-3]}")
 
 for filename in os.listdir("./cogs/commands"):
     if filename.endswith(".py"):
