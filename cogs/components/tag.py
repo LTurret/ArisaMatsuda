@@ -25,11 +25,11 @@ class tag(interactions.Extension):
         self.IMGPATH = ImagePath()
 
     @interactions.extension_command(
-        name="fstring",
+        name="tag",
         description="f-string",
         scope=[production, testing]
     )
-    async def fstring(self, ctx):
+    async def tag(self, ctx):
         image_location = self.IMGPATH.folder(selector=0, filename="fstring.png")
         image = discord.File(image_location)
         channel = await ctx.get_channel()

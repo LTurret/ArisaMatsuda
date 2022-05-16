@@ -7,7 +7,7 @@ with open("./configuration/scope.json") as server_scopes:
     production = server_scopes["Production"]
     testing = server_scopes["Testing"]
 
-class ouen(interactions.Extension):
+class ping(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
         self.MESSAGE_CACHE = None
@@ -15,10 +15,10 @@ class ouen(interactions.Extension):
     @interactions.extension_command(
         name="ping",
         description="回傳延遲時間",
-        scope=[production, testing]
+        scope=production
     ) 
-    async def ouen(self, ctx):
+    async def ping(self, ctx):
         await ctx.send(content=f"pong!\n{round(self.Arisa.latency*1000)} ms")
     
 def setup(ArisaInteraction):
-    ouen(ArisaInteraction)
+    ping(ArisaInteraction)
