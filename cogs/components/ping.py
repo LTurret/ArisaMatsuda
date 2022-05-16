@@ -18,7 +18,7 @@ class ping(interactions.Extension):
         scope=production
     ) 
     async def ping(self, ctx):
-        await ctx.send(content=f"pong!\n{round(self.Arisa.latency*1000)} ms")
+        await ctx.send(content=f"pong!\n{round(self.ArisaInteraction.latency)} ms")
     
 def setup(ArisaInteraction):
     ping(ArisaInteraction)
