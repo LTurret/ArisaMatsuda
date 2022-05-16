@@ -7,17 +7,18 @@ with open("./configuration/scope.json") as server_scopes:
     production = server_scopes["Production"]
     testing = server_scopes["Testing"]
 
-class emotes(interactions.Extension):
+class ping(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
+        self.MESSAGE_CACHE = None
 
     @interactions.extension_command(
-        name="shy",
-        description="亞利沙害羞",
-        scope=[production, testing]
+        name="ping",
+        description="回傳延遲時間",
+        scope=production
     ) 
-    async def shy(self, ctx):
-        await ctx.send(content="<:ArisaShy:957861166082822195>")
+    async def ping(self, ctx):
+        await ctx.send(content=f"pong!\n{round(self.ArisaInteraction.latency)} ms")
     
 def setup(ArisaInteraction):
-    emotes(ArisaInteraction)
+    ping(ArisaInteraction)

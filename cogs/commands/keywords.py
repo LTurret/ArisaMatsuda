@@ -26,12 +26,14 @@ class ImagePath:
         self.__ANNA_SLEEP = __FUNCTIONAL + "/anna_sleep/"
         self.__ANNA_EMOTES = __FUNCTIONAL + "/anna_emotes/"
         self.__MIRAI_GM = __FUNCTIONAL + "/mirai_gm/"
+        self.__TAG_FUNNY = __FUNCTIONAL + "/tag_funny/"
 
     def folder(self, selector:int=None, filename:str=""):
         manifest = {
             0: self.__ANNA_SLEEP,
             1: self.__ANNA_EMOTES,
-            2: self.__MIRAI_GM
+            2: self.__MIRAI_GM,
+            3: self.__TAG_FUNNY
         }
         return f"{manifest[selector]}{filename}"
 
@@ -110,6 +112,12 @@ class keyword(commands.Cog):
                 image_location = self.IMGPATH.folder(selector=2, filename="gm.png")
                 image = discord.File(image_location)
                 await message.channel.send(file=image)
+
+        # [Other] fstring
+        if message.content.count("fstring") and not_bot():
+            image_location = self.IMGPATH.folder(selector=3, filename="fstring.png")
+            image = discord.File(image_location)
+            await message.channel.send(file=image)
 
 def setup(Arisa):
     Arisa.add_cog(keyword(Arisa))
