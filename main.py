@@ -6,7 +6,11 @@ from discord.ext import commands
 with open("./config/token.json", mode="r") as token:
     token = json.load(token)
 
+<<<<<<< HEAD
 ArisaInteractions = interactions.Client(token=token["token"], intents=interactions.Intents.ALL, disable_sync=True)
+=======
+ArisaInteractions = interactions.Client(token=token["token"], intents=interactions.Intents.ALL, disable_sync=False)
+>>>>>>> f074673c34e4b34f83d96f01e97434a5b1a9aaaf
 Arisa = commands.Bot(command_prefix=commands.when_mentioned)
 Arisa.remove_command('help')
 

@@ -7,7 +7,7 @@ with open("./config/scope.json") as server_scopes:
     production = server_scopes["Production"]
     testing = server_scopes["Testing"]
 
-class ouen(interactions.Extension):
+class emotes(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
 
@@ -20,4 +20,4 @@ class ouen(interactions.Extension):
         await ctx.send(content="<:ArisaShy:957861166082822195>")
     
 def setup(ArisaInteraction):
-    ouen(ArisaInteraction)
+    emotes(ArisaInteraction)

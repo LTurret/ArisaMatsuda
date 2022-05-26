@@ -2,7 +2,11 @@ import json
 
 import interactions
 
+<<<<<<< HEAD:cogs/slash/ping.py
 with open("./config/scope.json") as server_scopes:
+=======
+with open("./configuration/scope.json") as server_scopes:
+>>>>>>> f074673c34e4b34f83d96f01e97434a5b1a9aaaf:cogs/components/ping.py
     server_scopes = json.load(server_scopes)
     production = server_scopes["Production"]
     testing = server_scopes["Testing"]
