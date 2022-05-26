@@ -2,10 +2,10 @@ import json
 
 from discord.ext import commands
 
-with open("./configuration/unique.json") as unique_ids:
+with open("./config/unique.json") as unique_ids:
     unique_ids = json.load(unique_ids)
 
-with open("./configuration/scope.json") as server_scopes:
+with open("./config/scope.json") as server_scopes:
     server_scopes = json.load(server_scopes)
 
 class const():
