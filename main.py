@@ -6,18 +6,17 @@ from discord.ext import commands
 with open("./config/token.json", mode="r") as token:
     token = json.load(token)
 
-<<<<<<< HEAD
 ArisaInteractions = interactions.Client(token=token["token"], intents=interactions.Intents.ALL, disable_sync=True)
-=======
-ArisaInteractions = interactions.Client(token=token["token"], intents=interactions.Intents.ALL, disable_sync=False)
->>>>>>> f074673c34e4b34f83d96f01e97434a5b1a9aaaf
 Arisa = commands.Bot(command_prefix=commands.when_mentioned)
 Arisa.remove_command('help')
 
 @Arisa.event
 async def on_ready():
     await Arisa.change_presence(status = discord.Status.online, activity = discord.Game("偶像大師 百萬人演唱會！ 劇場時光"))
-    os.system("cls")
+    try:
+        os.system("cls")
+    except Exception as _:
+        pass
     print(f"Up!10sion♪\nEverybody attention!!")
 
 @Arisa.command()
@@ -40,20 +39,20 @@ async def reload(ctx, extension):
 
 for filename in os.listdir("./cogs/slash"):
     if filename.endswith(".py"):
-        print(f"Loading interactions extension: {filename}")
-        ArisaInteractions.load(f"cogs.components.{filename[:-3]}")
+        print(f"Loading slash command extension: {filename}")
+        ArisaInteractions.load(f"cogs.slash.{filename[:-3]}")
 
-for filename in os.listdir("./cogs/slash"):
+for filename in os.listdir("./cogs/command"):
     if filename.endswith(".py"):
-        print(f"Loading command extension: {filename}")
-        Arisa.load_extension(f"cogs.commands.{filename[:-3]}")
+        print(f"Loading commands extension: {filename}")
+        Arisa.load_extension(f"cogs.command.{filename[:-3]}")
 
 print("Booting...")
 
 loop = asyncio.get_event_loop()
 
-task2 = loop.create_task(Arisa.start(token["token"]))
 task1 = loop.create_task(ArisaInteractions._ready())
+task2 = loop.create_task(Arisa.start(token["token"]))
 
 gathered = asyncio.gather(task1, task2, loop=loop)
 loop.run_until_complete(gathered)
