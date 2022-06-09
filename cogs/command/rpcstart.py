@@ -10,7 +10,7 @@ class richpresence(commands.Cog):
     async def rpcstart(self, ctx):
         await ctx.message.delete()
         while True:
-            await asyncio.sleep(1680)
+            await asyncio.sleep(1200)
             print("ㄤ奈我醒了")
 
 def setup(Arisa):
