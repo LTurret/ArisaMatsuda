@@ -1,4 +1,0 @@
-aiohttp==3.7.4
-discord.py==1.7.3
-discord-ext-bot==1.0.1
-discord-py-interactions==4.1

@@ -5,7 +5,7 @@ import interactions, discord
 with open("./config/token.json", mode="r") as token:
     token = json.load(token)
 
-Arisa = interactions.Client(token=process.env.TOKEN, intents=interactions.Intents.ALL, disable_sync=True)
+Arisa = interactions.Client(token=token["token"], intents=interactions.Intents.ALL, disable_sync=True)
 
 @Arisa.event
 async def on_ready():
