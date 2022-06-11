@@ -5,7 +5,7 @@ Arisa-san will be the main bot and have a higher priority for maintenance.
 
 ## Arisa-san is cute
 
-![Arisa](./image/README/720p.gif)
+![Arisa](./README/720p.gif)
 
 ## Roadmap
 

@@ -1,4 +1,8 @@
 
+package.json
 token.json
+Procfile
+requirement.txt
+runtime.txt
 
 **/__pycache__
