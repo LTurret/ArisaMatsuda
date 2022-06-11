@@ -1,4 +1,4 @@
-import json, os
+import asyncio, json, os
 
 import interactions, discord
 
@@ -23,4 +23,9 @@ for filename in os.listdir("./cogs/slash"):
 
 print("Booting...")
 
-Arisa._ready()
+loop = asyncio.get_event_loop()
+
+task = loop.create_task(Arisa._ready())
+
+gathered = asyncio.gather(task, loop=loop)
+loop.run_until_complete(gathered)
