@@ -13,9 +13,9 @@ class ping(interactions.Extension):
         self.MESSAGE_CACHE = None
 
     @interactions.extension_command(
-        name="ping",
-        description="回傳延遲時間",
-        scope=production
+        name = "ping",
+        description = "回傳延遲時間",
+        scope = production
     ) 
     async def ping(self, ctx):
         await ctx.send(content=f"pong!\n{round(self.ArisaInteraction.latency)} ms")

@@ -12,15 +12,15 @@ class toggle(interactions.Extension):
         self.ArisaInteraction = ArisaInteraction
 
     @interactions.extension_command(
-        name="toggle",
-        description="開關頻道的檢視模式",
-        scope=production,
-        options=[
+        name = "toggle",
+        description = "開關頻道的檢視模式",
+        scope = production,
+        options = [
             interactions.Option(
-                type=interactions.OptionType.BOOLEAN,
-                name="view",
-                description="是否檢視該頻道",
-                required=True
+                type = interactions.OptionType.BOOLEAN,
+                name = "view",
+                description = "是否檢視該頻道",
+                required = True
             )
         ]
     ) 
