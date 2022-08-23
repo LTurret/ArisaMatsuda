@@ -19,9 +19,9 @@ class ouen(interactions.Extension):
     ) 
     async def ouen(self, ctx):
         ouen_button = interactions.Button(
-            style=interactions.ButtonStyle.PRIMARY,
-            label="\応援するよ！/",
-            custom_id="ouen_reply"
+            style = interactions.ButtonStyle.PRIMARY,
+            label = "\応援するよ！/",
+            custom_id = "ouen_reply"
         )
         message = await ctx.send(content="⌒(  ＞ヮ＜)⌒＜ 応援ください！", components=ouen_button)
         self.MESSAGE_CACHE = message
