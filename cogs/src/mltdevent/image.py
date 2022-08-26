@@ -117,7 +117,9 @@ async def makeimg(category: str, path: str="./cogs/dist/mltdevent/image"):
                 font=interval
             )
 
-            if len(str(score)) == 9:
+            if len(str(score)) == 10:
+                score_x = 210
+            elif len(str(score)) == 9:
                 score_x = 230
             elif len(str(score)) == 8:
                 score_x = 256.8
