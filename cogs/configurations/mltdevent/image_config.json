@@ -1,0 +1,8 @@
+{
+    "border_data": "./cogs/dist/mltdevent/data/border.json",
+    "data_eventinfo": "./cogs/dist/mltdevent/data/information.json",
+    "background": "./cogs/components/mltdevent/AnnaFrame.png",
+    "font_event_title":"./cogs/components/mltdevent/ChiuKongGothic-CL-Regular.otf" ,
+    "font_data_title": "./cogs/components/mltdevent/jf-openhuninn-1.1.ttf",
+    "font_subtitle": "./cogs/components/mltdevent/jf-openhuninn-1.1.ttf"
+}
