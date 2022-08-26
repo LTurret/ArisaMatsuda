@@ -1,3 +1,5 @@
+/cogs/dist/mltdevent/data/*.json
+*.png
 
 token.json
 
