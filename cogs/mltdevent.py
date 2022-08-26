@@ -1,11 +1,10 @@
 import aiohttp
 import asyncio
 import json
-import os
 
 import interactions
 
-from cogs.src.mltdevent.fetch import GetNewest, Search, FetchBorder, FetchCover
+from cogs.src.mltdevent.fetch import GetNewest, FetchBorder
 from cogs.src.mltdevent.make import makefile
 from cogs.src.mltdevent.image import makeimg 
 
@@ -33,41 +32,29 @@ class mltdevent(interactions.Extension):
                     interactions.Choice(name="高分榜", value="hs"),
                     interactions.Choice(name="廳榜", value="lp"),
                 ]
-            ),
-            interactions.Option(
-                name = "identify",
-                description = "使用活動ID搜尋過去的活動",
-                type = interactions.OptionType.INTEGER,
-                required = False
             )
         ]
     ) 
-    async def event(self, ctx: interactions.CommandContext, border_type: str, identify: int=0):    
+    async def event(self, ctx: interactions.CommandContext, border_type: str):
+
         announcement = ""
 
-        check_identified = lambda identify: True if (identify is not None and type(identify) is int and identify > 0) else False
         matchtype = lambda typecode: ([3, 4, 5, 11, 13, 16].count(typecode)) == 1
         border_exists = lambda file: True if (len(file) > 0) else False
-        early_announce = lambda message: True if (len(message) > 0) else False
+        announced = lambda message: True if (len(message) > 0) else False
 
         async with aiohttp.ClientSession() as session:
-            event_data = await GetNewest(session)
 
-            if check_identified(identify):
-                event_data = await Search(identify, session)
+            event_data = await GetNewest(session)
             identify = event_data["id"]
 
             if matchtype(event_data["type"]):
                 border_data = await FetchBorder(identify, session)
             else:
-                announcement = "查無此活動喔⌒(*＞ｖ＜)b⌒"
+                announcement = "此活動無榜線喔⌒(*＞ｖ＜)b⌒"
 
-            if early_announce(announcement):
-                pass
-            else:
-                tasks = [
-                    asyncio.create_task(makefile(event_data, "information"))
-                ]
+            if not announced(announcement):
+                tasks = [asyncio.create_task(makefile(event_data, "information"))]
 
                 if border_exists(border_data):
                     tasks.append(asyncio.create_task(makefile(border_data, "border")))
