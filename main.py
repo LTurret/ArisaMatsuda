@@ -22,7 +22,7 @@ Arisa = interactions.Client(
 @Arisa.event
 async def on_ready():
     try:
-        os.system("cls")
+        os.system("clear")
     except Exception as _:
         pass
     print(f"Up!10sion♪\nEverybody attention!!")
