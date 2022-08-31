@@ -1,4 +1,4 @@
-import asyncio, json, os
+import json, os
 
 import interactions
 
@@ -34,9 +34,4 @@ for filename in os.listdir("./cogs"):
 
 print("Booting...")
 
-loop = asyncio.get_event_loop()
-
-task = loop.create_task(Arisa._ready())
-
-gathered = asyncio.gather(task, loop=loop)
-loop.run_until_complete(gathered)
+Arisa.start()
