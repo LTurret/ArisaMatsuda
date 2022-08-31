@@ -29,7 +29,7 @@ class ouen(interactions.Extension):
     @interactions.extension_component("ouen_reply")
     async def ouen_response(self, ctx):
         await ctx.send("<:Anna:948915505064976485>", ephemeral=False)
-        await self.MESSAGE_CACHE.edit("⌒(＞ヮ＜)⌒", components=None)
+        await self.MESSAGE_CACHE.edit("⌒(  ＞ヮ＜)⌒＜ 応援するよ！", components=None)
     
 def setup(ArisaInteraction):
     ouen(ArisaInteraction)
