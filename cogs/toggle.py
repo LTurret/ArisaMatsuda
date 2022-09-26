@@ -12,7 +12,6 @@ class toggle(interactions.Extension):
         self.ArisaInteraction = ArisaInteraction
 
     CATEGORIES = [
-        interactions.Choice(name="偶像大師", value="672685805525008414"),
         interactions.Choice(name="藝術", value="1023609569529823273"),
         interactions.Choice(name="資訊工程", value="712240674337980486")
     ]
