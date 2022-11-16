@@ -14,7 +14,7 @@ class help(interactions.Extension):
     @interactions.extension_command(
         name = "help",
         description = "顯示說明",
-        scope = production,
+        scope = [production, testing],
         options = [
             interactions.Option(
                 name = "tag_name",

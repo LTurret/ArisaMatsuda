@@ -13,9 +13,9 @@ class ouen(interactions.Extension):
         self.MESSAGE_CACHE = None
 
     @interactions.extension_command(
-        name="ouen",
-        description="為杏奈寶貝應援！！！！",
-        scope=production
+        name = "ouen",
+        description = "為杏奈寶貝應援！！！！",
+        scope = [production, testing]
     ) 
     async def ouen(self, ctx):
         ouen_button = interactions.Button(
