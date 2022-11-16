@@ -31,8 +31,6 @@ class toggle(interactions.Extension):
         ]
     ) 
     async def toggle(self, ctx: interactions.CommandContext, category: str):
-        print(ctx.member.roles)
-        print(any(list(map(lambda role_id: role_id == int(category), ctx.member.roles))))
         if any(list(map(lambda role_id: role_id == int(category), ctx.member.roles))):
             await ctx.member.remove_role(role=int(category), guild_id=production)
             await ctx.send(content="已離開該領域", ephemeral=True)
