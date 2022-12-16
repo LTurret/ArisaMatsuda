@@ -1,11 +1,6 @@
-import json
-
 import interactions
 
-with open("./config/scope.json") as server_scopes:
-    server_scopes = json.load(server_scopes)
-    production = server_scopes["Production"]
-    testing = server_scopes["Testing"]
+from core.scopes import Scopes
 
 class help(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -14,7 +9,7 @@ class help(interactions.Extension):
     @interactions.extension_command(
         name = "help",
         description = "顯示說明",
-        scope = [production, testing],
+        scope = Scopes()["All"],
         options = [
             interactions.Option(
                 name = "tag_name",

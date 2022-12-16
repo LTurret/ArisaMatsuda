@@ -1,11 +1,6 @@
-import json
-
 import interactions
 
-with open("./config/scope.json") as server_scopes:
-    server_scopes = json.load(server_scopes)
-    production = server_scopes["Production"]
-    testing = server_scopes["Testing"]
+from core.scopes import Scopes
 
 class ping(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -14,7 +9,7 @@ class ping(interactions.Extension):
     @interactions.extension_command(
         name = "ping",
         description = "回傳延遲時間",
-        scope = production
+        scope = Scopes()["All"]
     ) 
     async def ping(self, ctx: interactions.CommandContext):
         await ctx.send(content=f"pong!\n{round(self.ArisaInteraction.latency)} ms")

@@ -1,10 +1,4 @@
-import json
-
 import interactions
-
-with open("./config/scope.json") as server_scopes:
-    server_scopes = json.load(server_scopes)
-    production = server_scopes["Production"]
 
 class domain(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -13,7 +7,7 @@ class domain(interactions.Extension):
     @interactions.extension_command(
         name = "domain",
         description = "開關頻道的檢視模式",
-        scope = production
+        scope = 339368837356978187
     )
     async def domain(self, ctx: interactions.ComponentContext):
         selection = interactions.SelectMenu(
@@ -34,21 +28,16 @@ class domain(interactions.Extension):
             min_values = 1,
             max_values = 2
         )
-        ouen_button = interactions.Button(
-            style = interactions.ButtonStyle.PRIMARY,
-            label = "關閉選單",
-            custom_id = "close_button"
-        )
-        message = await ctx.send("使用以下選單選擇領域：", components=selection, ephemeral=True)
+        await ctx.send("使用以下選單選擇領域：", components=selection, ephemeral=True)
 
     @interactions.extension_component("button")
     async def callback(self, ctx: interactions.ComponentContext, options: list[str]):
         for option in options:
             if any(list(map(lambda role_id: role_id == int(option), ctx.member.roles))):
-                await ctx.member.remove_role(role=int(option), guild_id=production)
+                await ctx.member.remove_role(role=int(option), guild_id=339368837356978187)
                 await ctx.send(content="已離開該領域", ephemeral=True)
             else:
-                await ctx.member.add_role(role=int(option), guild_id=production)
+                await ctx.member.add_role(role=int(option), guild_id=339368837356978187)
                 await ctx.send(content="已加入該領域", ephemeral=True)
 
 def setup(ArisaInteraction):
