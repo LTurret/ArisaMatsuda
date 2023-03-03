@@ -21,22 +21,22 @@ class domain(interactions.Extension):
                     label = "[討論區] CSIE",
                     emoji = interactions.Emoji(name="💻"),
                     value = "712240674337980486"
-                ),
-                interactions.SelectOption(
-                    label = "[頻道] IM@S",
-                    emoji = interactions.Emoji(name="💻"),
-                    value = "712240674337980486"
-                ),
-                interactions.SelectOption(
-                    label = "[頻道] IDOLY PRIDE",
-                    emoji = interactions.Emoji(name="💻"),
-                    value = "712240674337980486"
                 )
+                # interactions.SelectOption(
+                #     label = "[頻道] IM@S",
+                #     emoji = interactions.Emoji(name="💻"),
+                #     value = "712240674337980486"
+                # ),
+                # interactions.SelectOption(
+                #     label = "[頻道] IDOLY PRIDE",
+                #     emoji = interactions.Emoji(name="💻"),
+                #     value = "712240674337980486"
+                # )
             ],
             placeholder = "選擇領域（多選）",
             custom_id = "button",
             min_values = 1,
-            max_values = 4 
+            max_values = 2 
         )
         await ctx.send("使用以下選單選擇領域：", components=selection, ephemeral=True)
 
