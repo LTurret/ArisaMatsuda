@@ -1,3 +1,5 @@
+import time
+
 import interactions
 
 class join(interactions.Extension):
@@ -55,7 +57,7 @@ class join(interactions.Extension):
             min_values = 1,
             max_values = 6
         )
-        await ctx.send("使用選單選擇加入討論區：", components=selection, ephemeral=True)
+        await ctx.send(f"<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：", components=selection, ephemeral=True)
 
     @interactions.extension_component("selections")
     async def callback(self, ctx: interactions.ComponentContext, options: list[str]):
