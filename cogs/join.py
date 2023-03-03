@@ -1,6 +1,6 @@
 import interactions
 
-class domain(interactions.Extension):
+class join(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
 
@@ -10,45 +10,62 @@ class domain(interactions.Extension):
         scope = 339368837356978187
     )
     async def join(self, ctx: interactions.ComponentContext):
+
         selection = interactions.SelectMenu(
+            custom_id = "selections",
             options = [
                 interactions.SelectOption(
-                    label = "[討論區] Arts",
-                    emoji = interactions.Emoji(name="🎨"),
-                    value = "1023609569529823273"
+                    label = "Arts",
+                    value = "1023609569529823273",
+                    description = "藝術類別討論串",
+                    emoji = interactions.Emoji(name="🔖")
                 ),
                 interactions.SelectOption(
-                    label = "[討論區] CSIE",
-                    emoji = interactions.Emoji(name="💻"),
-                    value = "712240674337980486"
+                    label = "CSIE",
+                    value = "712240674337980486",
+                    description = "資訊工程類別討論串",
+                    emoji = interactions.Emoji(name="🔖")
+                ),
+                interactions.SelectOption(
+                    label = "IM@S",
+                    value = "672685805525008414",
+                    description = "五家事務所皆可聊的偶像大師文字頻道",
+                    emoji = interactions.Emoji(name="💬")
+                ),
+                interactions.SelectOption(
+                    label = "IDOLY PRIDE",
+                    value = "1075816300514902138",
+                    description = "偶像榮耀文字頻道",
+                    emoji = interactions.Emoji(name="💬")
+                ),
+                interactions.SelectOption(
+                    label = "Nsfw",
+                    value = "983712854156935229",
+                    description = "色色頻道 - nsfw文字頻道",
+                    emoji = interactions.Emoji(name="💬")
+                ),
+                interactions.SelectOption(
+                    label = "Meme",
+                    value = "1081248335710654524",
+                    description = "促咪齁搜災 - meme文字頻道",
+                    emoji = interactions.Emoji(name="💬")
                 )
-                # interactions.SelectOption(
-                #     label = "[頻道] IM@S",
-                #     emoji = interactions.Emoji(name="💻"),
-                #     value = "712240674337980486"
-                # ),
-                # interactions.SelectOption(
-                #     label = "[頻道] IDOLY PRIDE",
-                #     emoji = interactions.Emoji(name="💻"),
-                #     value = "712240674337980486"
-                # )
             ],
             placeholder = "選擇領域（多選）",
-            custom_id = "button",
             min_values = 1,
-            max_values = 2 
+            max_values = 6
         )
-        await ctx.send("使用以下選單選擇領域：", components=selection, ephemeral=True)
+        await ctx.send("使用選單選擇加入討論區：", components=selection, ephemeral=True)
 
-    @interactions.extension_component("button")
+    @interactions.extension_component("selections")
     async def callback(self, ctx: interactions.ComponentContext, options: list[str]):
         for option in options:
             if any(list(map(lambda role_id: role_id == int(option), ctx.member.roles))):
                 await ctx.member.remove_role(role=int(option), guild_id=339368837356978187)
-                await ctx.send(content="已離開該領域", ephemeral=True)
+                await ctx.send(content="已離開該討論區", ephemeral=True)
             else:
                 await ctx.member.add_role(role=int(option), guild_id=339368837356978187)
-                await ctx.send(content="已加入該領域", ephemeral=True)
+                await ctx.send(content="已加入該討論區", ephemeral=True)
 
 def setup(ArisaInteraction):
-    domain(ArisaInteraction)
+    join(ArisaInteraction)
