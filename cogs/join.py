@@ -23,7 +23,7 @@ class join(interactions.Extension):
                     emoji = interactions.Emoji(name="🔖")
                 ),
                 interactions.SelectOption(
-                    label = "CSIE",
+                    label = "Computer Science",
                     value = "712240674337980486",
                     description = "資訊工程類別討論串",
                     emoji = interactions.Emoji(name="🔖")
