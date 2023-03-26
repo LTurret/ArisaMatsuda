@@ -57,7 +57,7 @@ class join(interactions.Extension):
             min_values = 1,
             max_values = 6
         )
-        message = f'''<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：\n可以使用`j/<討論區>`來快速加入/退出'''
+        message = f'''<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：\n也可以使用`j/<討論區>`來快速加入/退出'''
         await ctx.send(message, components=selection, ephemeral=True)
 
     @interactions.extension_component("selections")
