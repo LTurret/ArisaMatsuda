@@ -53,11 +53,12 @@ class join(interactions.Extension):
                     emoji = interactions.Emoji(name="💬")
                 )
             ],
-            placeholder = "選擇領域（多選）",
+            placeholder = "選擇討論區（多選）",
             min_values = 1,
             max_values = 6
         )
-        await ctx.send(f"<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：", components=selection, ephemeral=True)
+        message = f'''<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：\n可以使用`j/<討論區>`來快速加入/退出'''
+        await ctx.send(message, components=selection, ephemeral=True)
 
     @interactions.extension_component("selections")
     async def callback(self, ctx: interactions.ComponentContext, options: list[str]):
