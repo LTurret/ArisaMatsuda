@@ -31,13 +31,25 @@ class join(interactions.Extension):
                 interactions.SelectOption(
                     label = "IM@S",
                     value = "672685805525008414",
-                    description = "五家事務所皆可聊的偶像大師文字頻道",
-                    emoji = interactions.Emoji(name="💬")
+                    description = "五家事務所偶像大師文字頻道",
+                    emoji = interactions.Emoji(name="🔖")
                 ),
                 interactions.SelectOption(
                     label = "IDOLY PRIDE",
                     value = "1075816300514902138",
                     description = "偶像榮耀文字頻道",
+                    emoji = interactions.Emoji(name="💬")
+                ),
+                interactions.SelectOption(
+                    label = "Gaming",
+                    value = "1090959289293742100",
+                    description = "綜合遊戲頻道",
+                    emoji = interactions.Emoji(name="💬")
+                ),
+                interactions.SelectOption(
+                    label = "Photos",
+                    value = "1090959411633209374",
+                    description = "綜合圖串",
                     emoji = interactions.Emoji(name="💬")
                 ),
                 interactions.SelectOption(
@@ -55,7 +67,7 @@ class join(interactions.Extension):
             ],
             placeholder = "選擇討論區（多選）",
             min_values = 1,
-            max_values = 6
+            max_values = 8
         )
         message = f'''<t:{int(time.time())}> </join:1080308276186587236>\n使用選單選擇加入討論區：\n也可以使用 `j/<討論區>` 來快速加入/退出'''
         await ctx.send(message, components=selection, ephemeral=True)
