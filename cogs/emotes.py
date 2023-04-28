@@ -8,8 +8,7 @@ class emotes(interactions.Extension):
 
     @interactions.extension_command(
         name="shy",
-        description="亞利沙害羞",
-        scope=Scopes()["All"]
+        description="亞利沙害羞"
     ) 
     async def shy(self, ctx):
         await ctx.send(content="<:ArisaShy:957861166082822195>")
