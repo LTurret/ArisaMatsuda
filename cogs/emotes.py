@@ -1,7 +1,5 @@
 import interactions
 
-from core.scopes import Scopes
-
 class emotes(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction

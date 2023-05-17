@@ -2,6 +2,8 @@ import time
 
 import interactions
 
+from core.scopes import scopes
+
 class join(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
@@ -9,7 +11,7 @@ class join(interactions.Extension):
     @interactions.extension_command(
         name = "join",
         description = "開關頻道的檢視模式",
-        scope = 339368837356978187
+        scope = scopes["anna"]
     )
     async def join(self, ctx: interactions.ComponentContext):
 

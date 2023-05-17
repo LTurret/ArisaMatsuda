@@ -1,10 +1,8 @@
-import json
-import random
-
 import interactions
 import openai
 
-from core.scopes import Scopes
+from core.scopes import scopes
+from core.secrets import tokens
 
 class ask(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -13,7 +11,7 @@ class ask(interactions.Extension):
     @interactions.extension_command(
         name = "ask",
         description = "問亞利沙",
-        scope = Scopes()["All"],
+        scope = scopes()["all"],
         options = [
             interactions.Option(
                 name = "question",
@@ -24,18 +22,16 @@ class ask(interactions.Extension):
         ]
     )
     async def shy(self, ctx: interactions.CommandContext, question: str):
-        with open("./config/openai.json", "r") as token:
-            token = json.load(token)["token"]
-        openai.api_key = token
+        openai.api_key = tokens()["openai"]
         completion = openai.ChatCompletion.create(
-                model = "gpt-3.5-turbo",
-                messages = [
-                        {
-                            "role": "user",
-                            "content": f"你現在是一個很活潑的16歲女孩，請用繁體中文回答以下問題：「{question}」"
-                        }
-                    ]
-                )
+            model = "gpt-3.5-turbo",
+            messages = [
+                    {
+                        "role": "user",
+                        "content": f"你現在是一個很活潑的16歲女孩，請用繁體中文回答以下問題：「{question}」"
+                    }
+                ]
+            )
         await ctx.send(content=completion.choices[0].message.content)
     
 def setup(ArisaInteraction):

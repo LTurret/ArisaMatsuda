@@ -1,6 +1,6 @@
 import interactions
 
-from core.scopes import Scopes
+from core.scopes import scopes
 
 class ouen(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -10,7 +10,7 @@ class ouen(interactions.Extension):
     @interactions.extension_command(
         name = "ouen",
         description = "為杏奈寶貝應援！！！！",
-        scope = Scopes()["All"]
+        scope = scopes()["all"]
     ) 
     async def ouen(self, ctx):
         ouen_button = interactions.Button(

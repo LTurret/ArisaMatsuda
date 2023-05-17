@@ -1,6 +1,6 @@
 import interactions
 
-from core.scopes import Scopes
+from core.scopes import scopes
 
 class help(interactions.Extension):
     def __init__(self, ArisaInteraction):
@@ -9,7 +9,7 @@ class help(interactions.Extension):
     @interactions.extension_command(
         name = "help",
         description = "顯示說明",
-        scope = Scopes()["All"],
+        scope = scopes()["all"],
         options = [
             interactions.Option(
                 name = "tag_name",

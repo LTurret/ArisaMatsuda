@@ -2,8 +2,6 @@ import random
 
 import interactions
 
-from core.scopes import Scopes
-
 class post(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
@@ -12,7 +10,6 @@ class post(interactions.Extension):
     @interactions.extension_command(
         name = "post",
         description = "匿名發文（可使用超連結文字格式）",
-        scope = Scopes()["All"],
         options = [
             interactions.Option(
                 name = "content",

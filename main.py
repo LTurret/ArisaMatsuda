@@ -2,17 +2,16 @@ import json, os
 
 import interactions
 
-with open("./config/token.json", mode="r") as token:
-    token = json.load(token)
+from core.secrets import tokens
 
 Arisa = interactions.Client(
-    token=token["token"],
-    intents=interactions.Intents.ALL,
-    presence=interactions.ClientPresence(
-        activities=[
+    token = tokens()["bot"],
+    intents = interactions.Intents.ALL,
+    presence = interactions.ClientPresence(
+        activities = [
             interactions.PresenceActivity(
-                name="偶像大師 百萬人演唱會！ 劇場時光",
-                type=interactions.PresenceActivityType.GAME
+                name = "偶像大師 百萬人演唱會！ 劇場時光",
+                type = interactions.PresenceActivityType.GAME
             )
         ]
     ),
