@@ -1,36 +1,26 @@
-import json, os
+import os
 
 import interactions
 
 from core.secrets import tokens
 
-Arisa = interactions.Client(
-    token = tokens()["bot"],
+arisa = interactions.Client(
     intents = interactions.Intents.ALL,
-    presence = interactions.ClientPresence(
-        activities = [
-            interactions.PresenceActivity(
-                name = "偶像大師 百萬人演唱會！ 劇場時光",
-                type = interactions.PresenceActivityType.GAME
-            )
-        ]
-    ),
-    disable_sync=False
+    activity = interactions.Activity(
+        name = "偶像大師 百萬人演唱會！ 劇場時光"
+    )
 )
 
-@Arisa.event
-async def on_ready():
-    try:
-        os.system("clear")
-    except Exception as _:
-        pass
+@interactions.listen()
+async def on_startup():
+    os.system("clear")
     print(f"Up!10sion♪\nEverybody attention!!")
 
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
-        print(f"Loading slash command extension: {filename}")
-        Arisa.load(f"cogs.{filename[:-3]}")
+        print(f"Loading extension: {filename}")
+        arisa.load_extension(f"cogs.{filename[:-3]}")
 
 print("Booting...")
 
-Arisa.start()
+arisa.start(token=tokens()["bot"])
