@@ -1,20 +1,23 @@
 import json
 
-def Scopes():
-    with open("./config/scope.json") as server_scopes:
-        server_scopes = json.load(server_scopes)
-        prod = [
-            server_scopes["Production_anna"],
-            server_scopes["Production_sheep"]
-        ]
-        test = [
-            server_scopes["Testing"]
-        ]
-        every = [
-            server_scopes["Production_anna"],
-            server_scopes["Production_sheep"],
-            server_scopes["Testing"]
-        ]
-    return {"Production":prod, "Testing":test, "All":every}
+def scopes() -> list:
+    with open("./core/config/scope.json", "r") as scope:
+        scope = json.load(scope)
 
-# how to make `every=[prod, test]` but its `every=[**prod, **test]`
+        anna = scope["Production_anna"]
+        arisa = scope["Production_arisa"]
+        testing = scope["Testing"]
+
+    prod = [anna, arisa]
+    test = [testing]
+    every = [anna, arisa, testing]
+
+    serverSet = {
+        "anna": anna,
+        "arisa": arisa,
+        "prod": prod,
+        "testing": test,
+        "all": every
+    }
+
+    return serverSet
