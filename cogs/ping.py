@@ -1,14 +1,14 @@
-import interactions
+from interactions import Extension, slash_command, SlashContext
 
-class ping(interactions.Extension):
+class ping(Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
 
-    @interactions.extension_command(
+    @slash_command(
         name = "ping",
         description = "回傳延遲時間"
     ) 
-    async def ping(self, ctx: interactions.CommandContext):
+    async def ping(self, ctx: SlashContext):
         await ctx.send(content=f"pong!\n{round(self.ArisaInteraction.latency)} ms")
     
 def setup(ArisaInteraction):
