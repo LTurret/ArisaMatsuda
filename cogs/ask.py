@@ -17,8 +17,8 @@ async def chat(question: str):
     return completion
 
 class ask(Extension):
-    def __init__(self, bot):
-        self.ArisaInteraction = bot
+    def __init__(self, Arisa):
+        self.Arisa = Arisa
         self.CHANNEL_CACHE = None
 
     @slash_command(
@@ -38,5 +38,5 @@ class ask(Extension):
         content = message[0]["choices"][0]["message"]["content"]
         await self.CHANNEL_CACHE.send(content=content)
 
-def setup(ArisaInteraction):
-    ask(ArisaInteraction)
+def setup(Arisa):
+    ask(Arisa)
