@@ -1,10 +1,8 @@
-import interactions
-
 from interactions import Extension, slash_command, SlashContext
 
 class emotes(Extension):
-    def __init__(self, ArisaInteraction):
-        self.ArisaInteraction = ArisaInteraction
+    def __init__(self, Arisa):
+        self.Arisa = Arisa
 
     @slash_command(
         name="shy",
@@ -13,5 +11,5 @@ class emotes(Extension):
     async def shy(self, ctx: SlashContext):
         await ctx.send(content="<:ArisaShy:957861166082822195>")
     
-def setup(ArisaInteraction):
-    emotes(ArisaInteraction)
+def setup(Arisa):
+    emotes(Arisa)
