@@ -1,6 +1,16 @@
+import aiohttp
+import io
+
 from interactions import listen
 from interactions import Extension
+from interactions import File
 from interactions.api.events import MessageCreate
+from interactions.models.discord import channel
+
+async def fetch(session: aiohttp.ClientSession(), url: str) -> bytes | None:
+    async with session.get(url) as response:
+        file: bytes = await response.read()
+        return file
 
 class communication(Extension):
     def __init__(self, Arisa):
@@ -8,14 +18,35 @@ class communication(Extension):
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
-        entry_anna = await self.Arisa.fetch_channel(695508789327298570)
-        entry_arisa = await self.Arisa.fetch_channel(1052268807038709846)
+        channel_manifest: dict = {
+            1112275098741780711: 1112324039537590293,
+            1112324039537590293: 1112275098741780711
+        }
 
-        if event.message.author != self.Arisa.user:
-            if await entry_arisa.fetch_message(event.message):
-                await entry_anna.send(event.message.content)
-            else:
-                await entry_arisa.send(event.message.content)
+        # Attachments handler
+        if len(event.message.attachments) != 0:
+            files: list[bytes] = []
+            for attachment in event.message.attachments:
+                async with aiohttp.ClientSession() as session:
+                    file = await fetch(session, attachment.url)
+                    files.append(File(io.BytesIO(file), file_name="attachment.png"))
+
+        # Channel filter
+        if int(event.message.channel.id) == 1112275098741780711 or int(event.message.channel.id) == 1112324039537590293:
+            content: str = "**("
+
+            # Give a specify member special identity
+            if str(event.message.author) == "ペットリー#4222":
+                content += "🐑 "
+            content += f"{str(event.message.author)})**　{event.message.content}"
+
+            # Send message
+            if event.message.author != self.Arisa.user:
+                entry: channel = self.Arisa.get_channel(channel_manifest[event.message.channel.id])
+                if "files" in locals():
+                    await entry.send(content=content, files=files)
+                else:
+                    await entry.send(content=content)
 
 def setup(Arisa):
     communication(Arisa)
