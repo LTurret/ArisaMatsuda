@@ -1,5 +1,5 @@
-import aiohttp
-import io
+from io import BytesIO
+from aiohttp import ClientSession
 
 from interactions import listen
 from interactions import Extension
@@ -7,7 +7,7 @@ from interactions import File
 from interactions.api.events import MessageCreate
 from interactions.models.discord import channel
 
-async def fetch(session: aiohttp.ClientSession(), url: str) -> bytes | None:
+async def fetch(session: ClientSession, url: str) -> bytes | None:
     async with session.get(url) as response:
         file: bytes = await response.read()
         return file
@@ -27,9 +27,9 @@ class communication(Extension):
         if len(event.message.attachments) != 0:
             files: list[bytes] = []
             for attachment in event.message.attachments:
-                async with aiohttp.ClientSession() as session:
+                async with ClientSession() as session:
                     file = await fetch(session, attachment.url)
-                    files.append(File(io.BytesIO(file), file_name="attachment.png"))
+                    files.append(File(BytesIO(file), file_name="attachment.png"))
 
         # Channel filter
         if int(event.message.channel.id) == 1112275098741780711 or int(event.message.channel.id) == 1112324039537590293:
