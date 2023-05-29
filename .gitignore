@@ -2,6 +2,6 @@
 *.png
 
 token.json
-openai.json
+scope.json
 
 **/__pycache__
