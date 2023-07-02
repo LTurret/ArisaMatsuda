@@ -1,26 +1,33 @@
-import os
+from os import getenv
+from os import listdir
+from os import system
 
-import interactions
+from dotenv import load_dotenv
 
-from core.secrets import tokens
+from interactions import listen
+from interactions import Activity
+from interactions import Client
+from interactions import Intents
 
-arisa = interactions.Client(
-    intents = interactions.Intents.ALL,
-    activity = interactions.Activity(
+load_dotenv()
+
+arisa = Client(
+    intents = Intents.ALL,
+    activity = Activity(
         name = "偶像大師 百萬人演唱會！ 劇場時光"
     )
 )
 
-@interactions.listen()
+@listen()
 async def on_startup():
-    os.system("clear")
+    system("clear")
     print(f"Up!10sion♪\nEverybody attention!!")
 
-for filename in os.listdir("./cogs"):
+for filename in listdir("./cogs"):
     if filename.endswith(".py"):
         print(f"Loading extension: {filename}")
         arisa.load_extension(f"cogs.{filename[:-3]}")
 
-print("Booting...")
+print("Starting...")
 
-arisa.start(token=tokens()["bot"])
+arisa.start(getenv("BOT_TOKEN"))

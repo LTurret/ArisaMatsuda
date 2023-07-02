@@ -1,5 +1,7 @@
 import time
 
+from os import getenv
+
 from interactions import component_callback
 from interactions import slash_command
 from interactions import ComponentContext
@@ -8,8 +10,6 @@ from interactions import StringSelectOption
 from interactions import StringSelectMenu
 from interactions import PartialEmoji
 
-from core.scopes import scopes
-
 class join(Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
@@ -17,7 +17,7 @@ class join(Extension):
     @slash_command(
         name = "join",
         description = "開關頻道的檢視模式",
-        scopes = [scopes()["anna"]]
+        scopes = [getenv("Production_anna")]
     )
     async def join(self, ctx: ComponentContext):
 
