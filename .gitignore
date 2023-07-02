@@ -1,6 +1,8 @@
 /cogs/dist/mltdevent/data/*.json
 *.png
 
+.env
+
 token.json
 scope.json
 
