@@ -32,16 +32,31 @@ You should add your own configs in the directory `core/config` and redefine vari
 }
 ```
 
-## Dependencies
+## Build
 
-### Dev
+### Requirements
 
 ```plaintext
 [package] [version]
 --------------------------------
-aiohttp 3.8.4
-discord-py-interactions 5.5.1
-openai 0.27.6
+aiohttp==3.8.4
+aiosignal==1.3.1
+async-timeout==4.0.2
+attrs==23.1.0
+certifi==2023.5.7
+charset-normalizer==3.1.0
+discord-py-interactions==5.5.1
+discord-typings==0.5.1
+emoji==2.2.0
+frozenlist==1.3.3
+idna==3.4
+multidict==6.0.4
+requests==2.30.0
+tomli==2.0.1
+tqdm==4.65.0
+typing_extensions==4.5.0
+urllib3==2.0.2
+yarl==1.9.2
 ```
 
 ## Todo
