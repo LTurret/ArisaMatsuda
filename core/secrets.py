@@ -5,11 +5,9 @@ def tokens() -> list:
         token = json.load(token)
 
         bot = token["bot_token"]
-        openai = token["openai_token"]
 
     TokenSet = {
-        "bot": bot,
-        "openai": openai
+        "bot": bot
     }
 
     return TokenSet
