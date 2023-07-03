@@ -3,6 +3,7 @@ from interactions import Extension, slash_command, SlashContext
 class emotes(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
+        print(f" ↳ Extension {__name__} created")
 
     @slash_command(
         name="shy",

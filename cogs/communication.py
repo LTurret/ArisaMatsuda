@@ -15,6 +15,7 @@ async def fetch(session: ClientSession, url: str) -> bytes | None:
 class communication(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
+        print(f" ↳ Extension {__name__} created")
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
