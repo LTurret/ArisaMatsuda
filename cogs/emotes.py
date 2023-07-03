@@ -1,4 +1,6 @@
-from interactions import Extension, slash_command, SlashContext
+from interactions import slash_command
+from interactions import Extension
+from interactions import SlashContext
 
 class emotes(Extension):
     def __init__(self, Arisa):
