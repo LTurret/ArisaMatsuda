@@ -4,41 +4,28 @@ A python based program that using `discord-py-interactions` hosting a discord bo
 
 ## Configuration
 
-### Config folder
+Before hosting this bot directly from clone this repo, you have to change all the secret variable such as `channel_id` or `message_id` in [`./cogs`](./cogs/) and secrets in `.env`
 
-Your key such as `bot_token` or `server_scope` should be sort in `core/config` directory, You should create the folder for your own.
+### Secrets
 
-### Key manager
+The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following information in `.env`.
 
-The current token and scope **are managed by integrated tool** `core/scopes.py` and `core/secrets.json`, They are kinda sucks and I will rewrite them in future sometime.
+Here is a example where you should place your confidentials:
 
-You should add your own configs in the directory `core/config` and redefine variables in the two tools mentioned above.
-
-#### Token
-
-```json
-{
-  "bot_token": YOUR_BOT_TOKEN_HERE
-}
-```
-
-#### Scopes
-
-```json
-{
-  "main_server": SERVER_SCOPE,
-  "test_server": SERVER_SCOPE,
-  "other_server": SERVER_SCOPE
-}
+```env
+BOT_TOKEN=
+Production_anna=
+Production_arisa=
+Testing=
 ```
 
 ## Build
 
-### Requirements
+### [Requirements](./requirements.txt)
+
+You can install packages with `pip install -r requirements.txt`
 
 ```plaintext
-[package] [version]
---------------------------------
 aiohttp==3.8.4
 aiosignal==1.3.1
 async-timeout==4.0.2
@@ -51,12 +38,21 @@ emoji==2.2.0
 frozenlist==1.3.3
 idna==3.4
 multidict==6.0.4
+python-dotenv==1.0.0
 requests==2.30.0
 tomli==2.0.1
 tqdm==4.65.0
 typing_extensions==4.5.0
 urllib3==2.0.2
 yarl==1.9.2
+```
+
+### Running
+
+The `-B` prevents `__pycache__` being created
+
+```shell
+python3 -B main.py
 ```
 
 ## Todo
@@ -76,6 +72,9 @@ yarl==1.9.2
   - [ ] ouen
   - [ ] buttons
 - [ ] `zenMode` - Enabling will remove all channel to make less notification, disable it can put all roles back.
+- [ ] Twitter url fix automations.
+  - [x] resent with vx prefix.
+  - [ ] fetch all information in the tweet then resent.
 
 ## License
 
