@@ -59,7 +59,7 @@ python3 -B main.py
 
 - [x] two-path communication method
   - [x] use the right condition to determine which guild
-  - [x] attachment (JPG only)
+  - [x] attachment
   - [ ] reply method
   - [ ] delete method
   - [ ] edit method

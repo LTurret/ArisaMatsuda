@@ -30,7 +30,7 @@ class communication(Extension):
             for attachment in event.message.attachments:
                 async with ClientSession() as session:
                     file = await fetch(session, attachment.url)
-                    files.append(File(BytesIO(file), file_name="attachment.png"))
+                    files.append(File(BytesIO(file), file_name=attachment.filename))
 
         # Channel filter
         if int(event.message.channel.id) == 1112275098741780711 or int(event.message.channel.id) == 1112324039537590293:
