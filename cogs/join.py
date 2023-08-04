@@ -11,8 +11,8 @@ from interactions import StringSelectMenu
 from interactions import PartialEmoji
 
 class join(Extension):
-    def __init__(self, ArisaInteraction):
-        self.ArisaInteraction = ArisaInteraction
+    def __init__(self, Arisa):
+        self.Arisa = Arisa
         print(f" ↳ Extension {__name__} created")
 
     @slash_command(
@@ -95,5 +95,5 @@ class join(Extension):
                 await ctx.member.add_role(role=int(value))
                 await ctx.send(content="已加入該討論區", ephemeral=True)
 
-def setup(ArisaInteraction):
-    join(ArisaInteraction)
+def setup(Arisa):
+    join(Arisa)
