@@ -1,6 +1,6 @@
 # ArisaMatsuda
 
-A python based program that using `discord-py-interactions` hosting a discord bot for server managements.
+A discord bot for private server management.
 
 ## Configuration
 
