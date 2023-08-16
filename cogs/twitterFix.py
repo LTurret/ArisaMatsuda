@@ -7,9 +7,9 @@ from urllib.parse import quote
 from aiohttp import ClientSession
 from interactions import events
 from interactions import listen
+from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
-
 
 class twitterFix(Extension):
     def __init__(self, Arisa):
@@ -129,8 +129,9 @@ class twitterFix(Extension):
                     text="樓梯的推特連結修復魔法",
                     icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
                 )
-                # await event.message.channel.send(reply_to=event.message, embeds=embed, allowed_mentions=False, silent=True)
-                await event.message.channel.send(embeds=embed, allowed_mentions=False, silent=True)
+
+                # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
+                await event.message.channel.send(embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
 
 def setup(Arisa):
