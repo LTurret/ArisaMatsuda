@@ -5,8 +5,7 @@ A discord bot for private server management.
 ## Configuration
 
 Before hosting this bot directly from this repo, you have to change some secret and variable.  
-such as `channel_id` or `message_id` in `.env`  
-More detail will describe in [Secrets](#secrets) section
+such as `channel_id` or `message_id` in `.env`, More detail will describe in [Secrets](#secrets) section
 
 ### Secrets
 
