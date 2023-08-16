@@ -4,15 +4,14 @@ A discord bot for private server management.
 
 ## Configuration
 
-> [!IMPORTANT]  
-> Before hosting this bot directly from this repo, you have to change some secret and variable.  
-> such as `channel_id` or `message_id` in `.env`  
-> More detail will describe in [Secrets](#secrets) section
+Before hosting this bot directly from this repo, you have to change some secret and variable.  
+such as `channel_id` or `message_id` in `.env`  
+More detail will describe in [Secrets](#secrets) section
 
 ### Secrets
 
 > [!NOTE]  
-> **The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following confidentials in `.env`.**
+> The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following confidentials in `.env`.
 
 This section documented some information about how and where to use your confidential.
 
