@@ -23,8 +23,8 @@ class communication(Extension):
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
-        bi_channel_1: int = getenv("bi-channel_1")
-        bi_channel_2: int = getenv("bi-channel_2")
+        bi_channel_1: int = int(getenv("bi-channel_1"))
+        bi_channel_2: int = int(getenv("bi-channel_2"))
 
         channel_manifest: dict = {bi_channel_1: bi_channel_2, bi_channel_2: bi_channel_1}
 
