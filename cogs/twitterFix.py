@@ -1,3 +1,5 @@
+from io import BytesIO
+from json import dump
 from json import dumps
 from re import findall
 from re import search
@@ -10,6 +12,8 @@ from interactions import listen
 from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
+from interactions import File
+
 
 class twitterFix(Extension):
     def __init__(self, Arisa):
@@ -48,10 +52,11 @@ class twitterFix(Extension):
 
                 return api_url
 
-            def get_contents(api_callback) -> dict:
+            async def get_contents(api_callback) -> dict:
                 body_post: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
                 media: list | None = None
                 media_first: str | None = None
+                media_video: str | None = None
                 full_text: str | None = None
 
                 favorite_count: int = body_post["favorite_count"]
@@ -65,6 +70,12 @@ class twitterFix(Extension):
                 if "media" in body_post["entities"]:
                     media = body_post["entities"]["media"]
                     media_first = body_post["entities"]["media"][0]["media_url_https"]
+                    if "video_info" in body_post["extended_entities"]["media"][0]:
+                        async with ClientSession() as session:
+                            async with session.get(body_post["extended_entities"]["media"][0]["video_info"]["variants"][-1]["url"]) as response:
+                                file: bytes = await response.read()
+                        file = File(BytesIO(file), file_name="attachment.mp4")
+                        media_video = file
 
                 if "full_text" in body_post:
                     start = search(r"https:\/\/t.co\/", body_post["full_text"]).start()
@@ -73,6 +84,7 @@ class twitterFix(Extension):
                 return {
                     "media": media,
                     "media_first": media_first,
+                    "media_video": media_video,
                     "full_text": full_text,
                     "author": author,
                     "screen_name": screen_name,
@@ -117,7 +129,7 @@ class twitterFix(Extension):
                 async with ClientSession(headers=headers) as session:
                     async with session.get(api_url) as response:
                         api_callback = await response.json()
-                content: dict = {**get_contents(api_callback)}
+                content: dict = {**(await get_contents(api_callback))}
                 embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time())
                 embed.set_author(
                     name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
@@ -131,7 +143,9 @@ class twitterFix(Extension):
                 )
 
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                await event.message.channel.send(embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
+                await event.message.channel.send(
+                    files=[content["media_video"]], embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                )
 
 
 def setup(Arisa):
