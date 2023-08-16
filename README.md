@@ -5,27 +5,55 @@ A discord bot for private server management.
 ## Configuration
 
 > [!IMPORTANT]  
-> Before hosting this bot directly from clone this repo, you have to change all the secret variable such as `channel_id` or `message_id` in [`./cogs`](./cogs/) and secrets in `.env`
+> Before hosting this bot directly from this repo, you have to change some secret and variable.  
+> such as `channel_id` or `message_id` in `.env`  
+> More detail will describe in [Secrets](#secrets) section
 
 ### Secrets
 
 > [!NOTE]  
-> **The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following information in `.env`.**
+> **The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following confidentials in `.env`.**
 
-Here is a example where you should place your confidentials:
+This section documented some information about how and where to use your confidential.
+
+> [!IMPORTANT]  
+> The following table is all **REQUIRED** and make sure you place them well.
 
 ```env
 BOT_TOKEN=
-Production_anna=
-Production_arisa=
-Testing=
+production_server_1=
+production_server_2=
+bi-channel_1=
+bi-channel_2=
 ```
+
+#### Confidential and scopes
+
+> [!NOTE]  
+> I use `.env` to store my `server_id` and `channel_id`, and this table will tell where this bot use these scopes.
+
+| **Extension name** | **Use range**                | **Scopes set**                             | **Additional**                                          |
+| ------------------ | ---------------------------- | ------------------------------------------ | ------------------------------------------------------- |
+| communication.py   | 2 servers, specific channels | {production_server_1, production_server_2} | this extension is special, please check the source code |
+| emotes.py          | global                       |                                            |                                                         |
+| goods.py           | global                       |                                            |                                                         |
+| join.py            | not global                   | {production_server_1}                      |                                                         |
+| ping.py            | global                       |                                            |                                                         |
+| twitterFix.py      | global                       |                                            |                                                         |
+
+#### bi-channels
+
+bi-channel is a very special extension, This extension makes bot transfer message between `production_server_1` and `production_server_2` and their specific channels, which is `bi-channel_1` and `bi-channel_2`
+
+> [!NOTE]  
+> If your deployment does not require this function, make sure to unload `./cogs/communication.py`, and you can remove `bi-channel_1` and `bi-channel_2` from `.env`
 
 ## Build
 
 ### [Requirements](./requirements.txt)
 
-You can install packages with `pip install -r requirements.txt`
+> [!NOTE]  
+> You can install packages via `pip install -r requirements.txt`
 
 ```plaintext
 aiohttp==3.8.4
@@ -52,7 +80,8 @@ yarl==1.9.2
 
 ### Running
 
-The `-B` prevents `__pycache__` being created
+> [!NOTE]
+> The `-B` prevents `__pycache__` being created
 
 ```shell
 python3 -B main.py
