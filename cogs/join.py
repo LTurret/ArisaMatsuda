@@ -22,7 +22,6 @@ class join(Extension):
             StringSelectOption(label="Arts", value="1023609569529823273", description="藝術類別討論串", emoji=PartialEmoji(name="🔖")),
             StringSelectOption(label="Computer Science", value="712240674337980486", description="電腦科學類別討論串", emoji=PartialEmoji(name="🔖")),
             StringSelectOption(label="IM@S", value="672685805525008414", description="五家事務所偶像大師文字頻道", emoji=PartialEmoji(name="🔖")),
-            StringSelectOption(label="Bi-general", value="1112321667226681364", description="跟配托利聊天的雙向頻道", emoji=PartialEmoji(name="💬")),
             StringSelectOption(label="IDOLY PRIDE", value="1075816300514902138", description="偶像榮耀文字頻道", emoji=PartialEmoji(name="💬")),
             StringSelectOption(label="Gaming", value="1090959289293742100", description="綜合遊戲頻道", emoji=PartialEmoji(name="💬")),
             StringSelectOption(label="Photos", value="1090959411633209374", description="綜合圖串", emoji=PartialEmoji(name="💬")),
@@ -31,9 +30,9 @@ class join(Extension):
             custom_id="selections",
             placeholder="選擇討論區（多選）",
             min_values=1,
-            max_values=9,
+            max_values=8,
         )
-        message = f"""# <t:{int(time.time())}> </join:1112285216447401984>\n使用選單選擇加入討論區\n也可以使用 `j/<討論區>` 來快速加入/退出"""
+        message = f"""### <t:{int(time.time())}> </join:1112285216447401984>\n- 使用選單選擇加入討論區\n- 也可以使用 `j/<討論區>` 來快速加入/退出"""
         await ctx.send(content=message, components=selection, ephemeral=True)
 
     @component_callback("selections")
