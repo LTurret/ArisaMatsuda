@@ -2,31 +2,16 @@ import interactions
 
 from core.scopes import scopes
 
+
 class role(interactions.Extension):
     def __init__(self, ArisaInteraction):
         self.ArisaInteraction = ArisaInteraction
 
-    @interactions.extension_command(
-        name = "role",
-        description = "問亞利沙",
-        scope = scopes()["arisa"]
-    )
+    @interactions.extension_command(name="role", description="問亞利沙", scope=scopes()["arisa"])
     async def role(self, ctx: interactions.CommandContext):
-        role_verified = interactions.Button(
-            style = interactions.ButtonStyle.PRIMARY,
-            label = "Verified",
-            custom_id = "role_verified"
-        )
-        role_nsfw = interactions.Button(
-            style = interactions.ButtonStyle.SECONDARY,
-            label = "NSFW",
-            custom_id = "role_nsfw"
-        )
-        role_programmer = interactions.Button(
-            style = interactions.ButtonStyle.SECONDARY,
-            label = "Programmer",
-            custom_id = "role_programmer"
-        )
+        role_verified = interactions.Button(style=interactions.ButtonStyle.PRIMARY, label="Verified", custom_id="role_verified")
+        role_nsfw = interactions.Button(style=interactions.ButtonStyle.SECONDARY, label="NSFW", custom_id="role_nsfw")
+        role_programmer = interactions.Button(style=interactions.ButtonStyle.SECONDARY, label="Programmer", custom_id="role_programmer")
 
         row = interactions.ActionRow(components=[role_nsfw, role_programmer])
 
@@ -34,7 +19,7 @@ class role(interactions.Extension):
 
     @interactions.extension_component("role_verified")
     async def role_action_verified(self, ctx):
-        if any(list(map(lambda role_id: role_id==1052268806166294610, ctx.author.roles))):
+        if any(list(map(lambda role_id: role_id == 1052268806166294610, ctx.author.roles))):
             await ctx.member.remove_role(role=1052268806166294610, guild_id=1052268806166294609)
             await ctx.send(content="已解除認證", ephemeral=True)
         else:
@@ -58,6 +43,7 @@ class role(interactions.Extension):
         else:
             await ctx.member.add_role(role=1052268806166294614, guild_id=1052268806166294609)
             await ctx.send(content="已加入身分組", ephemeral=True)
+
 
 def setup(ArisaInteraction):
     role(ArisaInteraction)

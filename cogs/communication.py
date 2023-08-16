@@ -1,4 +1,6 @@
 from io import BytesIO
+from os import getenv
+
 from aiohttp import ClientSession
 
 from interactions import listen
@@ -7,10 +9,12 @@ from interactions import File
 from interactions.api.events import MessageCreate
 from interactions.models.discord import channel
 
+
 async def fetch(session: ClientSession, url: str) -> bytes | None:
     async with session.get(url) as response:
         file: bytes = await response.read()
         return file
+
 
 class communication(Extension):
     def __init__(self, Arisa):
@@ -19,10 +23,10 @@ class communication(Extension):
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
-        channel_manifest: dict = {
-            1112275098741780711: 1112324039537590293,
-            1112324039537590293: 1112275098741780711
-        }
+        bi_channel_1: int = getenv("bi-channel_1")
+        bi_channel_2: int = getenv("bi-channel_2")
+
+        channel_manifest: dict = {bi_channel_1: bi_channel_2, bi_channel_2: bi_channel_1}
 
         # Attachments handler
         if len(event.message.attachments) != 0:
@@ -33,7 +37,7 @@ class communication(Extension):
                     files.append(File(BytesIO(file), file_name=attachment.filename))
 
         # Channel filter
-        if int(event.message.channel.id) == 1112275098741780711 or int(event.message.channel.id) == 1112324039537590293:
+        if int(event.message.channel.id) == bi_channel_1 or int(event.message.channel.id) == bi_channel_2:
             content: str = "**("
 
             # Give a specify member special identity
@@ -48,6 +52,7 @@ class communication(Extension):
                     await entry.send(content=content, files=files)
                 else:
                     await entry.send(content=content)
+
 
 def setup(Arisa):
     communication(Arisa)

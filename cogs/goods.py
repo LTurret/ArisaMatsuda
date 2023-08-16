@@ -10,34 +10,27 @@ from interactions import SlashCommandChoice
 from PIL import Image
 from PIL import ImageChops
 
+
 class goods(Extension):
     def __init__(self, Misaki):
         self.Misaki = Misaki
         print(f"↳ Extension {__name__} created")
 
-    @slash_command(
-        name = "goods",
-        description = "六周年立牌產生器"
+    @slash_command(name="goods", description="六周年立牌產生器")
+    @slash_option(
+        name="idol",
+        description="偶像名",
+        required=True,
+        opt_type=OptionType.STRING,
     )
     @slash_option(
-        name = "idol",
-        description = "偶像名",
-        required = True,
-        opt_type = OptionType.STRING,
+        name="base",
+        description="底座樣式",
+        required=False,
+        opt_type=OptionType.INTEGER,
+        choices=[SlashCommandChoice(name="普通底座", value=1), SlashCommandChoice(name="金色底座", value=3), SlashCommandChoice(name="前十底座", value=2)],
     )
-    @slash_option(
-        name = "base",
-        description = "底座樣式",
-        required = False,
-        opt_type = OptionType.INTEGER,
-        choices=[
-            SlashCommandChoice(name="普通底座", value=1),
-            SlashCommandChoice(name="金色底座", value=3),
-            SlashCommandChoice(name="前十底座", value=2)
-        ]
-    )
-
-    async def goods(self, ctx: SlashContext, idol: str="杏奈", base: int=1):
+    async def goods(self, ctx: SlashContext, idol: str = "杏奈", base: int = 1):
         manifest = {
             "春香": 1,
             "千早": 2,
@@ -90,7 +83,7 @@ class goods(Extension):
             "桃子": 49,
             "Julia": 50,
             "紬": 51,
-            "歌織": 52
+            "歌織": 52,
         }
 
         DIR: str = "./image/goods"
@@ -120,6 +113,7 @@ class goods(Extension):
             image_binary.seek(0)
             attachment = File(image_binary, file_name="goods.png")
             await ctx.send(files=attachment)
+
 
 def setup(Misaki):
     goods(Misaki)
