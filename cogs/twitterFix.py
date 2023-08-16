@@ -129,7 +129,8 @@ class twitterFix(Extension):
                     text="樓梯的推特連結修復魔法",
                     icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
                 )
-                await event.message.channel.send(reply_to=event.message, embeds=embed, allowed_mentions=False, silent=True)
+                # await event.message.channel.send(reply_to=event.message, embeds=embed, allowed_mentions=False, silent=True)
+                await event.message.channel.send(embeds=embed, allowed_mentions=False, silent=True)
 
 
 def setup(Arisa):
