@@ -15,7 +15,7 @@ such as `channel_id` or `message_id` in `.env`, More detail will describe in [Se
 This section documented some information about how and where to use your confidential.
 
 > [!IMPORTANT]  
-> The following table is all **REQUIRED** and make sure you place them well.
+> The following variables is all **REQUIRED** and make sure you place them well.
 
 ```env
 BOT_TOKEN=
