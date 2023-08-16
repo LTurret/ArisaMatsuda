@@ -143,9 +143,12 @@ class twitterFix(Extension):
                 )
 
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                await event.message.channel.send(
-                    files=[content["media_video"]], embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
-                )
+                if content["media_video"]:
+                    await event.message.channel.send(
+                        files=[content["media_video"]], embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                    )
+                else:
+                    await event.message.channel.send(embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
 
 def setup(Arisa):
