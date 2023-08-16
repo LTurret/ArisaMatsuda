@@ -122,7 +122,7 @@ class twitterFix(Extension):
             variables: dict = {"includePromotedContent": False, "withCommunity": False, "withVoice": False}
             tokens: dict = {**(await get_tokens())}
 
-            if search(r"^https://twitter.com/", event.message.content) and search(r"/status/", event.message.content):
+            if search(r"https://twitter.com/", event.message.content) and search(r"/status/", event.message.content):
                 tweetId = findall(r"\/[0-9][^\?|\/]+", event.message.content)[0][1:]
                 api_url: str = fetch_tweet(tweetId, features, variables)
                 headers = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
