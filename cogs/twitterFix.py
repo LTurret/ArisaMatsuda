@@ -47,6 +47,7 @@ class twitterFix(Extension):
                 variables["tweetId"] = tweetId
 
                 api_url: str = ""
+                root: str = ""
                 api_url += f"https://twitter.com/i/api/graphql/{query_id_token}"
                 api_url += f"/TweetResultByRestId?variables={quote(dumps(variables))}&features={quote(dumps(features))}"
 
@@ -59,39 +60,48 @@ class twitterFix(Extension):
                 return callback
 
             # Get contents from API-callback
-            async def get_contents(api_callback) -> dict:
-                body_post: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
+            async def get_contents(api_callback: dict) -> dict:
+                tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
+                images: list = []
+                video: File | None = None
                 media: list | None = None
-                media_first: str | None = None
-                media_video: str | None = None
                 full_text: str | None = None
 
-                favorite_count: int = body_post["favorite_count"]
-                retweet_count: int = body_post["retweet_count"]
+                favorite_count: int = tweet_detail["favorite_count"]
+                retweet_count: int = tweet_detail["retweet_count"]
 
                 user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"]["core"]["user_results"]["result"]["legacy"]
                 author: str = user_results_legacy["name"]
                 screen_name: str = user_results_legacy["screen_name"]
                 icon_url: str = user_results_legacy["profile_image_url_https"]
 
-                if "media" in body_post["entities"]:
-                    media = body_post["entities"]["media"]
-                    media_first = body_post["entities"]["media"][0]["media_url_https"]
-                    if "video_info" in body_post["extended_entities"]["media"][0]:
-                        async with ClientSession() as session:
-                            async with session.get(body_post["extended_entities"]["media"][0]["video_info"]["variants"][-1]["url"]) as response:
-                                file: bytes = await response.read()
-                        file = File(BytesIO(file), file_name="attachment.mp4")
-                        media_video = file
+                # Extract tweet content text
+                if "full_text" in tweet_detail:
+                    full_text: str = tweet_detail["full_text"]
+                    start: int = -1
 
-                if "full_text" in body_post:
-                    start = search(r"https:\/\/t.co\/", body_post["full_text"]).start()
-                    full_text = body_post["full_text"][: start - 1]
+                    if findall(r"https:\/\/t.co\/.+", full_text):
+                        match_pop: str = findall(r"https:\/\/t.co\/.+", full_text)[-1]
+                        start: int = search(match_pop, full_text).start()
+
+                    full_text = full_text[:start]
+
+                # Extract tweet medias
+                if "extended_entities" in tweet_detail:
+                    if "video_info" in tweet_detail["extended_entities"]["media"][0]:
+                        async with ClientSession() as session:
+                            async with session.get(tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"][-1]["url"]) as response:
+                                file: bytes = await response.read()
+                                video = File(BytesIO(file), file_name="attachment.mp4")
+
+                if "media" in tweet_detail["entities"]:
+                    media: list = tweet_detail["entities"]["media"]
+                    for image in media:
+                        images.append(image["media_url_https"])
 
                 return {
-                    "media": media,
-                    "media_first": media_first,
-                    "media_video": media_video,
+                    "images": images,
+                    "video": video,
                     "full_text": full_text,
                     "author": author,
                     "screen_name": screen_name,
@@ -99,6 +109,20 @@ class twitterFix(Extension):
                     "favorite_count": favorite_count,
                     "retweet_count": retweet_count,
                 }
+
+            def embed_generator(content: dict, media: str, url: str = "https://arisahi.me") -> Embed:
+                embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url=url)
+                embed.set_author(
+                    name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
+                )
+                embed.set_image(media)
+                embed.add_field(name="Likes", value=content["favorite_count"], inline=True)
+                embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
+                embed.set_footer(
+                    text="樓梯的推特連結修復魔法",
+                    icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
+                )
+                return embed
 
             # API headers
             features: dict = {
@@ -135,26 +159,33 @@ class twitterFix(Extension):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tweetId, features, variables)
                 content: dict = {**(await get_contents(api_callback))}
-                embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time())
-                embed.set_author(
+                init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time())
+                init_embed.set_author(
                     name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
                 )
-                embed.set_image(content["media_first"])
-                embed.add_field(name="Likes", value=content["favorite_count"], inline=True)
-                embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
-                embed.set_footer(
+                init_embed.add_field(name="Likes", value=content["favorite_count"], inline=True)
+                init_embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
+                init_embed.set_footer(
                     text="樓梯的推特連結修復魔法",
                     icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
                 )
 
+                embeds: list = [init_embed]
+
+                if range(len(content["images"])):
+                    embeds: list = []
+
+                    for counter in range(len(content["images"])):
+                        embeds.append(embed_generator(content, content["images"][counter]))
+
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                if content["media_video"]:
+                if content["video"] is not None:
                     await event.message.channel.send(
-                        files=[content["media_video"]], embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                        files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
                     )
                 else:
-                    await event.message.channel.send(embeds=embed, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
+                    await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
 
 def setup(Arisa):
