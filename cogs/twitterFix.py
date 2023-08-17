@@ -1,5 +1,4 @@
 from io import BytesIO
-from json import dump
 from json import dumps
 from re import findall
 from re import search
@@ -23,17 +22,17 @@ class twitterFix(Extension):
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
-
+            # Token handler
             async def get_tokens() -> dict:
                 async with ClientSession() as session:
                     async with session.get("https://twitter.com") as response:
-                        response = await response.text()
+                        response: str = await response.text()
                         js_url: str = findall(r"https://abs.twimg.com/responsive-web/client-web-legacy/main.[^\.]+.js", response)[0]
                     async with session.get(js_url) as mainjs:
-                        mainjs = await mainjs.text()
+                        mainjs: str = await mainjs.text()
                         bearer_token: str = findall(r'AAAAAAAAA[^"]+', mainjs)[0]
 
-                headers = {"accept": "*/*", "accept-encoding": "gzip, deflate, br", "te": "trailers", "authorization": f"Bearer {bearer_token}"}
+                headers: dict = {"accept": "*/*", "accept-encoding": "gzip, deflate, br", "te": "trailers", "authorization": f"Bearer {bearer_token}"}
 
                 async with ClientSession(headers=headers) as session:
                     async with session.post("https://api.twitter.com/1.1/guest/activate.json") as response:
@@ -42,7 +41,8 @@ class twitterFix(Extension):
 
                 return {"bearer_token": bearer_token, "guest_token": guest_token}
 
-            def fetch_tweet(tweetId: int, features: dict, variables: dict, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw") -> str:
+            # Tweet fetch
+            async def fetch_tweet(tweetId: int, features: dict, variables: dict, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw") -> dict:
                 variables: dict = {**variables}
                 variables["tweetId"] = tweetId
 
@@ -50,8 +50,15 @@ class twitterFix(Extension):
                 api_url += f"https://twitter.com/i/api/graphql/{query_id_token}"
                 api_url += f"/TweetResultByRestId?variables={quote(dumps(variables))}&features={quote(dumps(features))}"
 
-                return api_url
+                headers: dict = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
 
+                async with ClientSession(headers=headers) as session:
+                    async with session.get(api_url) as response:
+                        callback: dict = await response.json()
+
+                return callback
+
+            # Get contents from API-callback
             async def get_contents(api_callback) -> dict:
                 body_post: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
                 media: list | None = None
@@ -93,6 +100,7 @@ class twitterFix(Extension):
                     "retweet_count": retweet_count,
                 }
 
+            # API headers
             features: dict = {
                 "responsive_web_graphql_exclude_directive_enabled": True,
                 "verified_phone_label_enabled": False,
@@ -122,13 +130,10 @@ class twitterFix(Extension):
             variables: dict = {"includePromotedContent": False, "withCommunity": False, "withVoice": False}
             tokens: dict = {**(await get_tokens())}
 
+            # Find activation
             if search(r"https://twitter.com/", event.message.content) and search(r"/status/", event.message.content):
-                tweetId = findall(r"\/[0-9][^\?|\/]+", event.message.content)[0][1:]
-                api_url: str = fetch_tweet(tweetId, features, variables)
-                headers = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
-                async with ClientSession(headers=headers) as session:
-                    async with session.get(api_url) as response:
-                        api_callback = await response.json()
+                tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
+                api_callback: dict = await fetch_tweet(tweetId, features, variables)
                 content: dict = {**(await get_contents(api_callback))}
                 embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time())
                 embed.set_author(
@@ -142,6 +147,7 @@ class twitterFix(Extension):
                     icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
                 )
 
+                # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
                 if content["media_video"]:
                     await event.message.channel.send(
