@@ -159,7 +159,7 @@ class twitterFix(Extension):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tweetId, features, variables)
                 content: dict = {**(await get_contents(api_callback))}
-                init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time())
+                init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
                 init_embed.set_author(
                     name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
                 )
@@ -172,11 +172,9 @@ class twitterFix(Extension):
 
                 embeds: list = [init_embed]
 
-                if range(len(content["images"])):
-                    embeds: list = []
-
-                    for counter in range(len(content["images"])):
-                        embeds.append(embed_generator(content, content["images"][counter]))
+                if content["images"]:
+                    for image in content["images"]:
+                        embeds.append(embed_generator(content, image))
 
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
