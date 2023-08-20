@@ -77,8 +77,7 @@ class twitterFix(Extension):
                 root: str = "https://twitter.com/i/api"
                 prefix: str = "graphql"
                 query: str = f"{query_id_token}"
-                suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables))}&features={quote(dumps(features))}"
-
+                suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables_reference))}&features={quote(dumps(features))}"
                 api_url: str = f"{root}/{prefix}/{query}/{suffix}"
 
                 headers: dict = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
