@@ -37,7 +37,7 @@ class twitterFix(Extension):
                 async with ClientSession(headers=headers) as session:
                     async with session.post("https://api.twitter.com/1.1/guest/activate.json") as response:
                         guest_token: str = await response.json()
-                        guest_token = guest_token["guest_token"]
+                        guest_token: str = guest_token["guest_token"]
 
                 return {"bearer_token": bearer_token, "guest_token": guest_token}
 
@@ -46,10 +46,12 @@ class twitterFix(Extension):
                 variables: dict = {**variables}
                 variables["tweetId"] = tweetId
 
-                api_url: str = ""
-                root: str = ""
-                api_url += f"https://twitter.com/i/api/graphql/{query_id_token}"
-                api_url += f"/TweetResultByRestId?variables={quote(dumps(variables))}&features={quote(dumps(features))}"
+                root: str = "https://twitter.com/i/api"
+                prefix: str = "graphql"
+                query: str = f"{query_id_token}"
+                suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables))}&features={quote(dumps(features))}"
+
+                api_url: str = f"{root}/{prefix}/{query}/{suffix}"
 
                 headers: dict = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
 
@@ -89,8 +91,19 @@ class twitterFix(Extension):
                 # Extract tweet medias
                 if "extended_entities" in tweet_detail:
                     if "video_info" in tweet_detail["extended_entities"]["media"][0]:
+                        variants: dict = tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"]
+
+                        # find best bitrate
+                        best_bitrate: int = 0
+                        url: str = ""
+                        for asset in variants:
+                            if asset["content_type"] == "video/mp4":
+                                if asset["bitrate"] > best_bitrate:
+                                    best_bitrate = asset["bitrate"]
+                                    url = asset["url"]
+
                         async with ClientSession() as session:
-                            async with session.get(tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"][-1]["url"]) as response:
+                            async with session.get(url) as response:
                                 file: bytes = await response.read()
                                 video = File(BytesIO(file), file_name="attachment.mp4")
 
