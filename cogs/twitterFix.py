@@ -167,7 +167,7 @@ class twitterFix(Extension):
                 init_embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
                 init_embed.set_footer(
                     text="樓梯的推特連結修復魔法",
-                    icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
+                    icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
                 )
 
                 embeds: list = [init_embed]
