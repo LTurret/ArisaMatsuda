@@ -7,7 +7,7 @@ from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
 
-from cogs.src.get_tokens import embed_generator
+from cogs.src.embed_generator import embed_generator
 from cogs.src.fetch_tweet import fetch_tweet
 from cogs.src.get_contents import get_contents
 from cogs.src.get_tokens import get_tokens
