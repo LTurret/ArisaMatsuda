@@ -21,8 +21,16 @@ This section documented some information about how and where to use your confide
 BOT_TOKEN=
 production_server_1=
 production_server_2=
+
+# In this below is all selective
+
 bi-channel_1=
 bi-channel_2=
+
+# retweet
+channel=
+auth_token=
+
 ```
 
 #### Confidential and scopes
@@ -37,14 +45,21 @@ bi-channel_2=
 | goods.py           | global                       |                                            |                                                         |
 | join.py            | not global                   | {production_server_1}                      |                                                         |
 | ping.py            | global                       |                                            |                                                         |
+| retweet.py         | global                       |                                            | using `channel` and `auth_token` in .evn                |
 | twitterFix.py      | global                       |                                            |                                                         |
 
-#### bi-channels
+#### communication.py
 
-bi-channel is a very special extension, This extension makes bot transfer message between `production_server_1` and `production_server_2` and their specific channels, which is `bi-channel_1` and `bi-channel_2`
+a.k.a bi-channel, this is a very special extension, This extension makes bot transfer message between `production_server_1` and `production_server_2` and their specific channels, which is `bi-channel_1` and `bi-channel_2`
 
 > [!NOTE]  
 > If your deployment does not require this function, make sure to unload `./cogs/communication.py`, and you can remove `bi-channel_1` and `bi-channel_2` from `.env`
+
+#### retweet.py
+
+> [!WARNING]
+> THIS IS A EXPERIMENTAL AND VERY UNSTABLE FEATURE THAT USED TO HANDLE TWITTER RETWEETING FOR CHANNELS  
+> IF YOU ARE NOT GOING TO TAKE A RISK FROM TOKEN REVEALED, I SUGGEST YOU REMOVE THIS FEATURE BY YOURSELF
 
 ## Build
 
