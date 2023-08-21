@@ -12,6 +12,7 @@ from cogs.src.fetch_tweet import fetch_tweet
 from cogs.src.get_contents import get_contents
 from cogs.src.get_tokens import get_tokens
 
+
 class twitterFix(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
@@ -20,7 +21,6 @@ class twitterFix(Extension):
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
-
             # API headers
             tokens: dict = {**(await get_tokens())}
 
