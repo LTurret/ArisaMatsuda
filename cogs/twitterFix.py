@@ -34,8 +34,6 @@ class twitterFix(Extension):
                 init_embed.set_author(
                     name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
                 )
-                init_embed.add_field(name="Likes", value=content["favorite_count"], inline=True)
-                init_embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
                 init_embed.set_footer(
                     text="樓梯的推特連結修復魔法",
                     icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
