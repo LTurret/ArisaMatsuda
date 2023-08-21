@@ -1,3 +1,5 @@
+from time import time
+
 from interactions import Embed
 
 
