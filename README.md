@@ -58,8 +58,9 @@ a.k.a bi-channel, this is a very special extension, This extension makes bot tra
 #### retweet.py
 
 > [!WARNING]
-> THIS IS A EXPERIMENTAL AND VERY UNSTABLE FEATURE THAT USED TO HANDLE TWITTER RETWEETING FOR CHANNELS  
-> IF YOU ARE NOT GOING TO TAKE A RISK FROM TOKEN REVEALED, I SUGGEST YOU REMOVE THIS FEATURE BY YOURSELF
+> YOU HAVE BEEN WARNED!  
+> This is a experimental and very unstable feature that used to handle twitter retweeting for channels, if you are not going to take a risk from token revealed,  
+> I suggest you to remove `retweet.py` by yourself.
 
 ## Build
 
