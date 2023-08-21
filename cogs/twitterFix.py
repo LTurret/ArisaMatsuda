@@ -43,7 +43,7 @@ class twitterFix(Extension):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tokens, tweetId)
                 content: dict = {**(await get_contents(api_callback))}
-                
+
                 init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
                 init_embed.set_author(
                     name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
