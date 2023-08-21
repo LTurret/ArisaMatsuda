@@ -7,10 +7,10 @@ from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
 
+from cogs.src.get_tokens import embed_generator
 from cogs.src.fetch_tweet import fetch_tweet
 from cogs.src.get_contents import get_contents
 from cogs.src.get_tokens import get_tokens
-
 
 class twitterFix(Extension):
     def __init__(self, Arisa):
@@ -20,20 +20,6 @@ class twitterFix(Extension):
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
-
-            def embed_generator(content: dict, media: str, url: str = "https://arisahi.me") -> Embed:
-                embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url=url)
-                embed.set_author(
-                    name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
-                )
-                embed.set_image(media)
-                embed.add_field(name="Likes", value=content["favorite_count"], inline=True)
-                embed.add_field(name="Retweets", value=content["retweet_count"], inline=True)
-                embed.set_footer(
-                    text="樓梯的推特連結修復魔法",
-                    icon_url="https://images-ext-1.discordapp.net/external/bXJWV2Y_F3XSra_kEqIYXAAsI3m1meckfLhYuWzxIfI/https/abs.twimg.com/icons/apple-touch-icon-192x192.png",
-                )
-                return embed
 
             # API headers
             tokens: dict = {**(await get_tokens())}
