@@ -1,17 +1,15 @@
-from io import BytesIO
-from json import dumps
-from re import findall
 from re import search
 from time import time
-from urllib.parse import quote
 
-from aiohttp import ClientSession
 from interactions import events
 from interactions import listen
 from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
-from interactions import File
+
+from cogs.src.fetch_tweet import fetch_tweet
+from cogs.src.get_contents import get_contents
+from cogs.src.get_tokens import get_tokens
 
 
 class twitterFix(Extension):
@@ -22,133 +20,6 @@ class twitterFix(Extension):
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
-            # Token handler
-            async def get_tokens() -> dict:
-                async with ClientSession() as session:
-                    async with session.get("https://twitter.com") as response:
-                        response: str = await response.text()
-                        js_url: str = findall(r"https://abs.twimg.com/responsive-web/client-web-legacy/main.[^\.]+.js", response)[0]
-                    async with session.get(js_url) as mainjs:
-                        mainjs: str = await mainjs.text()
-                        bearer_token: str = findall(r'AAAAAAAAA[^"]+', mainjs)[0]
-
-                headers: dict = {"accept": "*/*", "accept-encoding": "gzip, deflate, br", "te": "trailers", "authorization": f"Bearer {bearer_token}"}
-
-                async with ClientSession(headers=headers) as session:
-                    async with session.post("https://api.twitter.com/1.1/guest/activate.json") as response:
-                        guest_token: str = await response.json()
-                        guest_token: str = guest_token["guest_token"]
-
-                return {"bearer_token": bearer_token, "guest_token": guest_token}
-
-            # Tweet fetch
-            async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw") -> dict:
-                features: dict = {
-                    "responsive_web_graphql_exclude_directive_enabled": True,
-                    "verified_phone_label_enabled": False,
-                    "responsive_web_graphql_timeline_navigation_enabled": True,
-                    "responsive_web_graphql_skip_user_profile_image_extensions_enabled": False,
-                    "tweetypie_unmention_optimization_enabled": True,
-                    "vibe_api_enabled": False,
-                    "responsive_web_edit_tweet_api_enabled": True,
-                    "graphql_is_translatable_rweb_tweet_is_translatable_enabled": True,
-                    "view_counts_everywhere_api_enabled": False,
-                    "longform_notetweets_consumption_enabled": True,
-                    "tweet_awards_web_tipping_enabled": False,
-                    "freedom_of_speech_not_reach_fetch_enabled": True,
-                    "standardized_nudges_misinfo": True,
-                    "tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled": True,
-                    "interactive_text_enabled": False,
-                    "responsive_web_twitter_blue_verified_badge_is_enabled": True,
-                    "responsive_web_text_conversations_enabled": False,
-                    "longform_notetweets_richtext_consumption_enabled": False,
-                    "responsive_web_enhance_cards_enabled": False,
-                    "longform_notetweets_rich_text_read_enabled": True,
-                    "longform_notetweets_inline_media_enabled": True,
-                    "responsive_web_media_download_video_enabled": False,
-                    "responsive_web_twitter_article_tweet_consumption_enabled": True,
-                    "creator_subscriptions_tweet_preview_api_enabled": True,
-                }
-                variables: dict = {"includePromotedContent": False, "withCommunity": False, "withVoice": False}
-
-                variables_reference: dict = {**variables}
-                variables_reference["tweetId"] = tweetId
-
-                root: str = "https://twitter.com/i/api"
-                prefix: str = "graphql"
-                query: str = f"{query_id_token}"
-                suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables_reference))}&features={quote(dumps(features))}"
-                api_url: str = f"{root}/{prefix}/{query}/{suffix}"
-
-                headers: dict = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
-
-                async with ClientSession(headers=headers) as session:
-                    async with session.get(api_url) as response:
-                        callback: dict = await response.json()
-
-                return callback
-
-            # Get contents from API-callback
-            async def get_contents(api_callback: dict) -> dict:
-                tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
-                images: list = []
-                video: File | None = None
-                media: list | None = None
-                full_text: str | None = None
-
-                favorite_count: int = tweet_detail["favorite_count"]
-                retweet_count: int = tweet_detail["retweet_count"]
-
-                user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"]["core"]["user_results"]["result"]["legacy"]
-                author: str = user_results_legacy["name"]
-                screen_name: str = user_results_legacy["screen_name"]
-                icon_url: str = user_results_legacy["profile_image_url_https"]
-
-                # Extract tweet content text
-                if "full_text" in tweet_detail:
-                    full_text: str = tweet_detail["full_text"]
-                    start: int = -1
-
-                    if findall(r"https:\/\/t.co\/.+", full_text):
-                        match_pop: str = findall(r"https:\/\/t.co\/.+", full_text)[-1]
-                        start: int = search(match_pop, full_text).start()
-
-                    full_text = full_text[:start]
-
-                # Extract tweet medias
-                if "extended_entities" in tweet_detail:
-                    if "video_info" in tweet_detail["extended_entities"]["media"][0]:
-                        variants: dict = tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"]
-
-                        # find best bitrate
-                        best_bitrate: int = 0
-                        url: str = ""
-                        for asset in variants:
-                            if asset["content_type"] == "video/mp4":
-                                if asset["bitrate"] > best_bitrate:
-                                    best_bitrate = asset["bitrate"]
-                                    url = asset["url"]
-
-                        async with ClientSession() as session:
-                            async with session.get(url) as response:
-                                file: bytes = await response.read()
-                                video = File(BytesIO(file), file_name="attachment.mp4")
-
-                if "media" in tweet_detail["entities"]:
-                    media: list = tweet_detail["entities"]["media"]
-                    for image in media:
-                        images.append(image["media_url_https"])
-
-                return {
-                    "images": images,
-                    "video": video,
-                    "full_text": full_text,
-                    "author": author,
-                    "screen_name": screen_name,
-                    "icon_url": icon_url,
-                    "favorite_count": favorite_count,
-                    "retweet_count": retweet_count,
-                }
 
             def embed_generator(content: dict, media: str, url: str = "https://arisahi.me") -> Embed:
                 embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url=url)
@@ -170,7 +41,7 @@ class twitterFix(Extension):
             # Find activation
             if search(r"https://twitter.com/", event.message.content) and search(r"/status/", event.message.content):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
-                api_callback: dict = await fetch_tweet(tweetId)
+                api_callback: dict = await fetch_tweet(tokens, tweetId)
                 content: dict = {**(await get_contents(api_callback))}
                 
                 init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
