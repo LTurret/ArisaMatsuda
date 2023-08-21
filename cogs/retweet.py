@@ -1,7 +1,10 @@
+from json import dump
+from json import load
 from json import loads
 from re import findall
 from time import time
 from os import getenv
+from os import sep
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup as bs
@@ -21,15 +24,19 @@ from cogs.src.get_tokens import get_tokens
 class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
+        self.max_ptr = None
         print(f" ↳ Extension {__name__} created")
-        self.max_ptr = 0
 
     @listen()
     async def on_startup(self):
         self.retweet.start()
 
-    @Task.create(IntervalTrigger(seconds=120))
+    @Task.create(IntervalTrigger(seconds=180))
     async def retweet(self):
+        cache_directory = f".{sep}cogs{sep}cache{sep}"
+        with open(f"{cache_directory}{sep}latest_snowflake.json") as cache_file:
+            self.max_ptr = load(cache_file)["latest"]
+
         user = "imasml_theater"
         cookies = {"auth_token": getenv("auth_token")}
         url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{user}"
@@ -61,7 +68,11 @@ class retweet(Extension):
             init_embed.set_author(
                 name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
             )
-            init_embed.add_field(name="原文傳送門", value=f"[點我](https://twitter.com/{user}/status/{tweetId})", inline=False)
+            init_embed.add_field(
+                name="原文傳送門",
+                value=f"[點我](https://twitter.com/{user}/status/{tweetId})",
+                inline=False,
+            )
             init_embed.set_footer(
                 text="樓梯的轉推百萬魔法",
                 icon_url="https://file.notion.so/f/s/5afa187d-3390-4337-823f-692939c724aa/imas_theater_icon.png?id=258485b3-6581-4f1b-af38-42fd0367c4cf&table=block&spaceId=b176c2e3-1a3c-4dfe-9530-0b752538476e&expirationTimestamp=1692705600000&signature=dh3oNyc0Ko88bR9ddh2mDEn0tBg8BfSVVnTM5UVAeLQ&downloadName=imas_theater_icon.png",
@@ -80,6 +91,13 @@ class retweet(Extension):
                 await CHANNEL.send(files=content["video"], embeds=embeds, silent=True)
             else:
                 await CHANNEL.send(embeds=embeds, silent=True)
+
+            with open(f"{cache_directory}{sep}latest_snowflake.json", "r") as cache_file:
+                max_ptr = load(cache_file)
+                max_ptr["latest"] = self.max_ptr
+
+            with open(f"{cache_directory}{sep}latest_snowflake.json", "r+") as cache_file:
+                dump(max_ptr, cache_file, indent=2)
 
 
 def setup(Arisa):

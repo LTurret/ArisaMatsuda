@@ -7,3 +7,4 @@ token.json
 scope.json
 
 **/__pycache__
+cache
