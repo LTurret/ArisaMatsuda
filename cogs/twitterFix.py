@@ -25,7 +25,7 @@ class twitterFix(Extension):
             tokens: dict = {**(await get_tokens())}
 
             # Find activation
-            if search(r"https://twitter.com/", event.message.content) and search(r"/status/", event.message.content):
+            if search(r"https://twitter\.com/.+/\d+[^?]", event.message.content):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tokens, tweetId)
                 content: dict = {**(await get_contents(api_callback))}
