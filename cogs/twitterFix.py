@@ -21,6 +21,13 @@ class twitterFix(Extension):
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
+            if search(r"https://twitter\.com/.+/\d+[^?]", event.message.content):
+                emoji = await self.Arisa.fetch_custom_emoji(1089582594833789028, 339368837356978187, force=True)
+                await event.message.add_reaction(emoji)
+
+    @listen()
+    async def on_message_react(self, event: events.MessageReactionAdd):
+        if event.message.reactions[0].me and event.message.reactions[0].count > 1:
             # API headers
             tokens: dict = {**(await get_tokens())}
 
