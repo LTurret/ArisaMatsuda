@@ -38,32 +38,37 @@ class twitterFix(Extension):
             if search(r"https://twitter\.com/.+/\d+[^?]", event.message.content):
                 tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tokens, tweetId)
-                content: dict = {**(await get_contents(api_callback))}
 
-                init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
-                init_embed.set_author(
-                    name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
-                )
-                init_embed.set_footer(
-                    text="樓梯的推特連結修復魔法",
-                    icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
-                )
-
-                embeds: list = [init_embed]
-
-                # Embeds composer - used for multiple images
-                if content["images"]:
-                    for image in content["images"]:
-                        embeds.append(embed_generator(content, image))
-
-                # Send embed
-                # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                if content["video"] is not None:
-                    await event.message.channel.send(
-                        files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                try:
+                    content: dict = {**(await get_contents(api_callback))}
+                    init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
+                    init_embed.set_author(
+                        name=f"{content['author']} (@{content['screen_name']})",
+                        url=f"https://twitter.com/{content['screen_name']}",
+                        icon_url=content["icon_url"],
                     )
-                else:
-                    await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
+                    init_embed.set_footer(
+                        text="樓梯的推特連結修復魔法",
+                        icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
+                    )
+
+                    embeds: list = [init_embed]
+
+                    # Embeds composer - used for multiple images
+                    if content["images"]:
+                        for image in content["images"]:
+                            embeds.append(embed_generator(content, image))
+
+                    # Send embed
+                    # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
+                    if content["video"] is not None:
+                        await event.message.channel.send(
+                            files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                        )
+                    else:
+                        await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
+                except FileNotFoundError:
+                    await event.message.channel.send('''```diff\n- Request failed\nprobably duo to nsfw content, check if callback is {"reason": "NsfwLoggedOut"}```''')
 
 
 def setup(Arisa):
