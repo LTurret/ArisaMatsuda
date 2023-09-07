@@ -28,6 +28,9 @@ class twitterFix(Extension):
     @listen()
     async def on_message_react(self, event: events.MessageReactionAdd):
         if event.message.reactions[0].me and event.message.reactions[0].count > 1:
+            # Clear reactions
+            await event.message.reactions[0].remove()
+
             # API headers
             tokens: dict = {**(await get_tokens())}
 
