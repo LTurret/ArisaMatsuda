@@ -31,7 +31,7 @@ class retweet(Extension):
     async def on_startup(self):
         self.retweet.start()
 
-    @Task.create(IntervalTrigger(seconds=180))
+    @Task.create(IntervalTrigger(seconds=70))
     async def retweet(self):
         cache_directory = f".{sep}cogs{sep}cache{sep}"
         with open(f"{cache_directory}{sep}latest_snowflake.json") as cache_file:
@@ -64,26 +64,28 @@ class retweet(Extension):
             tweetId = queue.pop()
             api_callback: dict = await fetch_tweet(tokens, tweetId)
             content: dict = {**(await get_contents(api_callback))}
-            init_embed: Embed = Embed(description=content["full_text"], color=0xD8A804, timestamp=time(), url="https://arisahi.me")
-            init_embed.set_author(
-                name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
-            )
-            init_embed.add_field(
-                name="原文傳送門",
-                value=f"[點我](https://twitter.com/{user}/status/{tweetId})",
-                inline=False,
-            )
-            init_embed.set_footer(
-                text="樓梯的轉推百萬魔法",
-                icon_url="https://file.notion.so/f/s/5afa187d-3390-4337-823f-692939c724aa/imas_theater_icon.png?id=258485b3-6581-4f1b-af38-42fd0367c4cf&table=block&spaceId=b176c2e3-1a3c-4dfe-9530-0b752538476e&expirationTimestamp=1692705600000&signature=dh3oNyc0Ko88bR9ddh2mDEn0tBg8BfSVVnTM5UVAeLQ&downloadName=imas_theater_icon.png",
-            )
-
-            embeds: list = [init_embed]
+            embeds: list = []
 
             # Embeds composer - used for multiple images
             if content["images"]:
                 for image in content["images"]:
                     embeds.append(embed_generator(content, image, color=0xD8A804))
+            else:
+                init_embed: Embed = Embed(description=content["full_text"], color=0xD8A804, timestamp=time(), url="https://arisahi.me")
+                init_embed.set_author(
+                    name=f"{content['author']} (@{content['screen_name']})", url=f"https://twitter.com/{content['screen_name']}", icon_url=content["icon_url"]
+                )
+                init_embed.add_field(
+                    name="原文傳送門",
+                    value=f"[點我](https://twitter.com/{user}/status/{tweetId})",
+                    inline=False,
+                )
+                init_embed.set_footer(
+                    text="樓梯的轉推百萬魔法",
+                    icon_url="https://file.notion.so/f/s/5afa187d-3390-4337-823f-692939c724aa/imas_theater_icon.png?id=258485b3-6581-4f1b-af38-42fd0367c4cf&table=block&spaceId=b176c2e3-1a3c-4dfe-9530-0b752538476e&expirationTimestamp=1692705600000&signature=dh3oNyc0Ko88bR9ddh2mDEn0tBg8BfSVVnTM5UVAeLQ&downloadName=imas_theater_icon.png",
+                )
+                embeds.append(init_embed)
+
 
             # Send embed
             CHANNEL = self.Arisa.get_channel(getenv("channel"))
