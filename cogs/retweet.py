@@ -33,7 +33,6 @@ class retweet(Extension):
 
     @Task.create(IntervalTrigger(seconds=120))
     async def retweet(self):
-        print("hello!")
         cache_directory = f".{sep}cogs{sep}cache{sep}"
         with open(f"{cache_directory}{sep}latest_snowflake.json") as cache_file:
             self.max_ptr = load(cache_file)["latest"]
