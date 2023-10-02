@@ -17,7 +17,7 @@ class twitterFix(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/(\d+)"
-        
+
         print(f" ↳ Extension {__name__} created")
 
     @listen()
