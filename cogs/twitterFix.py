@@ -16,12 +16,14 @@ from cogs.src.get_tokens import get_tokens
 class twitterFix(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
+        self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/(\d+)"
+        
         print(f" ↳ Extension {__name__} created")
 
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
-            if search(r"https://twitter\.com/.+/\d+[^?]", event.message.content):
+            if search(rf"{self.regex}", event.message.content):
                 emoji = await self.Arisa.fetch_custom_emoji(1089582594833789028, 339368837356978187, force=True)
                 await event.message.add_reaction(emoji)
 
@@ -35,8 +37,8 @@ class twitterFix(Extension):
             tokens: dict = {**(await get_tokens())}
 
             # Find activation
-            if search(r"https\:\/\/[x|twitter]+\.com\/.+\/[.\d^\?]+", event.message.content):
-                tweetId = search(r"status\/([0-9][^\?|\/]+)", event.message.content).group(1)
+            if search(rf"{self.regex}", event.message.content):
+                tweetId = search(rf"{self.regex}", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tokens, tweetId)
 
                 try:
