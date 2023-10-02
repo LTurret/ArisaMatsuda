@@ -70,7 +70,7 @@ class twitterFix(Extension):
                         await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
                 except FileNotFoundError:
                     await event.message.channel.send(
-                        """```diff\n- Request failed\nprobably duo to nsfw content, check if callback is {"reason": "NsfwLoggedOut"}```"""
+                        """```diff\n- Request failed\nprobably due to nsfw content, check if callback is {"reason": "NsfwLoggedOut"}```"""
                     )
 
 
