@@ -67,5 +67,5 @@ async def get_contents(api_callback: dict) -> dict:
             "favorite_count": favorite_count,
             "retweet_count": retweet_count,
         }
-    except Exception as _:
-        raise FileNotFoundError
+    except Exception:
+        raise Exception
