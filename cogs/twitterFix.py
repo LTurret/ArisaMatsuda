@@ -72,8 +72,8 @@ class twitterFix(Extension):
                     else:
                         await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
                 except Exception as _:
-                    result: list[tuple] = findall(r"(https://)twitter(.com/.+/status/\d+)", event.message.content)[0]
-                    await event.message.channel.send(f"{result[0]}fxtwitter{result[1]}")
+                    result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
+                    await event.message.channel.send(f"{result[0]}fxtwitter{result[-1]}")
 
 
 def setup(Arisa):
