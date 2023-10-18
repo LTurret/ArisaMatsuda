@@ -1,3 +1,5 @@
+from re import findall
+
 from json import dumps
 from urllib.parse import quote
 
@@ -31,7 +33,11 @@ async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhm
         "responsive_web_twitter_article_tweet_consumption_enabled": True,
         "creator_subscriptions_tweet_preview_api_enabled": True,
     }
-    variables: dict = {"includePromotedContent": False, "withCommunity": False, "withVoice": False}
+    variables: dict = {
+        "includePromotedContent": False,
+        "withCommunity": False,
+        "withVoice": False,
+    }
 
     variables_reference: dict = {**variables}
     variables_reference["tweetId"] = tweetId
@@ -42,10 +48,19 @@ async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhm
     suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables_reference))}&features={quote(dumps(features))}"
     api_url: str = f"{root}/{prefix}/{query}/{suffix}"
 
-    headers: dict = {"authorization": f"Bearer {tokens['bearer_token']}", "x-guest-token": tokens["guest_token"]}
+    headers: dict = {
+        "authorization": f"Bearer {tokens['bearer_token']}",
+        "x-guest-token": tokens["guest_token"],
+    }
 
     async with ClientSession(headers=headers) as session:
         async with session.get(api_url) as response:
             callback: dict = await response.json()
+
+    if findall(r"NsfwLoggedOut", str(callback)):
+        url: str = f"https://api.fxtwitter.com/i/status/{tweetId}"
+        async with ClientSession() as session:
+            async with session.get(url) as response:
+                callback: dict = await response.json()
 
     return callback

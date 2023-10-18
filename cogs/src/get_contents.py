@@ -56,16 +56,36 @@ async def get_contents(api_callback: dict) -> dict:
             media: list = tweet_detail["entities"]["media"]
             for image in media:
                 images.append(image["media_url_https"])
-
-        return {
-            "images": images,
-            "video": video,
-            "full_text": full_text,
-            "author": author,
-            "screen_name": screen_name,
-            "icon_url": icon_url,
-            "favorite_count": favorite_count,
-            "retweet_count": retweet_count,
-        }
     except Exception:
-        raise Exception
+        try:
+            images: list[str] | list = []
+            video: File | None = None
+            media: list | None = None
+            full_text: str = f'{api_callback["tweet"]["text"]}'
+
+            favorite_count: int = api_callback["tweet"]["likes"]
+            retweet_count: int = api_callback["tweet"]["retweets"]
+
+            author: str = api_callback["tweet"]["author"]["name"]
+            screen_name: str = api_callback["tweet"]["author"]["screen_name"]
+            icon_url: str = api_callback["tweet"]["author"]["avatar_url"]
+
+            if "media" in api_callback["tweet"]:
+                media = api_callback["tweet"]["media"]
+
+                for image in media["photos"]:
+                    images.append(image["url"])
+
+        except Exception:
+            raise Exception
+
+    return {
+        "images": images,
+        "video": video,
+        "full_text": full_text,
+        "author": author,
+        "screen_name": screen_name,
+        "icon_url": icon_url,
+        "favorite_count": favorite_count,
+        "retweet_count": retweet_count,
+    }
