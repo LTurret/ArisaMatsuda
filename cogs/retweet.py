@@ -69,7 +69,14 @@ class retweet(Extension):
             # Embeds composer - used for multiple images
             if content["images"]:
                 for image in content["images"]:
-                    embeds.append(embed_generator(content, image, color=0xD8A804))
+                    embeds.append(
+                        embed_generator(
+                            content,
+                            image,
+                            color=0xD8A804,
+                            footer_icon="https://cdn.discordapp.com/attachments/714097668233625670/1164054918169104464/imas_theater_icon.png",
+                        )
+                    )
             else:
                 init_embed: Embed = Embed(description=content["full_text"], color=0xD8A804, timestamp=time(), url="https://arisahi.me")
                 init_embed.set_author(
@@ -82,7 +89,7 @@ class retweet(Extension):
                 )
                 init_embed.set_footer(
                     text="樓梯的轉推百萬魔法",
-                    icon_url="https://file.notion.so/f/s/5afa187d-3390-4337-823f-692939c724aa/imas_theater_icon.png?id=258485b3-6581-4f1b-af38-42fd0367c4cf&table=block&spaceId=b176c2e3-1a3c-4dfe-9530-0b752538476e&expirationTimestamp=1692705600000&signature=dh3oNyc0Ko88bR9ddh2mDEn0tBg8BfSVVnTM5UVAeLQ&downloadName=imas_theater_icon.png",
+                    icon_url="https://cdn.discordapp.com/attachments/714097668233625670/1164054918169104464/imas_theater_icon.png",
                 )
                 embeds.append(init_embed)
 
