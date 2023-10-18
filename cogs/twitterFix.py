@@ -39,12 +39,12 @@ class twitterFix(Extension):
 
             # Find activation
             if search(rf"{self.regex}", event.message.content):
-                tweetId = search(rf"{self.regex}", event.message.content).group(1)
+                tweetId: str = search(rf"{self.regex}", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tokens, tweetId)
 
                 try:
                     content: dict = {**(await get_contents(api_callback))}
-                    embeds: list = []
+                    embeds: list[Embed] = []
 
                     # Embeds composer - used for multiple images
                     if content["images"]:
@@ -73,7 +73,9 @@ class twitterFix(Extension):
                         await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
                 except Exception as _:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
-                    await event.message.channel.send(f"{result[0]}fxtwitter{result[-1]}")
+                    await event.message.channel.send(
+                        f"{result[0]}fxtwitter{result[-1]}", reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                    )
 
 
 def setup(Arisa):
