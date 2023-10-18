@@ -9,7 +9,7 @@ from interactions import File
 async def get_contents(api_callback: dict) -> dict:
     try:
         tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
-        images: list = []
+        images: list[str] | list = []
         video: File | None = None
         media: list | None = None
         full_text: str | None = None
