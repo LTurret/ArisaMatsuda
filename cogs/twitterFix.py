@@ -44,38 +44,38 @@ class twitterFix(Extension):
 
                 try:
                     content: dict = {**(await get_contents(api_callback))}
-                    embeds: list[Embed] = []
-
-                    # Embeds composer - used for multiple images
-                    if content["images"]:
-                        for image in content["images"]:
-                            embeds.append(embed_generator(content, image))
-                    else:
-                        init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
-                        init_embed.set_author(
-                            name=f"{content['author']} (@{content['screen_name']})",
-                            url=f"https://twitter.com/{content['screen_name']}",
-                            icon_url=content["icon_url"],
-                        )
-                        init_embed.set_footer(
-                            text="樓梯的推特連結修復魔法",
-                            icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
-                        )
-                        embeds.append(init_embed)
-
-                    # Send embed
-                    # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                    if content["video"] is not None:
-                        await event.message.channel.send(
-                            files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
-                        )
-                    else:
-                        await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
                 except Exception:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
                     await event.message.channel.send(
                         f"{result[0]}fxtwitter{result[-1]}", reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
                     )
+
+                # Embeds composer - used for multiple images
+                embeds: list[Embed] = []
+                if content["images"]:
+                    for image in content["images"]:
+                        embeds.append(embed_generator(content, image))
+                else:
+                    init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
+                    init_embed.set_author(
+                        name=f"{content['author']} (@{content['screen_name']})",
+                        url=f"https://twitter.com/{content['screen_name']}",
+                        icon_url=content["icon_url"],
+                    )
+                    init_embed.set_footer(
+                        text="樓梯的推特連結修復魔法",
+                        icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
+                    )
+                    embeds.append(init_embed)
+
+                # Send embed
+                # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
+                if content["video"] is not None:
+                    await event.message.channel.send(
+                        files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                    )
+                else:
+                    await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
 
 def setup(Arisa):
