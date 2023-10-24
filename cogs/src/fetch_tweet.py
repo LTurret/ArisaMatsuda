@@ -5,9 +5,11 @@ from urllib.parse import quote
 
 from aiohttp import ClientSession
 
+from cogs.src.get_tokens import get_tokens
 
-async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "vx") -> dict:
-    parameter: dict = {"tokens": tokens, "tweetId": tweetId, "query_id_token": query_id_token}
+
+async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "vx") -> dict:
+    parameter: dict = {"tweetId": tweetId, "query_id_token": query_id_token}
     service_manifest: dict = {"twitter": by_twitter, "vx": by_vx}
     callback = await service_manifest[host](parameter)
 
@@ -18,7 +20,8 @@ async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhm
 
 
 async def by_twitter(parameter: dict) -> dict:
-    tokens: dict = parameter["tokens"]
+    # API headers
+    tokens: dict = {**(await get_tokens())}
     tweetId: int = parameter["tweetId"]
     query_id_token: str = parameter["query_id_token"]
 

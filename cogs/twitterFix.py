@@ -34,13 +34,10 @@ class twitterFix(Extension):
             # Clear reactions
             await event.message.reactions[0].remove()
 
-            # API headers
-            tokens: dict = {**(await get_tokens())}
-
             # Find activation
             if search(rf"{self.regex}", event.message.content):
                 tweetId: str = search(rf"{self.regex}", event.message.content).group(1)
-                api_callback: dict = await fetch_tweet(tokens, tweetId)
+                api_callback: dict = await fetch_tweet(tweetId)
 
                 try:
                     content: dict = {**(await get_contents(api_callback))}
