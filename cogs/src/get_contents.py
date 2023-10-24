@@ -7,7 +7,6 @@ from interactions import File
 
 
 async def get_contents(api_callback: dict) -> dict:
-    
     # Initialize assets
     images: list[str] | list = []
     video: File | None = None
@@ -23,7 +22,7 @@ async def get_contents(api_callback: dict) -> dict:
         # Abbreviations for data accessing
         tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
         user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"]["core"]["user_results"]["result"]["legacy"]
-        
+
         # Get assets
         author = user_results_legacy["name"]
         screen_name = user_results_legacy["screen_name"]
@@ -64,23 +63,22 @@ async def get_contents(api_callback: dict) -> dict:
                         video: File = File(BytesIO(file), file_name="attachment.mp4")
 
         # Check is tweet contains multiple pictures
-        if "media" in tweet_detail["entities"]: 
+        if "media" in tweet_detail["entities"]:
             for image in tweet_detail["entities"]["media"]:
                 images.append(image["media_url_https"])
 
     except Exception:
-        print("Ordinary method failed, try api.fxtwitter calling")
         try:
             # Abbreviation for data accessing
-            tweet = tweet
+            tweet = api_callback["tweet"]
 
             # Get assets
-            favorite_count: int = tweet["likes"]
-            retweet_count: int = tweet["retweets"]
+            favorite_count = tweet["likes"]
+            retweet_count = tweet["retweets"]
             full_text = f'{tweet["text"]}'
-            author: str = tweet["author"]["name"]
-            screen_name: str = tweet["author"]["screen_name"]
-            icon_url: str = tweet["author"]["avatar_url"]
+            author = tweet["author"]["name"]
+            screen_name = tweet["author"]["screen_name"]
+            icon_url = tweet["author"]["avatar_url"]
 
             if "media" in tweet:
                 media = tweet["media"]
