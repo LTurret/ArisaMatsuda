@@ -6,7 +6,22 @@ from urllib.parse import quote
 from aiohttp import ClientSession
 
 
-async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw") -> dict:
+async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "vx") -> dict:
+    parameter: dict = {"tokens": tokens, "tweetId": tweetId, "query_id_token": query_id_token}
+    service_manifest: dict = {"twitter": by_twitter, "vx": by_vx}
+    callback = await service_manifest[host](parameter)
+
+    if findall(r"NsfwLoggedOut", str(callback)):
+        await by_vx(tweetId)
+
+    return callback
+
+
+async def by_twitter(parameter: dict) -> dict:
+    tokens: dict = parameter["tokens"]
+    tweetId: int = parameter["tweetId"]
+    query_id_token: str = parameter["query_id_token"]
+
     features: dict = {
         "responsive_web_graphql_exclude_directive_enabled": True,
         "verified_phone_label_enabled": False,
@@ -57,10 +72,15 @@ async def fetch_tweet(tokens: dict, tweetId: int, query_id_token: str = "0hWvDhm
         async with session.get(api_url) as response:
             callback: dict = await response.json()
 
-    if findall(r"NsfwLoggedOut", str(callback)):
-        url: str = f"https://api.fxtwitter.com/i/status/{tweetId}"
-        async with ClientSession() as session:
-            async with session.get(url) as response:
-                callback: dict = await response.json()
+    return callback
+
+
+async def by_vx(parameter: dict):
+    tweetId: int = parameter["tweetId"]
+    url: str = f"https://api.fxtwitter.com/i/status/{tweetId}"
+
+    async with ClientSession() as session:
+        async with session.get(url) as response:
+            callback: dict = await response.json()
 
     return callback
