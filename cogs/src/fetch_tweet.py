@@ -11,10 +11,11 @@ from cogs.src.get_tokens import get_tokens
 async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "vx") -> dict:
     parameter: dict = {"tweetId": tweetId, "query_id_token": query_id_token}
     service_manifest: dict = {"twitter": by_twitter, "vx": by_vx}
-    callback = await service_manifest[host](parameter)
+    callback: dict = await service_manifest[host](parameter)
 
+    # Check if twitter api returns NsfwLoggedOut
     if findall(r"NsfwLoggedOut", str(callback)):
-        await by_vx(tweetId)
+        callback: dict = await by_vx(tweetId)
 
     return callback
 
