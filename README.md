@@ -4,33 +4,23 @@ A discord bot for private server management.
 
 ## Configuration
 
-Before hosting this bot directly from this repo, you have to change some secret and variable.  
-such as `channel_id` or `message_id` in `.env`, More detail will describe in [Secrets](#secrets) section
+Before hosting this bot directly from this repo, There are few steps need to do, or the bot will not work properly.
+such as `channel_id` or `message_id` in `.env`, More detail is documented in [Secrets](#secrets) section
 
 ### Secrets
 
-> [!NOTE]  
-> The token is accessed with `dotenv.load_dotenv()` and `os.getenv()`, make sure you have prepare the following confidentials in `.env`.
-
-This section documented some information about how and where to use your confidential.
-
-> [!IMPORTANT]  
-> The following variables is all **REQUIRED** and make sure you place them well.
+Token are accessed with `dotenv.load_dotenv()` and `os.getenv()`.
 
 ```env
 BOT_TOKEN=
 production_server_1=
 production_server_2=
 
-# In this below is all selective
+# Below are optional
 
 bi-channel_1=
 bi-channel_2=
-
-# retweet
-channel=
-auth_token=
-
+retweet_subscribe_channel=
 ```
 
 #### Confidential and scopes
@@ -38,28 +28,25 @@ auth_token=
 > [!NOTE]  
 > I use `.env` to store my `server_id` and `channel_id`, and this table will tell where this bot use these scopes.
 
-| **Extension name** | **Use range**                | **Scopes set**                             | **Additional**                                          |
-| ------------------ | ---------------------------- | ------------------------------------------ | ------------------------------------------------------- |
-| communication.py   | 2 servers, specific channels | {production_server_1, production_server_2} | this extension is special, please check the source code |
-| emotes.py          | global                       |                                            |                                                         |
-| goods.py           | global                       |                                            |                                                         |
-| join.py            | not global                   | {production_server_1}                      |                                                         |
-| ping.py            | global                       |                                            |                                                         |
-| retweet.py         | global                       |                                            | using `channel` and `auth_token` in .evn                |
-| twitterFix.py      | global                       |                                            |                                                         |
+| **Name**         | **Tend for**        | **Scopes set**               | **Additional Information**                              |
+| ---------------- | ------------------- | ---------------------------- | ------------------------------------------------------- |
+| communication.py | 2 specific channels | {bi-channel_1, bi-channel_2} | This extension is special, Please check the source code |
+| emotes.py        | global              |                              |                                                         |
+| goods.py         | global              |                              |                                                         |
+| join.py          | server              | {production_server_1}        | Please check the source code                            |
+| ping.py          | global              |                              |                                                         |
+| twitterFix.py    | global              |                              |                                                         |
 
 #### communication.py
 
 a.k.a bi-channel, this is a very special extension, This extension makes bot transfer message between `production_server_1` and `production_server_2` and their specific channels, which is `bi-channel_1` and `bi-channel_2`
 
+#### join.py
+
+This extension is build for server member managements, Member who has the chat permission, may decide to grant the access for selected channels view permission with this command
+
 > [!NOTE]  
-> If your deployment does not require this function, make sure to unload `./cogs/communication.py`, and you can remove `bi-channel_1` and `bi-channel_2` from `.env`
-
-#### retweet.py
-
-> [!WARNING]
-> **YOU HAVE BEEN WARNED!**  
-> This is a experimental and extreme unstable feature that used to handle twitter retweeting for channels, if you are not going to take a risk from token revealed, I suggest you to remove `retweet.py` by yourself.
+> If your deployment does not require this function, make sure to unload `./cogs/communication.py`, and you can remove `bi-channel_1` and `bi-channel_2` from `.env`, and so on for `./cogs/join.py`
 
 ## Build
 
@@ -73,6 +60,7 @@ aiohttp==3.8.4
 aiosignal==1.3.1
 async-timeout==4.0.2
 attrs==23.1.0
+beautifulsoup4==4.12.2
 certifi==2023.5.7
 charset-normalizer==3.1.0
 discord-py-interactions==5.5.1
@@ -84,6 +72,7 @@ multidict==6.0.4
 Pillow==10.0.0
 python-dotenv==1.0.0
 requests==2.30.0
+soupsieve==2.4.1
 tomli==2.0.1
 tqdm==4.65.0
 typing_extensions==4.5.0
@@ -93,12 +82,20 @@ yarl==1.9.2
 
 ### Running
 
-> [!NOTE]
-> The `-B` prevents `__pycache__` being created
+#### Local
 
 ```shell
 python3 -B main.py
 ```
+
+#### PM2
+
+```shell
+pm2 start main.py --name "arisa" --interpreter "python3" --interpreter-args "-B"
+```
+
+> [!NOTE]
+> The `-B` prevents `__pycache__` being created
 
 ## Todo
 
@@ -111,18 +108,12 @@ python3 -B main.py
   - [ ] edit method
   - [ ] mention method
   - [ ] support more attachment
-- [x] redesign scope integration system
-  > [!NOTE]  
-  > This is a small rewrite, consider using a reliable method to future maintenance
+  - [ ] maintenance
 - [ ] fix all `desperate` functions
   - [x] join
   - [ ] ouen
   - [ ] buttons
-- [ ] zenMode - Enabling will remove all channel to make less notification, disable it can put all roles back.
-- [x] Twitter url fix automations.
-  - [x] resent with vx prefix.
-  - [x] fetch all information in the tweet then resend.
-  - [x] rework a new one
+  - [ ] retweet
 
 ## License
 

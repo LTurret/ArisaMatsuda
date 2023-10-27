@@ -16,7 +16,7 @@ class join(Extension):
         self.Arisa = Arisa
         print(f" ↳ Extension {__name__} created")
 
-    @slash_command(name="join", description="開關頻道的檢視模式", scopes=[getenv("production_server_anna")])
+    @slash_command(name="join", description="開關頻道的檢視模式", scopes=[getenv("production_server_1")])
     async def join(self, ctx: ComponentContext):
         selection = StringSelectMenu(
             StringSelectOption(label="Arts", value="1023609569529823273", description="藝術類別討論串", emoji=PartialEmoji(name="🔖")),
