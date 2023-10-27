@@ -81,11 +81,12 @@ async def get_contents(api_callback: dict) -> dict:
                     for raw_video in media["videos"]:
                         videos.append(await video_upload(raw_video["url"]))
 
-                for image in media["photos"]:
-                    images.append(image["url"])
+                if "photos" in media:
+                    for image in media["photos"]:
+                        images.append(image["url"])
 
-        except Exception:
-            raise Exception
+        except Exception as exception:
+            raise exception
 
     return {
         "images": images,
