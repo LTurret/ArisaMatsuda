@@ -1,6 +1,5 @@
 from re import findall
 from re import search
-from time import time
 
 from interactions import events
 from interactions import listen
