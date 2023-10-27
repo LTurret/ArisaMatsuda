@@ -15,10 +15,10 @@ from interactions import Extension
 from interactions import IntervalTrigger
 from interactions import Task
 
-from cogs.src.embed_generator import embed_generator
-from cogs.src.fetch_tweet import fetch_tweet
-from cogs.src.get_contents import get_contents
-from cogs.src.get_tokens import get_tokens
+from cogs.modules.embed_generator import embed_generator
+from cogs.modules.fetch_tweet import fetch_tweet
+from cogs.modules.get_contents import get_contents
+from cogs.modules.get_tokens import get_tokens
 
 
 class retweet(Extension):

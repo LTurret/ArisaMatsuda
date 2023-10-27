@@ -7,14 +7,14 @@ from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
 
-from cogs.src.embed_generator import embed_generator
-from cogs.src.fetch_tweet import fetch_tweet
-from cogs.src.get_contents import get_contents
+from cogs.modules.embed_generator import embed_generator
+from cogs.modules.fetch_tweet import fetch_tweet
+from cogs.modules.get_contents import get_contents
 
 
 class twitterFix(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: any = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/(\d+)"
 
         print(f" ↳ Extension {__name__} created")
@@ -32,26 +32,28 @@ class twitterFix(Extension):
             # Clear reactions
             await event.message.reactions[0].remove()
 
-            # Find activation
+            # Find keyword
             if search(rf"{self.regex}", event.message.content):
                 tweetId: str = search(rf"{self.regex}", event.message.content).group(1)
                 api_callback: dict = await fetch_tweet(tweetId)
 
+                # Try follow the standard procedure or just send vxtwitter
                 try:
                     content: dict = {**(await get_contents(api_callback))}
+                    embeds: list[Embed] = []
+
+                    if content["images"]:
+                        for image in content["images"]:
+                            # Embeds composer - Compose multiple picture in to one array
+                            embeds.append(embed_generator(content, image))
+
+                    else:
+                        embeds.append(embed_generator(content))
+
                 except Exception:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
-                    await event.message.channel.send(
-                        f"{result[0]}fxtwitter{result[-1]}", reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
-                    )
-
-                # Embeds composer - used for multiple images
-                embeds: list[Embed] = []
-                if content["images"]:
-                    for image in content["images"]:
-                        embeds.append(embed_generator(content, image))
-                else:
-                    embeds.append(embed_generator(content))
+                    content: str = f'f"{result[0]}vxtwitter{result[-1]}"'
+                    await event.message.channel.send(content, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
