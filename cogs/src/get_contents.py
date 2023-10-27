@@ -53,7 +53,7 @@ async def get_contents(api_callback: dict) -> dict:
                         if asset["bitrate"] > best_bitrate:
                             best_bitrate = asset["bitrate"]
                     videos.append(await video_upload(asset["url"]))
-            
+
             # Only check pictures when tweet is not contain any video
             else:
                 # Check is tweet contains multiple pictures
