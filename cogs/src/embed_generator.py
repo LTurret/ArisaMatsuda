@@ -5,7 +5,7 @@ from interactions import Embed
 
 def embed_generator(
     content: dict,
-    media: str,
+    media: str | None = None,
     tweetId: str | None = None,
     url: str = "https://arisahi.me",
     color: hex = 0x1DA0F2,
@@ -22,7 +22,9 @@ def embed_generator(
         text="樓梯的推特連結修復魔法",
         icon_url=footer_icon,
     )
-    embed.set_image(media)
+
+    if media:
+        embed.set_image(media)
 
     if attach_origin_url:
         embed.add_field(name="原文傳送門", value=f"[點我](https://twitter.com/i/status/{tweetId})", inline=False)

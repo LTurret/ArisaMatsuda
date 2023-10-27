@@ -52,17 +52,7 @@ class twitterFix(Extension):
                     for image in content["images"]:
                         embeds.append(embed_generator(content, image))
                 else:
-                    init_embed: Embed = Embed(description=content["full_text"], color=0x1DA0F2, timestamp=time(), url="https://arisahi.me")
-                    init_embed.set_author(
-                        name=f"{content['author']} (@{content['screen_name']})",
-                        url=f"https://twitter.com/{content['screen_name']}",
-                        icon_url=content["icon_url"],
-                    )
-                    init_embed.set_footer(
-                        text="樓梯的推特連結修復魔法",
-                        icon_url="https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
-                    )
-                    embeds.append(init_embed)
+                    embeds.append(embed_generator(content))
 
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
