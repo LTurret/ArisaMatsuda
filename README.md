@@ -25,9 +25,6 @@ retweet_subscribe_channel=
 
 #### Confidential and scopes
 
-> [!NOTE]  
-> I use `.env` to store my `server_id` and `channel_id`, and this table will tell where this bot use these scopes.
-
 | **Name**         | **Tend for**        | **Scopes set**               | **Additional Information**                              |
 | ---------------- | ------------------- | ---------------------------- | ------------------------------------------------------- |
 | communication.py | 2 specific channels | {bi-channel_1, bi-channel_2} | This extension is special, Please check the source code |
