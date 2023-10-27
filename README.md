@@ -47,10 +47,7 @@ This extension is build for server member managements, Member who has the chat p
 
 ## Build
 
-### [Requirements](./requirements.txt)
-
-> [!NOTE]  
-> You can install packages via `pip install -r requirements.txt`
+### Requirements
 
 ```plaintext
 aiohttp==3.8.4
@@ -85,14 +82,11 @@ yarl==1.9.2
 python3 -B main.py
 ```
 
-#### PM2
+#### pm2
 
 ```shell
 pm2 start main.py --name "arisa" --interpreter "python3" --interpreter-args "-B"
 ```
-
-> [!NOTE]
-> The `-B` prevents `__pycache__` being created
 
 ## Todo
 
