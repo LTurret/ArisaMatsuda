@@ -11,7 +11,6 @@ from interactions import Extension
 from cogs.src.embed_generator import embed_generator
 from cogs.src.fetch_tweet import fetch_tweet
 from cogs.src.get_contents import get_contents
-from cogs.src.get_tokens import get_tokens
 
 
 class twitterFix(Extension):
@@ -67,9 +66,9 @@ class twitterFix(Extension):
 
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                if content["video"] is not None:
+                if content["videos"] is not None:
                     await event.message.channel.send(
-                        files=content["video"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
+                        files=content["videos"], embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True
                     )
                 else:
                     await event.message.channel.send(embeds=embeds, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)

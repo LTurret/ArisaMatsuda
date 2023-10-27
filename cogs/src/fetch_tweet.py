@@ -8,7 +8,7 @@ from aiohttp import ClientSession
 from cogs.src.get_tokens import get_tokens
 
 
-async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "vx") -> dict:
+async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "twitter") -> dict:
     parameter: dict = {"tweetId": tweetId, "query_id_token": query_id_token}
     service_manifest: dict = {"twitter": by_twitter, "vx": by_vx}
     callback: dict = await service_manifest[host](parameter)

@@ -1,16 +1,15 @@
-from io import BytesIO
 from re import findall
 from re import search
 
-from aiohttp import ClientSession
 from interactions import File
+
+from cogs.src.video_upload import video_upload
 
 
 async def get_contents(api_callback: dict) -> dict:
     # Initialize assets
     images: list[str] | list = []
-    video: File | None = None
-    media: list | None = None
+    videos: list[File] | list = []
     full_text: str | None = None
     author: str = ""
     screen_name: str = ""
@@ -49,23 +48,18 @@ async def get_contents(api_callback: dict) -> dict:
 
                 # find best bitrate
                 best_bitrate: int = 0
-                url: str = ""
                 for asset in variants:
                     if asset["content_type"] == "video/mp4":
                         if asset["bitrate"] > best_bitrate:
                             best_bitrate = asset["bitrate"]
-                            url = asset["url"]
-
-                # Download video from twitters cdn to discord File object
-                async with ClientSession() as session:
-                    async with session.get(url) as response:
-                        file: bytes = await response.read()
-                        video: File = File(BytesIO(file), file_name="attachment.mp4")
-
-        # Check is tweet contains multiple pictures
-        if "media" in tweet_detail["entities"]:
-            for image in tweet_detail["entities"]["media"]:
-                images.append(image["media_url_https"])
+                    videos.append(await video_upload(asset["url"]))
+            
+            # Only check pictures when tweet is not contain any video
+            else:
+                # Check is tweet contains multiple pictures
+                if "media" in tweet_detail["entities"]:
+                    for image in tweet_detail["entities"]["media"]:
+                        images.append(image["media_url_https"])
 
     except Exception:
         try:
@@ -83,6 +77,10 @@ async def get_contents(api_callback: dict) -> dict:
             if "media" in tweet:
                 media = tweet["media"]
 
+                if "videos" in media:
+                    for raw_video in media["videos"]:
+                        videos.append(await video_upload(raw_video["url"]))
+
                 for image in media["photos"]:
                     images.append(image["url"])
 
@@ -91,7 +89,7 @@ async def get_contents(api_callback: dict) -> dict:
 
     return {
         "images": images,
-        "video": video,
+        "videos": videos,
         "full_text": full_text,
         "author": author,
         "screen_name": screen_name,
