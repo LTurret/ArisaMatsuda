@@ -14,7 +14,7 @@ def embed_generator(content: dict, media: str | None = None, tweetId: str | None
     )
     embed.add_field(name="愛心數", value=f'{int(content["favorite_count"]):3,d}', inline=True)
     embed.add_field(name="轉推數", value=f'{int(content["retweet_count"]):3,d}', inline=True)
-    embed.add_field(name="推文傳送門（已改成fxtwitter連結）", value=f"[點我｜複製我](https://fxtwitter.com/i/status/{tweetId})", inline=True)
+    embed.add_field(name="推文傳送門", value=f"[點我！](https://fxtwitter.com/i/status/{tweetId})", inline=True)
 
     if media:
         embed.set_image(media)
