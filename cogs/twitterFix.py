@@ -45,14 +45,14 @@ class twitterFix(Extension):
                     if content["images"]:
                         for image in content["images"]:
                             # Embeds composer - Compose multiple picture in to one array
-                            embeds.append(embed_generator(content, image))
+                            embeds.append(embed_generator(content, image, tweetId=tweetId))
 
                     else:
-                        embeds.append(embed_generator(content))
+                        embeds.append(embed_generator(content, tweetId=tweetId))
 
                 except Exception:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
-                    content: str = f'f"{result[0]}vxtwitter{result[-1]}"'
+                    content: str = f"{result[0]}vxtwitter{result[-1]}"
                     await event.message.channel.send(content, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
                 # Send embed

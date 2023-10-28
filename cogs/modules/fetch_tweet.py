@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 from aiohttp import ClientSession
 
-from cogs.src.get_tokens import get_tokens
+from cogs.modules.get_tokens import get_tokens
 
 
 async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "fx") -> dict:
