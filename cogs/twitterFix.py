@@ -15,7 +15,7 @@ from cogs.modules.get_contents import get_contents
 class twitterFix(Extension):
     def __init__(self, Arisa):
         self.Arisa: any = Arisa
-        self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/(\d+)"
+        self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
 
         print(f" ↳ Extension {__name__} created")
 
@@ -28,9 +28,9 @@ class twitterFix(Extension):
 
     @listen()
     async def on_message_react(self, event: events.MessageReactionAdd):
-        if event.message.reactions[0].me and event.message.reactions[0].count > 1:
+        if event.reaction.count > 1 and event.reaction.me:
             # Clear reactions
-            await event.message.reactions[0].remove()
+            await event.reaction.remove()
 
             # Find keyword
             if search(rf"{self.regex}", event.message.content):
@@ -52,8 +52,8 @@ class twitterFix(Extension):
 
                 except Exception:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
-                    content: str = f"{result[0]}vxtwitter{result[-1]}"
-                    await event.message.channel.send(content, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
+                    message: str = f"{result[0]}vxtwitter{result[-1]}"
+                    await event.message.channel.send(message, reply_to=event.message, allowed_mentions=AllowedMentions.none(), silent=True)
 
                 # Send embed
                 # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
