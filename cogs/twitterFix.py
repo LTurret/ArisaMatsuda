@@ -23,8 +23,7 @@ class twitterFix(Extension):
     async def on_message_create(self, event: events.MessageCreate):
         if event.message.author != self.Arisa.user:
             if search(rf"{self.regex}", event.message.content):
-                emoji = await self.Arisa.fetch_custom_emoji(1089582594833789028, 339368837356978187, force=True)
-                await event.message.add_reaction(emoji)
+                await event.message.add_reaction("🎄")
 
     @listen()
     async def on_message_react(self, event: events.MessageReactionAdd):
