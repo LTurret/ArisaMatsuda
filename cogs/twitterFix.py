@@ -7,9 +7,9 @@ from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
 
-from cogs.modules.embed_generator import embed_generator
-from cogs.modules.fetch_tweet import fetch_tweet
-from cogs.modules.get_contents import get_contents
+from cogs.module.embed_generator import embed_generator
+from cogs.module.fetch_tweet import fetch_tweet
+from cogs.module.get_contents import get_contents
 
 
 class twitterFix(Extension):
