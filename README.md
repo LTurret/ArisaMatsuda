@@ -17,17 +17,17 @@ such as `channel_id` or `message_id` in `.env`, More detail is documented in [Se
 ├── cogs/
 │   ├── config/
 │   │   └── headers.json
+│   ├── module/
+│   │   └── ...
+│   ├── desperate/
+│   │   └── ...
 │   ├── communication.py
 │   ├── emotes.py
 │   ├── goods.py
 │   ├── join.py
 │   ├── ping.py
 │   ├── retweet.py
-│   ├── twitterFix.py
-│   ├── module/
-│   │   └── ...
-│   └── desperate/
-│       └── ...
+│   └── twitterFix.py
 └── image/goods/
     └── ...
 ```
