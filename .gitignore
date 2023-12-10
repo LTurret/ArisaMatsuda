@@ -1,3 +1,4 @@
+/cogs/module
 /cogs/dist/mltdevent/data/*.json
 /venv
 
