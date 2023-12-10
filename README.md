@@ -1,6 +1,6 @@
 # ArisaMatsuda
 
-A discord bot for private server management.
+A discord bot for private server management
 
 ## Configuration
 
@@ -34,7 +34,7 @@ such as `channel_id` or `message_id` in `.env`, More detail is documented in [Se
 
 ### Secrets
 
-Token are accessed with `dotenv.load_dotenv()` and `os.getenv()`.
+Token are accessed with `dotenv.load_dotenv()` and `os.getenv()`
 
 ```env
 BOT_TOKEN=
@@ -141,4 +141,4 @@ pm2 start main.py --name "arisa" --interpreter "python3" --interpreter-args "-B"
 
 ## License
 
-Licensed under [MIT](LICENSE).
+Licensed under [MIT](LICENSE)
