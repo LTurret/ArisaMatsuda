@@ -59,10 +59,29 @@ class retweet(Extension):
             if content["images"]:
                 for image in content["images"]:
                     # Embeds composer - Compose multiple picture in to one array
-                    embeds.append(embed_generator(content, image, tweetId=tweetId, color=0xD8A804))
+                    embeds.append(
+                        embed_generator(
+                            content=content,
+                            media=image,
+                            tweetId=tweetId,
+                            color=0xD8A804,
+                            footer_text="百萬轉推魔法",
+                            icon_url="https://cdn.discordapp.com/attachments/714097668233625670/1164054918169104464/imas_theater_icon.png",
+                            minimal=True,
+                        )
+                    )
 
             else:
-                embeds.append(embed_generator(content, tweetId=tweetId, color=0xD8A804))
+                embeds.append(
+                    embed_generator(
+                        content=content,
+                        tweetId=tweetId,
+                        color=0xD8A804,
+                        footer_text="百萬轉推魔法",
+                        icon_url="https://cdn.discordapp.com/attachments/714097668233625670/1164054918169104464/imas_theater_icon.png",
+                        minimal=True,
+                    )
+                )
 
             CHANNEL = self.Arisa.get_channel(getenv("retweet_subscribe_channel"))
 
