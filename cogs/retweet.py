@@ -47,7 +47,6 @@ class retweet(Extension):
 
         queue = trim(queue, self.upper_snowflake)
 
-        # expression: str = r"https:\/\/.+\/imasml_theater\/status\/(\d+)"
         for url in queue:
             # Parsing tweetId
             tweetId: str = search(rf"{self.regex}", url).group(1)
@@ -56,7 +55,7 @@ class retweet(Extension):
 
             # Data handling
             embeds: list[Embed] = []
-            
+
             if content["images"]:
                 for image in content["images"]:
                     # Embeds composer - Compose multiple picture in to one array
