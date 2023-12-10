@@ -105,7 +105,7 @@ yarl==1.9.4
 
 #### Module
 
-Cclone [Twitter fetching module](https://github.com/LTurret/Twitter-fetching-module) to `./cogs` and rename folder to `module`
+Clone [Twitter fetching module](https://github.com/LTurret/Twitter-fetching-module) to `./cogs` and rename folder to `module`
 
 ### Running
 
