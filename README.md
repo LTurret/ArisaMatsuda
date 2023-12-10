@@ -4,6 +4,31 @@ A discord bot for private server management.
 
 ## Configuration
 
+### Directory structure
+
+```plain
+.
+├── main.py
+├── requirements.txt
+├── .env
+├── cogs/
+│   ├── config/
+│   │   └── headers.json
+│   ├── communication.py
+│   ├── emotes.py
+│   ├── goods.py
+│   ├── join.py
+│   ├── ping.py
+│   ├── retweet.py
+│   ├── twitterFix.py
+│   ├── module/
+│   │   └── ...
+│   └── desperate/
+│       └── ...
+└── image/goods/
+    └── ...
+```
+
 Before hosting this bot directly from this repo, There are few steps need to do, or the bot will not work properly.
 such as `channel_id` or `message_id` in `.env`, More detail is documented in [Secrets](#secrets) section
 
@@ -49,6 +74,10 @@ This extension is build for server member managements, Member who has the chat p
 
 ### Requirements
 
+Following packages and module are required
+
+#### Packages
+
 ```plaintext
 aiohttp==3.9.1
 aiosignal==1.3.1
@@ -74,9 +103,9 @@ urllib3==2.1.0
 yarl==1.9.4
 ```
 
-### Module (REQUIRED)
+#### Module
 
-Clone [Twitter fetching module](https://github.com/LTurret/Twitter-fetching-module) to `./cogs` and rename to `module`
+Cclone [Twitter fetching module](https://github.com/LTurret/Twitter-fetching-module) to `./cogs` and rename folder to `module`
 
 ### Running
 
