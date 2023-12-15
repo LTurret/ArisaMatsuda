@@ -13,10 +13,9 @@ such as `channel_id` or `message_id` in `.env`, More detail is documented in [Se
 .
 ├── main.py
 ├── requirements.txt
+├── headers.json
 ├── .env
 ├── cogs/
-│   ├── config/
-│   │   └── headers.json
 │   ├── module/
 │   │   └── ...
 │   ├── desperate/
