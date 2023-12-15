@@ -1,9 +1,8 @@
-from json import load
-from os import path
 from os import getenv
-from os import sep
 from re import search
 
+from tinydb import Query
+from tinydb import TinyDB
 from interactions import listen
 from interactions import Extension
 from interactions import Embed
@@ -23,33 +22,29 @@ class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        self.upper_snowflake: int = 0
+        self.config = TinyDB(f"config.json")
         print(f" ↳ Extension {__name__} created")
 
     @listen()
     async def on_startup(self):
         self.retweet.start()
 
-    @Task.create(IntervalTrigger(seconds=60))
+    @Task.create(IntervalTrigger(seconds=15))
     async def retweet(self):
         url: str = "https://nitter.net/imasml_theater"
-        script_dir: str = path.dirname(path.realpath(__file__))
-
-        assert "headers" not in f"{script_dir}{sep}config", "Please check is your header.json exists in config folder."
-
-        with open(f"{script_dir}{sep}config{sep}headers.json", "r") as headers:
-            headers: dict = load(headers)
+        headers: dict = self.config.search(Query().name == "headers")[0]["value"]
+        current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
         async with ClientSession(headers=headers) as session:
             async with session.get(url) as response:
                 queue: list[str] = html_parser(await response.text())
                 queue.reverse()
 
-        queue = trim(queue, self.upper_snowflake)
+        queue = trim(queue, current_snowflake)
 
         for url in queue:
             # Parsing tweetId
-            tweetId: str = search(rf"{self.regex}", url).group(1)
+            tweetId: int = int(search(rf"{self.regex}", url).group(1))
             api_callback: dict = await fetch_tweet(tweetId)
             content: dict = {**(await get_contents(api_callback))}
 
@@ -92,7 +87,8 @@ class retweet(Extension):
                 await CHANNEL.send(embeds=embeds, silent=True)
 
             # Update upper snowflake
-            self.upper_snowflake = max(self.upper_snowflake, int(tweetId))
+            snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, tweetId)}
+            self.config.update(snowflake_data, Query().name == "snowflake")
 
 
 def setup(Arisa):
