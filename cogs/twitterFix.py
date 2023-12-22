@@ -26,7 +26,7 @@ class twitterFix(Extension):
 
     @listen()
     async def on_message_react(self, event: events.MessageReactionAdd):
-        if event.reaction.count > 1 and event.reaction.me:
+        if event.reaction.count == 2 and event.reaction.me:
             # Clear reactions
             await event.reaction.remove()
 
