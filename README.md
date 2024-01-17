@@ -126,9 +126,9 @@ pm2 start main.py --name "arisa" --interpreter "python3" --interpreter-args "-B"
   - [x] use the right condition to determine which guild
   - [x] attachment handler
   - [x] advanced attachment handler
-  - [ ] reply method
   - [ ] delete method
   - [ ] edit method
+  - [ ] reply method
   - [ ] mention method
   - [ ] support more attachment
   - [ ] maintenance
