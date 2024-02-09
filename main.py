@@ -1,7 +1,9 @@
 from os import getenv
+from os import getcwd
 from os import listdir
-from os import path
+from os import sep
 from os import system
+from os.path import exists
 
 from dotenv import load_dotenv
 from tinydb import TinyDB
@@ -31,27 +33,31 @@ for filename in listdir("./cogs"):
 
 print("Starting...")
 
-if not path.isfile("config.json"):
-    print('Creating "config.json"...')
+root: str = f"{getcwd()}"
+path_db: str = f"{root}{sep}database.json"
+path_headers: str = f"{root}{sep}headers.json"
 
-    with open("config.json", "w"):
-        print("Config.json created!")
+if not exists(path_db):
+    print('Creating "database.json"...')
+
+    with open(path_db, "w"):
+        print(f'"{path_db}" created!')
 
     initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
 
-    config = TinyDB("config.json")
+    database = TinyDB(path_db)
 
     for data in initial_config:
-        config.insert(data)
+        database.insert(data)
 else:
-    config = TinyDB("config.json")
+    database = TinyDB(path_db)
 
-assert path.isfile("headers.json"), '"/ArisaMatsuda/headers.json" is not exist!'
-with open("headers.json", "r") as headers:
+assert exists(path_headers), f'"{path_headers}" is not exist!'
+with open(path_headers, "r") as headers:
     import json
 
     headers = json.load(headers)
     headers_update: dict = {"name": "headers", "value": headers}
-    config.update(headers_update, Query().name == "headers")
+    database.update(headers_update, Query().name == "headers")
 
 arisa.start(getenv("BOT_TOKEN"))
