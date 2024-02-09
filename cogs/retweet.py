@@ -22,7 +22,7 @@ class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        self.config = TinyDB(f"config.json")
+        self.config = TinyDB(f"database.json")
         print(f" ↳ Extension {__name__} created")
 
     @listen()
@@ -31,7 +31,7 @@ class retweet(Extension):
 
     @Task.create(IntervalTrigger(seconds=15))
     async def retweet(self):
-        url: str = "https://nitter.net/imasml_theater"
+        url: str = "https://nitter.moomoo.me/imasml_theater"
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
