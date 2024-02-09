@@ -4,8 +4,11 @@ from os import getenv
 from aiohttp import ClientSession
 
 from interactions import listen
+from interactions import message_context_menu
+from interactions import ContextMenuContext
 from interactions import Extension
 from interactions import File
+from interactions import Message
 from interactions.api.events import MessageCreate
 from interactions.models.discord import channel
 
@@ -20,6 +23,12 @@ class communication(Extension):
     def __init__(self, Arisa):
         self.Arisa = Arisa
         print(f" ↳ Extension {__name__} created")
+
+    @message_context_menu(name="delete")
+    async def delete(self, ctx: ContextMenuContext):
+        message: Message = ctx.target
+        await message.delete()
+        await ctx.send(content="已刪除訊息", ephemeral=True)
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
@@ -38,12 +47,7 @@ class communication(Extension):
 
         # Channel filter
         if int(event.message.channel.id) == bi_channel_1 or int(event.message.channel.id) == bi_channel_2:
-            content: str = "**("
-
-            # Give a specify member special identity
-            if str(event.message.author) == "ペットリー#4222":
-                content += "🐑 "
-            content += f"{str(event.message.author)})**　{event.message.content}"
+            content: str = f"**({str(event.message.author)})**　{event.message.content}"
 
             # Send message
             if event.message.author != self.Arisa.user:
