@@ -29,7 +29,7 @@ class retweet(Extension):
     async def on_startup(self):
         self.retweet.start()
 
-    @Task.create(IntervalTrigger(seconds=15))
+    @Task.create(IntervalTrigger(seconds=60))
     async def retweet(self):
         url: str = "https://nitter.moomoo.me/imasml_theater"
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
