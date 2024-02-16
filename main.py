@@ -3,7 +3,7 @@ from os import getcwd
 from os import listdir
 from os import sep
 from os import system
-from os.path import exists
+from os.path import isfile
 
 from dotenv import load_dotenv
 from tinydb import TinyDB
@@ -37,8 +37,8 @@ root: str = f"{getcwd()}"
 path_db: str = f"{root}{sep}database.json"
 path_headers: str = f"{root}{sep}headers.json"
 
-if not exists(path_db):
-    print('Creating "database.json"...')
+if not isfile(path_db):
+    print(f'Creating "{path_db}"...')
 
     with open(path_db, "w"):
         print(f'"{path_db}" created!')
@@ -52,7 +52,7 @@ if not exists(path_db):
 else:
     database = TinyDB(path_db)
 
-assert exists(path_headers), f'"{path_headers}" is not exist!'
+assert isfile(path_headers), f'"{path_headers}" is not exist!'
 with open(path_headers, "r") as headers:
     import json
 
