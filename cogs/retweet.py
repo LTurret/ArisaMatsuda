@@ -3,6 +3,7 @@ from re import search
 
 from tinydb import Query
 from tinydb import TinyDB
+from interactions import client
 from interactions import listen
 from interactions import Extension
 from interactions import Embed
@@ -20,7 +21,7 @@ from cogs.module.tweets_trim import trim
 
 class retweet(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: client = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         self.config = TinyDB(f"database.json")
         print(f" ↳ Extension {__name__} created")
@@ -35,9 +36,9 @@ class retweet(Extension):
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
-        async with ClientSession(headers=headers) as session:
+        async with ClientSession(headers=headers, trust_env=True) as session:
             async with session.get(url) as response:
-                queue: list[str] = html_parser(await response.text())
+                queue: list = html_parser(await response.text())
                 queue.reverse()
 
         queue = trim(queue, current_snowflake)

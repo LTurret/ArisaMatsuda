@@ -27,26 +27,24 @@ async def fetch(session: ClientSession, url: str) -> bytes | None:
 class communication(Extension):
     def __init__(self, Arisa):
         self.Arisa: client = Arisa
+        self.MESSAGE_CACHE: Message | None = None
         print(f" ↳ Extension {__name__} created")
-
-    @message_context_menu(name="刪除訊息")
-    async def delete(self, ctx: ContextMenuContext):
-        message: Message = ctx.target
-        await message.delete()
-        await ctx.send(content="已刪除訊息", ephemeral=True)
 
     @message_context_menu(name="編輯訊息")
     async def delete(self, ctx: ContextMenuContext):
+        self.MESSAGE_CACHE = ctx.target
         modal = Modal(
-            ParagraphText(label="Long Input Text", custom_id="long_text"),
+            ParagraphText(label="Long Input Text", custom_id="content"),
             title="編輯訊息",
             custom_id="edit",
         )
         await ctx.send_modal(modal=modal)
 
-    @modal_callback("my_modal")
-    async def on_modal_answer(self, ctx: ModalContext, message: str):
-        await ctx.send(f"Your text: {message}", ephemeral=True)
+    @modal_callback("edit")
+    async def on_modal_answer(self, ctx: ModalContext, content: str):
+        await self.MESSAGE_CACHE.edit(content=content)
+        await ctx.send(f"編輯完成！", ephemeral=True)
+        self.MESSAGE_CACHE = None
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
