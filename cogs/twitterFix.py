@@ -1,6 +1,7 @@
 from re import findall
 from re import search
 
+from interactions import client
 from interactions import events
 from interactions import listen
 from interactions import AllowedMentions
@@ -14,7 +15,7 @@ from cogs.module.get_contents import get_contents
 
 class twitterFix(Extension):
     def __init__(self, Arisa):
-        self.Arisa: any = Arisa
+        self.Arisa: client = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         print(f" ↳ Extension {__name__} created")
 
