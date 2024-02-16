@@ -3,12 +3,17 @@ from os import getenv
 
 from aiohttp import ClientSession
 
+from interactions import client
 from interactions import listen
 from interactions import message_context_menu
+from interactions import modal_callback
 from interactions import ContextMenuContext
 from interactions import Extension
 from interactions import File
 from interactions import Message
+from interactions import Modal
+from interactions import ModalContext
+from interactions import ParagraphText
 from interactions.api.events import MessageCreate
 from interactions.models.discord import channel
 
@@ -21,14 +26,27 @@ async def fetch(session: ClientSession, url: str) -> bytes | None:
 
 class communication(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: client = Arisa
         print(f" ↳ Extension {__name__} created")
 
-    @message_context_menu(name="delete")
+    @message_context_menu(name="刪除訊息")
     async def delete(self, ctx: ContextMenuContext):
         message: Message = ctx.target
         await message.delete()
         await ctx.send(content="已刪除訊息", ephemeral=True)
+
+    @message_context_menu(name="編輯訊息")
+    async def delete(self, ctx: ContextMenuContext):
+        modal = Modal(
+            ParagraphText(label="Long Input Text", custom_id="long_text"),
+            title="編輯訊息",
+            custom_id="edit",
+        )
+        await ctx.send_modal(modal=modal)
+
+    @modal_callback("my_modal")
+    async def on_modal_answer(self, ctx: ModalContext, message: str):
+        await ctx.send(f"Your text: {message}", ephemeral=True)
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
