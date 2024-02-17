@@ -1,16 +1,21 @@
 from re import findall
 from re import search
+from os import getenv
 
+from dotenv import load_dotenv
 from interactions import client
 from interactions import events
 from interactions import listen
 from interactions import AllowedMentions
 from interactions import Embed
 from interactions import Extension
+from requests import patch
 
 from cogs.module.embed_generator import embed_generator
 from cogs.module.fetch_tweet import fetch_tweet
 from cogs.module.get_contents import get_contents
+
+load_dotenv()
 
 
 class twitterFix(Extension):
@@ -30,6 +35,16 @@ class twitterFix(Extension):
         if event.reaction.count == 2 and event.reaction.me:
             # Clear reactions
             await event.reaction.remove()
+
+            channel_id: str = event.message.channel.id
+            message_id: str = event.message.id
+            headers: dict = {
+                "accept": "*/*",
+                "authorization": f'Bot {getenv("BOT_TOKEN")}',
+                "content-type": "application/json",
+            }
+
+            patch(f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}", headers=headers, data='{"flags":4}')
 
             # Find keyword
             if search(rf"{self.regex}", event.message.content):

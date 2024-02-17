@@ -1,5 +1,7 @@
 from io import BytesIO
+from os import getcwd
 
+from interactions import client
 from interactions import slash_command
 from interactions import slash_option
 from interactions import Extension
@@ -12,8 +14,8 @@ from PIL import ImageChops
 
 
 class goods(Extension):
-    def __init__(self, Misaki):
-        self.Misaki = Misaki
+    def __init__(self, Arisa):
+        self.Arisa: client = Arisa
         print(f"↳ Extension {__name__} created")
 
     @slash_command(name="goods", description="六周年立牌產生器")
@@ -30,7 +32,7 @@ class goods(Extension):
         opt_type=OptionType.INTEGER,
         choices=[SlashCommandChoice(name="普通底座", value=1), SlashCommandChoice(name="金色底座", value=3), SlashCommandChoice(name="前十底座", value=2)],
     )
-    async def goods(self, ctx: SlashContext, idol: str = "杏奈", base: int = 1):
+    async def goods(self, ctx: SlashContext, idol: str = "杏奈", base: int = 1) -> None:
         manifest = {
             "春香": 1,
             "千早": 2,
@@ -86,9 +88,9 @@ class goods(Extension):
             "歌織": 52,
         }
 
-        DIR: str = "./image/goods"
-        img_base = Image.open(f"{DIR}/base/{base}.png")
-        img_idol = Image.open(f"{DIR}/idol/{manifest[idol]}.png")
+        root: str = f"{getcwd()}/image/goods"
+        img_base = Image.open(f"{root}/base/{base}.png")
+        img_idol = Image.open(f"{root}/idol/{manifest[idol]}.png")
         image = Image.new("RGBA", (256, 300))
 
         if base == 1:
@@ -115,5 +117,5 @@ class goods(Extension):
             await ctx.send(files=attachment)
 
 
-def setup(Misaki):
-    goods(Misaki)
+def setup(Arisa):
+    goods(Arisa)

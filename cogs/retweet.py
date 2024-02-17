@@ -1,16 +1,14 @@
 from os import getenv
 from re import search
 
+from aiohttp import ClientSession
 from tinydb import Query
 from tinydb import TinyDB
-from interactions import client
 from interactions import listen
 from interactions import Extension
 from interactions import Embed
 from interactions import IntervalTrigger
 from interactions import Task
-
-from aiohttp import ClientSession
 
 from cogs.module.embed_generator import embed_generator
 from cogs.module.fetch_tweet import fetch_tweet
@@ -21,7 +19,7 @@ from cogs.module.tweets_trim import trim
 
 class retweet(Extension):
     def __init__(self, Arisa):
-        self.Arisa: client = Arisa
+        self.Arisa = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         self.config = TinyDB(f"database.json")
         print(f" ↳ Extension {__name__} created")
@@ -38,7 +36,7 @@ class retweet(Extension):
 
         async with ClientSession(headers=headers, trust_env=True) as session:
             async with session.get(url) as response:
-                queue: list = html_parser(await response.text())
+                queue: list[str] = html_parser(await response.text())
                 queue.reverse()
 
         queue = trim(queue, current_snowflake)

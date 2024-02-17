@@ -8,12 +8,10 @@ from os.path import isfile
 from dotenv import load_dotenv
 from tinydb import TinyDB
 from tinydb import Query
-
 from interactions import listen
 from interactions import Activity
 from interactions import Client
 from interactions import Intents
-
 
 load_dotenv()
 
