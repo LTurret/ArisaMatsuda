@@ -78,27 +78,27 @@ Following packages and module are required
 #### Packages
 
 ```plaintext
-aiohttp==3.9.1
+aiohttp==3.9.3
 aiosignal==1.3.1
-async-timeout==4.0.3
-attrs==23.1.0
-beautifulsoup4==4.12.2
-certifi==2023.11.17
-charset-normalizer==3.3.2
+attrs==23.2.0
+beautifulsoup4==4.12.3
+click==8.1.7
 discord-py-interactions==5.11.0
 discord-typings==0.7.0
-emoji==2.9.0
-frozenlist==1.4.0
+emoji==2.10.1
+frozenlist==1.4.1
 idna==3.6
-multidict==6.0.4
-Pillow==10.1.0
-python-dotenv==1.0.0
-requests==2.31.0
+multidict==6.0.5
+mypy-extensions==1.0.0
+packaging==23.2
+pathspec==0.12.1
+pillow==10.2.0
+platformdirs==4.2.0
+python-dotenv==1.0.1
 soupsieve==2.5
+tinydb==4.8.0
 tomli==2.0.1
-tqdm==4.66.1
-typing_extensions==4.8.0
-urllib3==2.1.0
+typing_extensions==4.9.0
 yarl==1.9.4
 ```
 
