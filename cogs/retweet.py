@@ -4,6 +4,7 @@ from re import search
 from aiohttp import ClientSession
 from tinydb import Query
 from tinydb import TinyDB
+from interactions import client
 from interactions import listen
 from interactions import Extension
 from interactions import Embed
@@ -19,7 +20,7 @@ from cogs.module.tweets_trim import trim
 
 class retweet(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: client = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         self.config = TinyDB(f"database.json")
         print(f" ↳ Extension {__name__} created")
@@ -30,7 +31,8 @@ class retweet(Extension):
 
     @Task.create(IntervalTrigger(seconds=60))
     async def retweet(self):
-        url: str = "https://nitter.moomoo.me/imasml_theater"
+        # url: str = "https://nitter.moomoo.me/imasml_theater"
+        url: str = "https://nitter.net/imasml_theater"
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
