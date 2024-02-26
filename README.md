@@ -78,27 +78,42 @@ Following packages and module are required
 #### Packages
 
 ```plaintext
-aiohttp==3.9.3
 aiosignal==1.3.1
+aiohttp==3.9.3
+annotated-types==0.6.0
+anyio==4.3.0
 attrs==23.2.0
 beautifulsoup4==4.12.3
+certifi==2024.2.2
+charset-normalizer==3.3.2
 click==8.1.7
 discord-py-interactions==5.11.0
 discord-typings==0.7.0
+distro==1.9.0
 emoji==2.10.1
 frozenlist==1.4.1
+h11==0.14.0
+httpcore==1.0.4
+httpx==0.27.0
 idna==3.6
 multidict==6.0.5
 mypy-extensions==1.0.0
+openai==1.12.0
 packaging==23.2
 pathspec==0.12.1
 pillow==10.2.0
 platformdirs==4.2.0
+pydantic==2.6.2
+pydantic_core==2.16.3
 python-dotenv==1.0.1
+requests==2.31.0
+sniffio==1.3.1
 soupsieve==2.5
 tinydb==4.8.0
 tomli==2.0.1
+tqdm==4.66.2
 typing_extensions==4.9.0
+urllib3==2.2.1
 yarl==1.9.4
 ```
 
@@ -126,16 +141,14 @@ pm2 start main.py --name "arisa" --interpreter "python3" --interpreter-args "-B"
   - [x] use the right condition to determine which guild
   - [x] attachment handler
   - [x] advanced attachment handler
-  - [ ] delete method
-  - [ ] edit method
+  - [x] delete method
+  - [x] edit method
   - [ ] reply method
   - [ ] mention method
   - [ ] support more attachment
-  - [ ] maintenance
 - [ ] fix all `desperate` functions
   - [x] join
   - [ ] ouen
-  - [ ] buttons
   - [x] retweet
 
 ## License
