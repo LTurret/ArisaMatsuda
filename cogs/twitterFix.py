@@ -26,16 +26,7 @@ class twitterFix(Extension):
 
     @listen()
     async def on_message_create(self, event: events.MessageCreate):
-        if event.message.author != self.Arisa.user:
-            if search(rf"{self.regex}", event.message.content):
-                await event.message.add_reaction("🎄")
-
-    @listen()
-    async def on_message_react(self, event: events.MessageReactionAdd):
-        if event.reaction.count == 2 and event.reaction.me:
-            # Clear reactions
-            await event.reaction.remove()
-
+        if search(rf"{self.regex}", event.message.content):
             channel_id: str = event.message.channel.id
             message_id: str = event.message.id
             headers: dict = {
@@ -59,10 +50,10 @@ class twitterFix(Extension):
                     if content["images"]:
                         for image in content["images"]:
                             # Embeds composer - Compose multiple picture in to one array
-                            embeds.append(embed_generator(content, image, tweetId=tweetId))
+                            embeds.append(embed_generator(content, image, tweetId=tweetId, footer_text="(*>△<)<"))
 
                     else:
-                        embeds.append(embed_generator(content, tweetId=tweetId))
+                        embeds.append(embed_generator(content, tweetId=tweetId, footer_text="(*>△<)<"))
 
                 except Exception:
                     result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", event.message.content)[0]
