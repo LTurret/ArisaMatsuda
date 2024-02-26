@@ -15,7 +15,7 @@ from interactions import Intents
 
 load_dotenv()
 
-arisa = Client(intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
+arisa = Client(delete_unused_application_cmds=True, intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
 
 
 @listen()

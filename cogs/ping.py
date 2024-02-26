@@ -1,3 +1,4 @@
+from interactions import client
 from interactions import slash_command
 from interactions import Extension
 from interactions import SlashContext
@@ -5,7 +6,7 @@ from interactions import SlashContext
 
 class ping(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: client = Arisa
         print(f" ↳ Extension {__name__} created")
 
     @slash_command(name="ping", description="回傳延遲時間")

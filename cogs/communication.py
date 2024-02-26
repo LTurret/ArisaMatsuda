@@ -33,7 +33,7 @@ class communication(Extension):
     @message_context_menu(name="編輯訊息")
     async def delete(self, ctx: ContextMenuContext):
         self.MESSAGE_CACHE = ctx.target
-        modal = Modal(
+        modal: Modal = Modal(
             ParagraphText(label="Long Input Text", custom_id="content"),
             title="編輯訊息",
             custom_id="edit",

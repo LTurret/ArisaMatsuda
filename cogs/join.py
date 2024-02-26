@@ -2,6 +2,7 @@ import time
 
 from os import getenv
 
+from interactions import client
 from interactions import component_callback
 from interactions import slash_command
 from interactions import ComponentContext
@@ -13,7 +14,7 @@ from interactions import PartialEmoji
 
 class join(Extension):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: client = Arisa
         print(f" ↳ Extension {__name__} created")
 
     @slash_command(name="join", description="開關頻道的檢視模式", scopes=[getenv("production_server_1")])
