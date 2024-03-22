@@ -1,4 +1,6 @@
 from os import getenv
+from os import path
+from os import sep
 from re import search
 
 from aiohttp import ClientSession
@@ -22,7 +24,7 @@ class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa: client = Arisa
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        self.config = TinyDB(f"database.json")
+        self.config = TinyDB(rf"{path.dirname(path.realpath(__file__))}{sep}..{sep}database.json")
         print(f" ↳ Extension {__name__} created")
 
     @listen()
@@ -32,7 +34,8 @@ class retweet(Extension):
     @Task.create(IntervalTrigger(seconds=60))
     async def retweet(self):
         # url: str = "https://nitter.moomoo.me/imasml_theater"
-        url: str = "https://nitter.net/imasml_theater"
+        # url: str = "https://nitter.net/imasml_theater"
+        url: str = "https://nitter.privacydev.net/imasml_theater"
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
