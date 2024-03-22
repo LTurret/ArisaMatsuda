@@ -1,9 +1,10 @@
+import json
+
 from os import getenv
-from os import getcwd
 from os import listdir
+from os import path
 from os import sep
 from os import system
-from os.path import isfile
 
 from dotenv import load_dotenv
 from tinydb import TinyDB
@@ -24,38 +25,32 @@ async def on_startup():
     print(f"Up!10sion♪\nEverybody attention!!")
 
 
+print("Starting...")
+
+root: str = rf"{path.dirname(path.realpath(__file__))}"
+path_db: str = rf"{root}{sep}database.json"
+path_headers: str = rf"{root}{sep}headers.json"
+
+if not path.isfile(path_db):
+    print(f'Creating "{path_db}"...')
+    database = TinyDB(path_db)
+    initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
+
+    for data in initial_config:
+        database.insert(data)
+
+else:
+    database = TinyDB(path_db)
+
+assert path.isfile(path_headers), f'"{path_headers}" is not exist!'
+with open(path_headers, "r") as headers:
+    headers = json.load(headers)
+    headers_update: dict = {"name": "headers", "value": headers}
+    database.update(headers_update, Query().name == "headers")
+
 for filename in listdir("./cogs"):
     if filename.endswith(".py"):
         print(f"Loading extension: {filename}")
         arisa.load_extension(f"cogs.{filename[:-3]}")
-
-print("Starting...")
-
-root: str = f"{getcwd()}"
-path_db: str = f"{root}{sep}database.json"
-path_headers: str = f"{root}{sep}headers.json"
-
-if not isfile(path_db):
-    print(f'Creating "{path_db}"...')
-
-    with open(path_db, "w"):
-        print(f'"{path_db}" created!')
-
-    initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
-
-    database = TinyDB(path_db)
-
-    for data in initial_config:
-        database.insert(data)
-else:
-    database = TinyDB(path_db)
-
-assert isfile(path_headers), f'"{path_headers}" is not exist!'
-with open(path_headers, "r") as headers:
-    import json
-
-    headers = json.load(headers)
-    headers_update: dict = {"name": "headers", "value": headers}
-    database.update(headers_update, Query().name == "headers")
 
 arisa.start(getenv("BOT_TOKEN"))
