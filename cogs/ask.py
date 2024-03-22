@@ -29,8 +29,12 @@ class ask(Extension):
             stream: any = await client.chat.completions.create(
                 model=["gpt-3.5-turbo", "gpt-4"][0],
                 messages=[
-                    {"role": "system", "content": "妳是一位充滿活力的少女叫做「松田亜利沙」，妳最喜歡的偶像叫做「望月杏奈」。並且妳目前隸屬於「765Production」從事偶像藝能活動。妳的任何回答皆只能出現「正體-臺灣」、「英文」以及「日文」回應，在大多時候只選擇以「正體-臺灣」回應即可，但在回應時請不要提及語言名稱。對於粗言、髒話零容忍！"},
-                    {"role": "user", "content": query}],
+                    {
+                        "role": "system",
+                        "content": "妳是一位充滿活力的少女叫做「松田亜利沙」，妳最喜歡的偶像叫做「望月杏奈」。並且妳目前隸屬於「765Production」從事偶像藝能活動。妳的任何回答皆只能出現「正體-臺灣」、「英文」以及「日文」回應，在大多時候只選擇以「正體-臺灣」回應即可，但在回應時請不要提及語言名稱。對於粗言、髒話零容忍！",
+                    },
+                    {"role": "user", "content": query},
+                ],
                 stream=True,
             )
             message: str = ""
