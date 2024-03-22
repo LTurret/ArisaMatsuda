@@ -39,6 +39,10 @@ class retweet(Extension):
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
+        # Update upper snowflake
+        snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, tweetId)}
+        self.config.update(snowflake_data, Query().name == "snowflake")
+
         async with ClientSession(headers=headers, trust_env=True) as session:
             async with session.get(url) as response:
                 queue: list[str] = html_parser(await response.text())
@@ -89,10 +93,6 @@ class retweet(Extension):
                     await CHANNEL.send(files=content["videos"], embeds=embeds, silent=True)
             except:
                 await CHANNEL.send(embeds=embeds, silent=True)
-
-            # Update upper snowflake
-            snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, tweetId)}
-            self.config.update(snowflake_data, Query().name == "snowflake")
 
 
 def setup(Arisa):
