@@ -42,7 +42,9 @@ if not path.isfile(path_db):
 else:
     database = TinyDB(path_db)
 
-assert path.isfile(path_headers), f'"{path_headers}" is not exist!'
+if not path.isfile(path_headers):
+    raise FileNotFoundError(rf'"{path_headers}" is not exist!')
+
 with open(path_headers, "r") as headers:
     headers = json.load(headers)
     headers_update: dict = {"name": "headers", "value": headers}
