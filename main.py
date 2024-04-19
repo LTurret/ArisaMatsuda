@@ -14,8 +14,6 @@ from interactions import Activity
 from interactions import Client
 from interactions import Intents
 
-load_dotenv()
-
 arisa = Client(delete_unused_application_cmds=True, intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
 
 
@@ -30,6 +28,8 @@ print("Starting...")
 root: str = rf"{path.dirname(path.realpath(__file__))}"
 path_db: str = rf"{root}{sep}database.json"
 path_headers: str = rf"{root}{sep}headers.json"
+
+load_dotenv(f"{root}{sep}.env")
 
 if not path.isfile(path_db):
     print(f'Creating "{path_db}"...')

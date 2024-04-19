@@ -1,7 +1,6 @@
 from os import getenv
 from os import path
 from os import sep
-from re import search
 
 from aiohttp import ClientSession
 from tinydb import Query
@@ -17,21 +16,23 @@ from cogs.module.embed_generator import embed_generator
 from cogs.module.fetch_tweet import fetch_tweet
 from cogs.module.get_contents import get_contents
 from cogs.module.html_parser import html_parser
-from cogs.module.tweets_trim import trim
+from cogs.module.tweets_segment import segment
 
 
 class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa: client = Arisa
+        self.config: TinyDB = TinyDB(rf"{path.dirname(path.realpath(__file__))}{sep}..{sep}database.json")
+        self.channel: None | int = None
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        self.config = TinyDB(rf"{path.dirname(path.realpath(__file__))}{sep}..{sep}database.json")
         print(f" ↳ Extension {__name__} created")
 
     @listen()
     async def on_startup(self):
+        self.channel = self.Arisa.get_channel(getenv("retweet_subscribe_channel"))
         self.retweet.start()
 
-    @Task.create(IntervalTrigger(seconds=60))
+    @Task.create(IntervalTrigger(seconds=5))
     async def retweet(self):
         # url: str = "https://nitter.moomoo.me/imasml_theater"
         # url: str = "https://nitter.net/imasml_theater"
@@ -39,24 +40,24 @@ class retweet(Extension):
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
-        # Update upper snowflake
-        snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, tweetId)}
-        self.config.update(snowflake_data, Query().name == "snowflake")
-
         async with ClientSession(headers=headers, trust_env=True) as session:
             async with session.get(url) as response:
                 queue: list[str] = html_parser(await response.text())
-                queue.reverse()
+                queue.sort()
 
-        queue = trim(queue, current_snowflake)
+        queue = segment(queue, current_snowflake)
 
-        for url in queue:
-            # Parsing tweetId
-            tweetId: int = int(search(rf"{self.regex}", url).group(1))
+        # Update upper snowflake
+        if queue:
+            upper_snowflake: int = queue[-1]
+            snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, upper_snowflake)}
+            self.config.update(snowflake_data, Query().name == "snowflake")
+
+        for tweetId in queue:
             api_callback: dict = await fetch_tweet(tweetId)
             content: dict = {**(await get_contents(api_callback))}
 
-            # Data handling
+            # Data processing
             embeds: list[Embed] = []
 
             if content["images"]:
@@ -86,13 +87,11 @@ class retweet(Extension):
                     )
                 )
 
-            CHANNEL = self.Arisa.get_channel(getenv("retweet_subscribe_channel"))
-
             try:
                 if content["videos"] is not None:
-                    await CHANNEL.send(files=content["videos"], embeds=embeds, silent=True)
+                    await self.channel.send(files=content["videos"], embeds=embeds, silent=True)
             except:
-                await CHANNEL.send(embeds=embeds, silent=True)
+                await self.channel.send(embeds=embeds, silent=True)
 
 
 def setup(Arisa):
