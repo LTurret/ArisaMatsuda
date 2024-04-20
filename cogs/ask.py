@@ -2,15 +2,12 @@ from os import getenv
 from re import findall
 from re import search
 
-from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from interactions import client
 from interactions import listen
 from interactions import Extension
 from interactions import Message
 from interactions.api.events import MessageCreate
-
-load_dotenv()
 
 
 class ask(Extension):

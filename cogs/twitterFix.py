@@ -2,7 +2,7 @@ from re import findall
 from re import search
 from os import getenv
 
-from dotenv import load_dotenv
+from asyncio import sleep
 from interactions import client
 from interactions import events
 from interactions import listen
@@ -14,8 +14,6 @@ from requests import patch
 from cogs.module.embed_generator import embed_generator
 from cogs.module.fetch_tweet import fetch_tweet
 from cogs.module.get_contents import get_contents
-
-load_dotenv()
 
 
 class twitterFix(Extension):
@@ -35,6 +33,7 @@ class twitterFix(Extension):
                 "content-type": "application/json",
             }
 
+            await sleep(0.25)
             patch(f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}", headers=headers, data='{"flags":4}')
 
             # Find keyword
