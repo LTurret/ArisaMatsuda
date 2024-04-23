@@ -14,7 +14,7 @@ from interactions import Activity
 from interactions import Client
 from interactions import Intents
 
-arisa = Client(delete_unused_application_cmds=True, intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
+Arisa = Client(delete_unused_application_cmds=True, intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
 
 
 @listen()
@@ -25,11 +25,12 @@ async def on_startup():
 
 print("Starting...")
 
-root: str = rf"{path.dirname(path.realpath(__file__))}"
-path_db: str = rf"{root}{sep}database.json"
-path_headers: str = rf"{root}{sep}headers.json"
+root: str = path.dirname(path.realpath(__file__))
+resource: str = f"{root}{sep}..{sep}res"
+path_db: str = f"{resource}{sep}database.json"
+path_headers: str = f"{resource}{sep}headers.json"
 
-load_dotenv(f"{root}{sep}.env")
+load_dotenv(f"{root}{sep}..{sep}.env")
 
 if not path.isfile(path_db):
     print(f'Creating "{path_db}"...')
@@ -50,9 +51,9 @@ with open(path_headers, "r") as headers:
     headers_update: dict = {"name": "headers", "value": headers}
     database.update(headers_update, Query().name == "headers")
 
-for filename in listdir("./cogs"):
+for filename in listdir(f"{root}{sep}cogs"):
     if filename.endswith(".py"):
         print(f"Loading extension: {filename}")
-        arisa.load_extension(f"cogs.{filename[:-3]}")
+        Arisa.load_extension(f"cogs.{filename[:-3]}")
 
-arisa.start(getenv("BOT_TOKEN"))
+Arisa.start(getenv("BOT_TOKEN"))

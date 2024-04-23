@@ -22,7 +22,7 @@ from cogs.module.tweets_segment import segment
 class retweet(Extension):
     def __init__(self, Arisa):
         self.Arisa: client = Arisa
-        self.config: TinyDB = TinyDB(rf"{path.dirname(path.realpath(__file__))}{sep}..{sep}database.json")
+        self.config: TinyDB = TinyDB(rf"{path.dirname(path.realpath(__file__))}{sep}..{sep}..{sep}res{sep}database.json") # why
         self.channel: None | int = None
         self.regex: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         print(f" ↳ Extension {__name__} created")

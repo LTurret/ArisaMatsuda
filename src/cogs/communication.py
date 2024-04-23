@@ -74,5 +74,9 @@ class communication(Extension):
                     await entry.send(content=content)
 
 
+    # @listen("on_message_update")
+    # async def on_message_edit(self, event):
+
+
 def setup(Arisa):
     communication(Arisa)

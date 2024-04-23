@@ -1,4 +1,4 @@
-/cogs/module
+/src/cogs/module
 /venv
 
 .env
@@ -6,6 +6,7 @@
 config.json
 database.json
 headers.json
+history.json
 
 **/__pycache__
 cache
