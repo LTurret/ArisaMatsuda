@@ -14,13 +14,13 @@ class ask(Extension):
     def __init__(self, Arisa):
         self.Arisa: client = Arisa
         self.regex: str = r"<@943078700042301490>(.+)"
-        self.MESSAGE: Message | None = None
+        self.message: Message | None = None
         print(f" ↳ Extension {__name__} created")
 
     @listen()
     async def on_message_create(self, event: MessageCreate):
         if findall(self.regex, event.message.content):
-            self.MESSAGE = await event.message.channel.send("回應處理中！")
+            self.message = await event.message.channel.send("回應處理中！")
             query: str = search(self.regex, event.message.content).group(1)
             client: any = AsyncOpenAI(api_key=getenv("GPT_TOKEN"), base_url="https://api.chatanywhere.tech/v1")
             stream: any = await client.chat.completions.create(
@@ -35,10 +35,12 @@ class ask(Extension):
                 stream=True,
             )
             message: str = ""
+
             async for chunk in stream:
                 message += chunk.choices[0].delta.content or ""
-            await self.MESSAGE.edit(content=message)
-            self.MESSAGE = None
+
+            await self.message.edit(content=message)
+            self.message = None
 
 
 def setup(Arisa):
