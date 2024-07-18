@@ -18,13 +18,15 @@ Arisa.remove_command("help")
 
 root: str = path.dirname(path.realpath(__file__))
 
+
 async def main():
     async with Arisa:
         for filename in listdir(f"{root}{sep}cogs"):
             if filename.endswith(".py"):
                 await Arisa.load_extension(f"cogs.{filename[:-3]}")
-    
+
         await Arisa.start(getenv("BOT_TOKEN", "None"))
-    
+
+
 if __name__ == "__main__":
     run(main())

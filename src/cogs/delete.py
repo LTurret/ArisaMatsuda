@@ -1,14 +1,13 @@
-from discord.ext import commands
+from discord.ext.commands import has_permissions, command, Cog
 
 
-class general(commands.Cog):
+class delete(Cog):
     def __init__(self, Arisa):
         self.Arisa = Arisa
         print(f" ↳ Extension {__name__} created")
- 
 
-    @commands.has_permissions(manage_messages=True)
-    @commands.command()
+    @has_permissions(manage_messages=True)
+    @command()
     async def cls(self, ctx, amount: int):
         await ctx.message.delete()
         if amount > 10:
@@ -18,4 +17,4 @@ class general(commands.Cog):
 
 
 async def setup(Arisa):
-    await Arisa.add_cog(general(Arisa))
+    await Arisa.add_cog(delete(Arisa))
