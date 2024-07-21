@@ -18,11 +18,11 @@ class ContentUtil:
         content: dict = await service_manifest[host](api_callback)
         return content
 
-    async def video_upload(url: str) -> File:
+    async def __video_upload(self, url: str) -> File:
         async with ClientSession() as session:
             async with session.get(url) as response:
                 file: bytes = await response.read()
-                video: File = File(BytesIO(file), file_name="attachment.mp4")
+                video: File = File(BytesIO(file), filename="attachment.mp4")
         return video
 
     async def __by_twitter(self, api_callback: dict) -> dict:
@@ -113,7 +113,7 @@ class ContentUtil:
 
             if "videos" in media:
                 for raw_video in media["videos"]:
-                    videos.append(await self.video_upload(raw_video["url"]))
+                    videos.append(await self.__video_upload(raw_video["url"]))
 
             if "photos" in media:
                 for image in media["photos"]:
