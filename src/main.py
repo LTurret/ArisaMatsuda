@@ -1,10 +1,9 @@
-from asyncio import run
-from os import getenv
-from os import listdir
-from os import path
-from os import sep
+import logging
 
-from discord import Intents
+from asyncio import run
+from os import getenv, listdir, path, sep, system
+
+from discord import Game, Intents, Status
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -19,6 +18,13 @@ Arisa.remove_command("help")
 root: str = path.dirname(path.realpath(__file__))
 
 
+@Arisa.event
+async def on_ready():
+    await Arisa.change_presence(status=Status.online, activity=Game("🚧 v2.0"))
+    system("clear")
+    logging.info(f"ENTER→PLEASURE")
+
+
 async def main():
     async with Arisa:
         for filename in listdir(f"{root}{sep}cogs"):
@@ -29,4 +35,5 @@ async def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     run(main())
