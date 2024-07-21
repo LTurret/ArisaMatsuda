@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 from io import BytesIO
 from re import findall, search
-from typing import Optional
 
 from aiohttp import ClientSession
 from discord import File
@@ -26,27 +25,21 @@ class ContentUtil:
         return video
 
     async def __by_twitter(self, api_callback: dict) -> dict:
-        # Initialize assets
-        author: str = ""
-        screen_name: str = ""
-        icon_url: str = ""
-        full_text: str | None = None
-        images: list[str] | list = []
-        videos: list[File] | list = []
-        favorite_count: int = -1
-        retweet_count: int = -1
-        created_timestamp: datetime = datetime.now()
-
-        # Abbreviations for data accessing
+        # Abbreviation for data accessing
         tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
         user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"]["core"]["user_results"]["result"]["legacy"]
 
-        # Get assets
-        author = user_results_legacy["name"]
-        screen_name = user_results_legacy["screen_name"]
-        icon_url = user_results_legacy["profile_image_url_https"]
-        favorite_count = tweet_detail["favorite_count"]
-        retweet_count = tweet_detail["retweet_count"]
+        # Initialize fields
+        author: str = user_results_legacy["author"]["screen_name"]
+        screen_name: str = user_results_legacy["author"]["screen_name"]
+        icon_url: str = user_results_legacy["author"]["avatar_url"]
+        full_text: str = user_results_legacy["text"]
+        favorite_count: int = tweet_detail["likes"]
+        retweet_count: int = tweet_detail["retweets"]
+        created_timestamp: int = 0  # Not plan to fix
+
+        images: list[str] = []
+        videos: list[File] = []
 
         # Extract tweet content text
         if "full_text" in tweet_detail:
@@ -95,19 +88,19 @@ class ContentUtil:
     async def __by_fx(self, api_callback: dict) -> dict:
         # Abbreviation for data accessing
         tweet: dict = api_callback["tweet"]
-        
-        # Initialize assets
+
+        # Initialize fields
         author: str = tweet["author"]["screen_name"]
         screen_name: str = tweet["author"]["screen_name"]
         icon_url: str = tweet["author"]["avatar_url"]
-        full_text: Optional[str] = tweet["text"]
+        full_text: str = tweet["text"]
         favorite_count: int = tweet["likes"]
         retweet_count: int = tweet["retweets"]
-        created_timestamp: Optional[int | datetime] = datetime.fromtimestamp(tweet["created_timestamp"])
+        created_timestamp: datetime = datetime.fromtimestamp(tweet["created_timestamp"])
 
         images: list[str] = []
         videos: list[File] = []
-        
+
         if "media" in tweet:
             media = tweet["media"]
 
