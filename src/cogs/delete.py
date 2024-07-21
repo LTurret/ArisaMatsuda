@@ -1,10 +1,12 @@
+import logging
+
 from discord.ext.commands import has_permissions, command, Cog
 
 
-class delete(Cog):
+class Delete(Cog):
     def __init__(self, Arisa):
         self.Arisa = Arisa
-        print(f" ↳ Extension {__name__} created")
+        logging.info(f" ↳ Extension {__name__} loaded")
 
     @has_permissions(manage_messages=True)
     @command()
@@ -17,4 +19,4 @@ class delete(Cog):
 
 
 async def setup(Arisa):
-    await Arisa.add_cog(delete(Arisa))
+    await Arisa.add_cog(Delete(Arisa))
