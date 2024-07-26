@@ -6,7 +6,7 @@ from re import findall, search
 from typing import Final, Optional
 
 from discord import Embed
-from discord.ext.commands import Cog
+from discord.ext.commands import Bot, Cog
 from requests import patch
 
 from module.fetch_tweet import fetch_tweet
@@ -16,7 +16,7 @@ from module.content_util import ContentUtil
 
 class TweetFix(Cog):
     def __init__(self, Arisa):
-        self.Arisa = Arisa
+        self.Arisa: Bot = Arisa
         self.channel: Optional[int] = None
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         logging.info(f" ↳ Extension {__name__} loaded")

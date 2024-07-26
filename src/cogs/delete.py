@@ -1,11 +1,11 @@
 import logging
 
-from discord.ext.commands import has_permissions, command, Cog
+from discord.ext.commands import has_permissions, command, Bot, Cog
 
 
 class Delete(Cog):
-    def __init__(self, Arisa):
-        self.Arisa = Arisa
+    def __init__(self, Arisa: Bot):
+        self.Arisa: Bot = Arisa
         logging.info(f" ↳ Extension {__name__} loaded")
 
     @has_permissions(manage_messages=True)

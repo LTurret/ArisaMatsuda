@@ -3,7 +3,7 @@ import logging
 from asyncio import run
 from os import getenv, listdir, path, sep, system
 
-from discord import Game, Intents, Status
+from discord import Game, Intents, Object, Status
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -21,11 +21,12 @@ root: str = path.dirname(path.realpath(__file__))
 @Arisa.event
 async def on_ready():
     await Arisa.change_presence(status=Status.online, activity=Game("🚧 v2.0"))
-    system("clear")
+    await Arisa.tree.sync(guild=Object(id=339368837356978187))
     logging.info(f"ENTER→PLEASURE")
 
 
 async def main():
+    system("clear")
     async with Arisa:
         for filename in listdir(f"{root}{sep}cogs"):
             if filename.endswith(".py"):
@@ -35,5 +36,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    logger = logging.getLogger("discord")
+    logger.setLevel(logging.CRITICAL)
     logging.basicConfig(level=logging.DEBUG)
     run(main())
