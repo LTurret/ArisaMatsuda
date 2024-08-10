@@ -89,7 +89,7 @@ python3 -B main.py
 > The following arguments are examples of using `virtualenv`.
 
 ```shell
-pm2 start main.py --name "arisa" --interpreter "venv/bin/python3" --interpreter-args "-B"
+pm2 start src/main.py --name "arisa" --interpreter "venv/bin/python3" --interpreter-args "-B"
 ```
 
 ## License
