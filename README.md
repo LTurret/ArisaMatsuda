@@ -49,14 +49,14 @@ retweet_subscribe_channel=
 
 #### Confidential and Scopes
 
-| **Name**         | **Tend for**        | **Scopes set**               | **Additional Information**                              |
-| ---------------- | ------------------- | ---------------------------- | ------------------------------------------------------- |
-| communication.py | 2 specific channels | {bi-channel_1, bi-channel_2} | This extension is special, Please check the source code |
-| emotes.py        | global              |                              |                                                         |
-| goods.py         | global              |                              |                                                         |
-| join.py          | server              | {production_server_1}        | Please check the source code                            |
-| ping.py          | global              |                              |                                                         |
-| twitterFix.py    | global              |                              |                                                         |
+| **Name**         | **Tend for**        | **Scopes**                 | **Additional Information**   |
+| ---------------- | ------------------- | -------------------------- | ---------------------------- |
+| communication.py | 2 specific channels | bi-channel_1, bi-channel_2 | Please check the source code |
+| emotes.py        | global              |                            |                              |
+| goods.py         | global              |                            |                              |
+| join.py          | server              | production_server_1        | Please check the source code |
+| ping.py          | global              |                            |                              |
+| twitterFix.py    | global              |                            |                              |
 
 #### communication.py
 
