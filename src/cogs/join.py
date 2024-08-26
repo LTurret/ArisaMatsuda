@@ -2,15 +2,12 @@ import logging
 
 from datetime import datetime
 from time import time
-from typing import List, Optional
+from typing import Callable, List, Optional
 from zoneinfo import ZoneInfo
 
 from discord import app_commands, Role, Interaction, Object, SelectOption
 from discord.ext.commands import Bot, Cog
 from discord.ui import Select, View
-
-
-current_time_taipei: datetime = datetime.now(ZoneInfo("Asia/Taipei"))
 
 
 class Join(Cog):
@@ -20,6 +17,7 @@ class Join(Cog):
 
     @app_commands.command(name="join", description="開關頻道的檢視模式")
     async def join(self, interaction: Interaction) -> None:
+        current_time_taipei: datetime = datetime.now(ZoneInfo("Asia/Taipei"))
         logging.info(f'[{current_time_taipei.strftime("%Y-%m-%d %H:%M:%S")}] "{__name__}" called by "{interaction.user.name}".')
         selection = Select(
             placeholder="選擇討論區（多選）",
@@ -39,13 +37,11 @@ class Join(Cog):
 
         async def join_callback(interaction: Interaction):
             async with interaction.channel.typing():
-                role_to_id = lambda role: role.id
-                manifest_role_id: List[int] = list(map(role_to_id, interaction.user.roles))
+                manifest_role_id: List[int] = [role.id for role in interaction.user.roles]
 
                 for role in selection.values:
                     interaction_role: Optional[Role] = interaction.guild.get_role(int(role))
-                    role_checker = lambda role_id: role_id == int(role)
-                    result: List[bool] = list(map(role_checker, manifest_role_id))
+                    result: List[bool] = [role_id == int(role) for role_id in manifest_role_id]
 
                     if any(result):
                         await interaction.user.remove_roles(interaction_role)
