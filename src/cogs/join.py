@@ -1,9 +1,7 @@
 import logging
 
-from datetime import datetime
 from time import time
-from typing import Callable, List, Optional
-from zoneinfo import ZoneInfo
+from typing import List, Optional
 
 from discord import app_commands, Role, Interaction, Object, SelectOption
 from discord.ext.commands import Bot, Cog
@@ -13,12 +11,11 @@ from discord.ui import Select, View
 class Join(Cog):
     def __init__(self, Arisa: Bot) -> None:
         self.Arisa: Bot = Arisa
-        logging.info(f" ↳ Extension {__name__} loaded")
+        logging.info(f"↳ Extension {__name__} loaded.")
 
     @app_commands.command(name="join", description="開關頻道的檢視模式")
     async def join(self, interaction: Interaction) -> None:
-        current_time_taipei: datetime = datetime.now(ZoneInfo("Asia/Taipei"))
-        logging.info(f'[{current_time_taipei.strftime("%Y-%m-%d %H:%M:%S")}] "{__name__}" called by "{interaction.user.name}".')
+        logging.info(f'{__name__}: called by "{interaction.user.name}".')
         selection = Select(
             placeholder="選擇討論區（多選）",
             options=[
