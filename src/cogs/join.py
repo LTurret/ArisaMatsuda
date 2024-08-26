@@ -1,10 +1,16 @@
 import logging
 
+from datetime import datetime
 from time import time
+from typing import List, Optional
+from zoneinfo import ZoneInfo
 
-from discord import app_commands, Interaction, Object, SelectOption
+from discord import app_commands, Role, Interaction, Object, SelectOption
 from discord.ext.commands import Bot, Cog
 from discord.ui import Select, View
+
+
+current_time_taipei: datetime = datetime.now(ZoneInfo("Asia/Taipei"))
 
 
 class Join(Cog):
@@ -14,6 +20,7 @@ class Join(Cog):
 
     @app_commands.command(name="join", description="開關頻道的檢視模式")
     async def join(self, interaction: Interaction) -> None:
+        logging.info(f'[{current_time_taipei.strftime("%Y-%m-%d %H:%M:%S")}] "{__name__}" called by "{interaction.user.name}".')
         selection = Select(
             placeholder="選擇討論區（多選）",
             options=[
@@ -30,20 +37,28 @@ class Join(Cog):
             max_values=8,
         )
 
-        async def join_callback(interaction):
-            for value in interaction.values:
-                if any(list(map(lambda role_id: role_id == int(value), interaction.member.roles))):
-                    await interaction.member.remove_role(role=int(value))
-                    await interaction.send(content="已離開該討論區", ephemeral=True)
-                else:
-                    await interaction.member.add_role(role=int(value))
-                    await interaction.send(content="已加入該討論區", ephemeral=True)
+        async def join_callback(interaction: Interaction):
+            async with interaction.channel.typing():
+                role_to_id = lambda role: role.id
+                manifest_role_id: List[int] = list(map(role_to_id, interaction.user.roles))
+
+                for role in selection.values:
+                    interaction_role: Optional[Role] = interaction.guild.get_role(int(role))
+                    role_checker = lambda role_id: role_id == int(role)
+                    result: List[bool] = list(map(role_checker, manifest_role_id))
+
+                    if any(result):
+                        await interaction.user.remove_roles(interaction_role)
+                        await interaction.response.send_message(content="已離開該討論區", ephemeral=True, silent=True, delete_after=3)
+                    else:
+                        await interaction.user.add_roles(interaction_role)
+                        await interaction.response.send_message(content="已加入該討論區", ephemeral=True, silent=True, delete_after=3)
 
         selection.callback = join_callback
         view = View()
         view.add_item(selection)
-        message: str = f"""### <t:{int(time())}> </join:1112285216447401984>\n- 使用選單選擇加入討論區\n- 也可以使用 `j/<討論區>` 來快速加入/退出"""
-        await interaction.response.send_message(message, view=view, ephemeral=True, silent=True, delete_after=30)
+        message: str = f"""- 使用選單選擇加入討論區\n- 也可以使用 `j/<討論區>` 來快速加入/退出\n-# <t:{int(time())}> </join:1112308135235956736>\n"""
+        await interaction.response.send_message(content=message, view=view, ephemeral=True, silent=True, delete_after=30)
 
 
 async def setup(Arisa):
