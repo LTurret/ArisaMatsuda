@@ -38,5 +38,7 @@ async def main():
 if __name__ == "__main__":
     logger = logging.getLogger("discord")
     logger.setLevel(logging.CRITICAL)
-    logging.basicConfig(level=logging.DEBUG)
+    logger = logging.getLogger("urllib3")
+    logger.setLevel(logging.CRITICAL)
+    logging.basicConfig(level=logging.DEBUG, format="%(levelname)s %(asctime)s %(message)s ", datefmt="%Y-%m-%d %H:%M:%S")
     run(main())
