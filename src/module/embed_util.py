@@ -52,7 +52,7 @@ class EmbedUtil:
         """
         Destructor for the EmbedUtil class.
         """
-        logging.info(f" ↳ Class {__name__} removed.")
+        logging.info(f"↳ Class {__name__} removed.")
 
     def __embed_generator(
         self,
