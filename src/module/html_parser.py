@@ -1,14 +1,12 @@
-from re import search
-
-from bs4 import BeautifulSoup
+import logging
+import re
 
 
 def html_parser(html: str, selector: str = "twitter") -> list:
-    soup: BeautifulSoup | list[str] = BeautifulSoup(html, "html.parser")
-    soup = soup.find_all("a", class_="tweet-link")
-    soup = list(map(str, soup))
-    soup = list(map(lambda string: url_slice(string, selector), soup))
-    return soup
+    pattern: str = r'<a[^>]*class="tweet-link"[^>]*href="(.+).."'
+    tweet_url: list[str] = re.findall(pattern, html)
+    tweet_url = list(map(lambda string: url_split(string, selector), tweet_url))
+    return tweet_url
 
 
 def url_slice(raw_string: str, selector: str = "twitter") -> str:
