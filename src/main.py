@@ -1,59 +1,82 @@
-import json
+import logging
 
-from os import getenv
-from os import listdir
-from os import path
-from os import sep
-from os import system
+from asyncio import run
+from os import environ, getenv, listdir, sep
+from pathlib import Path
 
-from dotenv import load_dotenv
 from tinydb import TinyDB
-from tinydb import Query
-from interactions import listen
-from interactions import Activity
-from interactions import Client
-from interactions import Intents
 
-Arisa = Client(delete_unused_application_cmds=True, intents=Intents.ALL, activity=Activity(name="偶像大師 百萬人演唱會！ 劇場時光"))
+from discord import Game, Intents, Status
+from discord.ext import commands
+from dotenv import load_dotenv
 
 
-@listen()
-async def on_startup():
-    system("clear")
-    print(f"Up!10sion♪\nEverybody attention!!")
+intents: Intents = Intents.default()
+intents.message_content = True
+Arisa: commands.Bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
+Arisa.remove_command("help")
+
+# Define paths using Path
+root: Path = Path(__file__).resolve().parent
+cogs: Path = root / "cogs"
+resource: Path = root.parent / "res"
+path_db: Path = resource / "database.json"
+path_headers: Path = resource / "headers.json"
+
+# Convert Path objects to strings
+environ["root"] = str(root)
+environ["cogs"] = str(cogs)
+environ["resource"] = str(resource)
+environ["path_db"] = str(path_db)
+environ["path_headers"] = str(path_headers)
 
 
-print("Starting...")
+@Arisa.event
+async def on_ready():
+    await Arisa.change_presence(status=Status.online, activity=Game("🚧 v2.0"))
+    # Syncing coulde cause 429 ratelimit, disable it when debugging.
+    # await Arisa.tree.sync(guild=Object(id=339368837356978187))
+    logging.info("Up!10sion♪ Everybody attention!!")
 
-root: str = path.dirname(path.realpath(__file__))
-resource: str = f"{root}{sep}..{sep}res"
-path_db: str = f"{resource}{sep}database.json"
-path_headers: str = f"{resource}{sep}headers.json"
 
-load_dotenv(f"{root}{sep}..{sep}.env")
+async def main():
+    # Initialize
+    if not path_headers.is_file():
+        raise FileNotFoundError(rf"{path_headers} does not exist!")
 
-if not path.isfile(path_db):
-    print(f'Creating "{path_db}"...')
-    database = TinyDB(path_db)
-    initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
+    if not path_db.is_file():
+        logging.info(rf"Initializing database. Creating database {path_db}")
+        database: TinyDB = TinyDB(path_db)
+        initial_coinfig: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
 
-    for data in initial_config:
-        database.insert(data)
+        for data in initial_coinfig:
+            database.insert(data)
 
-else:
-    database = TinyDB(path_db)
+    else:
+        logging.info(rf"Found database, Loading {path_db}")
+        database: TinyDB = TinyDB(path_db)
 
-if not path.isfile(path_headers):
-    raise FileNotFoundError(rf'"{path_headers}" is not exist!')
+    async with Arisa:
+        for filename in listdir(f"{root}{sep}cogs"):
+            if filename.endswith(".py"):
+                logging.debug(rf"Loading file: cogs/{filename}")
+                await Arisa.load_extension(rf"cogs.{filename[:-3]}")
 
-with open(path_headers, "r") as headers:
-    headers = json.load(headers)
-    headers_update: dict = {"name": "headers", "value": headers}
-    database.update(headers_update, Query().name == "headers")
+        await Arisa.start(getenv("BOT_TOKEN", "None"))
 
-for filename in listdir(f"{root}{sep}cogs"):
-    if filename.endswith(".py"):
-        print(f"Loading extension: {filename}")
-        Arisa.load_extension(f"cogs.{filename[:-3]}")
 
-Arisa.start(getenv("BOT_TOKEN"))
+if __name__ == "__main__":
+    load_dotenv()
+    logger = logging.getLogger("discord")
+    logger.setLevel(logging.WARNING)
+    logger = logging.getLogger("urllib3")
+    logger.setLevel(logging.CRITICAL)
+    logging.basicConfig(
+        filename="service.log",
+        encoding="utf-8",
+        filemode="a",
+        level=logging.INFO,
+        format="%(levelname)-5s %(asctime)s %(message)s ",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    run(main())
