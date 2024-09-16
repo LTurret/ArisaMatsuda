@@ -19,28 +19,28 @@ def segment(urls: dict, upper_snowflake: int) -> list:
 
 def debug() -> None:
     manifest: list[str] = [
-        'https://twitter.com/imasml_theater/status/1833339865162768888',
-        'https://twitter.com/imasml_theater/status/1835332755544056023',
-        'https://twitter.com/imasml_theater/status/1834651886487531848',
-        'https://twitter.com/imasml_theater/status/1834608474866811266',
-        'https://twitter.com/imasml_theater/status/1834608223997104459',
-        'https://twitter.com/imasml_theater/status/1834607984225443903',
-        'https://twitter.com/imasml_theater/status/1834502526705823838',
-        'https://twitter.com/imasml_theater/status/1834502277157322822',
-        'https://twitter.com/imasml_theater/status/1834396578792308773',
-        'https://twitter.com/imasml_theater/status/1834207837343383963',
-        'https://twitter.com/imasml_theater/status/1834206809785307630',
-        'https://twitter.com/imasml_theater/status/1834206000456630375',
-        'https://twitter.com/imasml_theater/status/1834080495354687699',
-        'https://twitter.com/imasml_theater/status/1834080243684180399',
-        'https://twitter.com/imasml_theater/status/1834079992180867578',
-        'https://twitter.com/imasml_theater/status/1834079740715786539',
-        'https://twitter.com/imasml_theater/status/1834079491116658783',
-        'https://twitter.com/imasml_theater/status/1834064391870054608',
-        'https://twitter.com/imasml_theater/status/1834034195288691043',
-        'https://twitter.com/imasml_theater/status/1833831119537741890',
-        'https://twitter.com/imasml_theater/status/1833792850490007757'
-        ] 
+        "https://twitter.com/imasml_theater/status/1833339865162768888",
+        "https://twitter.com/imasml_theater/status/1835332755544056023",
+        "https://twitter.com/imasml_theater/status/1834651886487531848",
+        "https://twitter.com/imasml_theater/status/1834608474866811266",
+        "https://twitter.com/imasml_theater/status/1834608223997104459",
+        "https://twitter.com/imasml_theater/status/1834607984225443903",
+        "https://twitter.com/imasml_theater/status/1834502526705823838",
+        "https://twitter.com/imasml_theater/status/1834502277157322822",
+        "https://twitter.com/imasml_theater/status/1834396578792308773",
+        "https://twitter.com/imasml_theater/status/1834207837343383963",
+        "https://twitter.com/imasml_theater/status/1834206809785307630",
+        "https://twitter.com/imasml_theater/status/1834206000456630375",
+        "https://twitter.com/imasml_theater/status/1834080495354687699",
+        "https://twitter.com/imasml_theater/status/1834080243684180399",
+        "https://twitter.com/imasml_theater/status/1834079992180867578",
+        "https://twitter.com/imasml_theater/status/1834079740715786539",
+        "https://twitter.com/imasml_theater/status/1834079491116658783",
+        "https://twitter.com/imasml_theater/status/1834064391870054608",
+        "https://twitter.com/imasml_theater/status/1834034195288691043",
+        "https://twitter.com/imasml_theater/status/1833831119537741890",
+        "https://twitter.com/imasml_theater/status/1833792850490007757",
+    ]
     logging.debug(f'Count: {len(segment(manifest, int(input("Enter upper snowflake: "))))}')
 
 

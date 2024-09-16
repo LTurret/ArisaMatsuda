@@ -23,7 +23,13 @@ class EmbedUtil:
         footer_text (Optional[str]): Custom footer text for the embed. Defaults to "樓梯的推特連結修復魔法".
     """
 
-    def __init__(self, content: Optional[dict] = None, tweet_id: Optional[str] = None, footer_text: Optional[str] = "樓梯的推特連結修復魔法") -> None:
+    def __init__(
+        self,
+        content: Optional[dict] = None,
+        tweet_id: Optional[str] = None,
+        footer_text: Optional[str] = "樓梯的推特連結修復魔法",
+        color: Optional[int] = 0x1DA0F2,
+    ) -> None:
         """
         Initializes the EmbedUtil class and processes the provided content to generate Embed objects.
 
@@ -95,10 +101,7 @@ class EmbedUtil:
             icon_url=content["icon_url"],
         )
 
-        embed.set_footer(
-            text=footer_text,
-            icon_url=icon_url,
-        )
+        embed.set_footer(text=footer_text, icon_url=icon_url)
 
         if not minimal:
             embed.add_field(name="愛心數", value=f'{int(content["favorite_count"]):,}', inline=True)
