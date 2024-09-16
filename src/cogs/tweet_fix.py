@@ -3,7 +3,7 @@ import logging
 from asyncio import sleep
 from os import getenv
 from re import findall, search
-from typing import Final, Optional
+from typing import Final, List, Optional
 
 from discord import Embed
 from discord.ext.commands import Bot, Cog
@@ -15,14 +15,14 @@ from module.content_util import ContentUtil
 
 
 class TweetFix(Cog):
-    def __init__(self, Arisa):
+    def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
         self.channel: Optional[int] = None
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        logging.info(f"↳ Class {__name__} created.")
+        logging.info(f"↳ Extension {__name__} created.")
 
     def __del__(self) -> None:
-        logging.info(f"↳ Class {__name__} removed.")
+        logging.info(f"↳ Extension {__name__} removed.")
 
     @Cog.listener()
     async def on_message(self, message: str):
@@ -46,27 +46,21 @@ class TweetFix(Cog):
 
                     # Try follow the standard procedure or just send vxtwitter
                     try:
-                        embeds: Optional[list[Embed]] = None
                         content_util: ContentUtil = ContentUtil()
                         content: dict = {**(await content_util.get_contents(api_callback))}
-                        embeds: EmbedUtil = EmbedUtil(content, tweet_id, "(*>△<)<").embed_queue
+                        embeds: List[Embed] = EmbedUtil(content, tweet_id, "(*>△<)<").embed_queue
 
                     except Exception as exception:
                         logging.critical(exception)
-                        result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", message.content)[0]
+                        result: List[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", message.content)[0]
                         query: str = f"{result[0]}vxtwitter{result[-1]}"
                         await message.channel.send(query, reference=message, silent=True)
 
                     # Send embed
                     # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                    try:
-                        if content["videos"] is not None:
-                            await message.channel.send(files=content["videos"], embeds=embeds, reference=message, allowed_mentions=None, silent=True)
-                        else:
-                            await message.channel.send(embeds=embeds, reference=message, allowed_mentions=None, silent=True)
-                    except:
-                        logging.info(f"{__name__}: Message parse failed.")
-                        await message.channel.send(embeds=embeds, reference=message, allowed_mentions=None, silent=True)
+                    logging.debug(content["videos"])
+                    logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
+                    await message.channel.send(files=content["videos"], embeds=embeds, reference=message, allowed_mentions=None, silent=True)
 
 
 async def setup(Arisa):

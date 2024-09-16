@@ -48,11 +48,11 @@ class EmbedUtil:
             logging.info(f"{__name__} Media contents processing.")
 
             for image in content["images"]:
-                self.embed_queue.append(self.__embed_generator(content, tweet_id, image, footer_text=footer_text))
+                self.embed_queue.append(self.__embed_generator(content, tweet_id, image, footer_text, color))
 
         elif content:
             logging.info(f"{__name__} Plain content processing.")
-            self.embed_queue.append(self.__embed_generator(content, tweet_id, footer_text=footer_text))
+            self.embed_queue.append(self.__embed_generator(content, tweet_id, footer_text, color))
 
     def __del__(self) -> None:
         """
