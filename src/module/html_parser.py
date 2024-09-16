@@ -19,19 +19,25 @@ def url_slice(raw_string: str, selector: str = "twitter") -> str:
     return text
 
 
-def debug():
-    # Control factor
-    selector: str | None = None
+def debug() -> None:
+    from requests import get, Response
+    from os import getenv
+    from dotenv import load_dotenv
 
-    with open("./response.html") as file:
-        queue: list = html_parser(file, selector)
-        print(queue)
+    load_dotenv()
+
+    response: Response = get(getenv("cdn_url"))
+    html_content: str = response.text
+    queue: list[str] = html_parser(html_content)
+    logging.debug(queue)
 
 
 if __name__ == "__main__":
+    logger = logging.getLogger("urllib3")
+    logger.setLevel(logging.CRITICAL)
+    logging.basicConfig(level=logging.DEBUG, format="%(message)s ", datefmt="%Y-%m-%d %H:%M:%S")
     try:
         debug()
         print("\033[93m")  # Format warning
     except Exception as exception:
-        print(exception)
-    raise Warning(f"{__file__} Running with debug mode, Please note that this script is not tend to run independently.")
+        logging.debug(exception)
