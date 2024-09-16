@@ -1,3 +1,5 @@
+import logging
+
 from re import findall
 
 
@@ -6,11 +8,12 @@ def segment(urls: dict, upper_snowflake: int) -> list:
     segmented: list[int] = []
 
     for url in urls:
-        if int(findall(regex, url)[0]) > upper_snowflake:
+        tweet_id: int = int(findall(regex, url)[0])
+        logging.debug(f"{tweet_id} {tweet_id - upper_snowflake}")
+        if tweet_id > upper_snowflake:
             segmented.append(url)
 
     segmented = [int(findall(r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)", url)[0]) for url in segmented]
-
     return segmented
 
 
