@@ -34,6 +34,5 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format="%(message)s ", datefmt="%Y-%m-%d %H:%M:%S")
     try:
         debug()
-        print("\033[93m")  # Format warning
     except Exception as exception:
         logging.debug(exception)
