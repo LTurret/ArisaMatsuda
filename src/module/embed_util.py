@@ -23,7 +23,7 @@ class EmbedUtil:
         footer_text (Optional[str]): Custom footer text for the embed. Defaults to "樓梯的推特連結修復魔法".
     """
 
-    def __init__(self, content: Optional[dict] = None, tweet_id: Optional[str] = None, footer_text: Optional[str] = "樓梯的推特連結修復魔法"):
+    def __init__(self, content: Optional[dict] = None, tweet_id: Optional[str] = None, footer_text: Optional[str] = "樓梯的推特連結修復魔法") -> None:
         """
         Initializes the EmbedUtil class and processes the provided content to generate Embed objects.
 
@@ -35,7 +35,7 @@ class EmbedUtil:
             tweet_id (Optional[str]): The snowflake or ID of the tweet to be linked in the embed.
             footer_text (Optional[str]): Custom footer text for the embed.
         """
-        logging.info(f"↳ Class {__name__} created.")
+        logging.debug(f"↳ Class {__name__} created.")
         self.embed_queue: List[Embed] = []
 
         if content and "images" in content and content["images"]:
@@ -52,7 +52,7 @@ class EmbedUtil:
         """
         Destructor for the EmbedUtil class.
         """
-        logging.info(f"↳ Class {__name__} removed.")
+        logging.debug(f"↳ Class {__name__} removed.")
 
     def __embed_generator(
         self,
