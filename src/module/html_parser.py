@@ -9,12 +9,10 @@ def html_parser(html: str, selector: str = "twitter") -> list:
     return tweet_url
 
 
-def url_slice(raw_string: str, selector: str = "twitter") -> str:
+def url_split(raw_string: str, selector: str = "twitter") -> str:
     domain_manifest: dict = {"twitter": "https://twitter.com", "x": "https://x.com", "nitter": "https://nitter.net"}
-    expression: str = r"href=\"(.+)\""
-    api_slice: str = search(expression, raw_string).group(1)[:-2]
-    text: str = f"{domain_manifest[selector]}{api_slice}"
-    return text
+    curl_compose: str = f"{domain_manifest[selector]}{raw_string}"
+    return curl_compose
 
 
 def debug() -> None:
