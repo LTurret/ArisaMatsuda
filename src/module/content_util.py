@@ -25,13 +25,13 @@ class ContentUtil:
         """
         Initializes the ContentUtil class.
         """
-        logging.info(f"↳ Class {__name__} created.")
+        logging.debug(f"↳ Class {__name__} created.")
 
     def __del__(self) -> None:
         """
         Destructor for the ContentUtil class.
         """
-        logging.info(f"↳ Class {__name__} removed.")
+        logging.debug(f"↳ Class {__name__} removed.")
 
     async def get_contents(self, api_callback: dict, host: str = "fx") -> dict:
         """
@@ -110,11 +110,11 @@ class ContentUtil:
                 variants: dict = tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"]
 
                 # Find best bitrate
-                best_bitrate: int = 0
+                upper_bitrate: int = 0
                 for asset in variants:
                     if asset["content_type"] == "video/mp4":
-                        if asset["bitrate"] > best_bitrate:
-                            best_bitrate = asset["bitrate"]
+                        if asset["bitrate"] > upper_bitrate:
+                            upper_bitrate = asset["bitrate"]
                         videos.append(await self.__video_upload(asset["url"]))
 
             # Only check pictures when tweet does not contain any video
