@@ -1,6 +1,8 @@
 import logging
 
 from asyncio import run
+from typing import Dict
+from logging import Logger
 from os import environ, getenv, listdir, sep
 from pathlib import Path
 
@@ -33,9 +35,9 @@ environ["path_headers"] = str(path_headers)
 
 @Arisa.event
 async def on_ready():
-    await Arisa.change_presence(status=Status.online, activity=Game("🚧 v2.0"))
+    await Arisa.change_presence(status=Status.online, activity=Game("⌒(*＞ｖ＜)b⌒"))
     # Syncing coulde cause 429 ratelimit, disable it when debugging.
-    # await Arisa.tree.sync(guild=Object(id=339368837356978187))
+    await Arisa.tree.sync()
     logging.info("Up!10sion♪ Everybody attention!!")
 
 
@@ -67,7 +69,8 @@ async def main():
 
 if __name__ == "__main__":
     load_dotenv()
-    logger = logging.getLogger("discord")
+    manifest: Dict[str, str] = {"0": logging.INFO, "1": logging.DEBUG}
+    logger: Logger = logging.getLogger("discord")
     logger.setLevel(logging.WARNING)
     logger = logging.getLogger("urllib3")
     logger.setLevel(logging.CRITICAL)
@@ -75,8 +78,9 @@ if __name__ == "__main__":
         filename="service.log",
         encoding="utf-8",
         filemode="a",
-        level=logging.INFO,
+        level=manifest[getenv("debug_flag")],
         format="%(levelname)-5s %(asctime)s %(message)s ",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+    logging.debug("🚧 Debug mode enable. 🚧")
     run(main())
