@@ -1,9 +1,9 @@
-from re import findall
-
 from json import dumps
-from urllib.parse import quote
+from re import findall
+from typing import Dict
 
 from aiohttp import ClientSession
+from urllib.parse import quote
 
 from module.get_tokens import get_tokens
 
@@ -20,7 +20,7 @@ async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIr
     return callback
 
 
-async def by_twitter(parameter: dict) -> dict:
+async def by_twitter(parameter: dict) -> Dict[str, any]:
     # API headers
     tokens: dict = {**(await get_tokens())}
     tweetId: int = parameter["tweetId"]
@@ -79,7 +79,7 @@ async def by_twitter(parameter: dict) -> dict:
     return callback
 
 
-async def by_fx(parameter: dict):
+async def by_fx(parameter: dict) -> Dict[str, any]:
     tweetId: int = parameter["tweetId"]
     url: str = f"https://api.fxtwitter.com/i/status/{tweetId}"
 
