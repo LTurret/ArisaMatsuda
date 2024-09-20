@@ -1,7 +1,7 @@
 import logging
 
 from os import getenv
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from aiohttp import ClientSession
 from tinydb import Query, TinyDB
@@ -36,33 +36,34 @@ class TweetSubscribe(Cog):
     @loop(seconds=20)
     async def retweet(self):
         logging.debug("Fetching subscription list.")
-        url: str = getenv("cdn_url")
+        urls: List[str] = getenv("cdn_urls").split(", ")
         headers: dict = self.config.search(Query().name == "headers")[0]["value"]
         current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
 
-        async with ClientSession(headers=headers, trust_env=True) as session:
-            async with session.get(url) as response:
-                queue: List[str] = html_parser(await response.text())
-                queue.sort()
+        for url in urls:
+            async with ClientSession(headers=headers, trust_env=True) as session:
+                async with session.get(url) as response:
+                    queue: List[str] = html_parser(await response.text())
+                    queue.sort()
 
-        queue = segment(queue, current_snowflake)
+            queue = segment(queue, current_snowflake)
 
-        # Update snowflake
-        if len(queue):
-            logging.info("New tweet found in subscription channel, start sending to Discord.")
-            upper_snowflake: int = queue[-1]
-            snowflake_data: dict = {"name": "snowflake", "value": max(current_snowflake, upper_snowflake)}
-            self.config.update(snowflake_data, Query().name == "snowflake")
-            logging.info(f"snowflake updated: {upper_snowflake}")
+            # Update snowflake
+            if len(queue):
+                logging.info("New tweet found in subscription channel, start sending to Discord.")
+                upper_snowflake: int = queue[-1]
+                snowflake_data: Dict[str, str | int] = {"name": "snowflake", "value": max(current_snowflake, upper_snowflake)}
+                self.config.update(snowflake_data, Query().name == "snowflake")
+                logging.info(f"snowflake updated: {upper_snowflake}")
 
-        for tweet_id in queue:
-            api_callback: dict = await fetch_tweet(tweet_id)
-            content_util: ContentUtil = ContentUtil()
-            content: dict = {**(await content_util.get_contents(api_callback))}
-            embeds: List[Embed] = EmbedUtil(content, tweet_id, "百萬轉推魔法", 0xD8A604).embed_queue
+            for tweet_id in queue:
+                api_callback: dict = await fetch_tweet(tweet_id)
+                content_util: ContentUtil = ContentUtil()
+                content: dict = {**(await content_util.get_contents(api_callback))}
+                embeds: List[Embed] = EmbedUtil(content, tweet_id, "百萬轉推魔法", 0xD8A604).embed_queue
 
-            logging.info(f"{__name__}: Video processed succesfully and sent to channel.")
-            await self.channel.send(files=content["videos"], embeds=embeds, allowed_mentions=None, silent=True)
+                await self.channel.send(files=content["videos"], embeds=embeds, allowed_mentions=None, silent=True)
+                logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
 
 
 async def setup(Arisa):
