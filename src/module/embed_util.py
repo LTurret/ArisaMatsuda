@@ -42,17 +42,18 @@ class EmbedUtil:
             footer_text (Optional[str]): Custom footer text for the embed.
         """
         logging.debug(f"↳ Class {__name__} created.")
+        logging.debug(content)
         self.embed_queue: List[Embed] = []
 
         if content and "images" in content and content["images"]:
             logging.info(f"{__name__} Media contents processing.")
 
             for image in content["images"]:
-                self.embed_queue.append(self.__embed_generator(content, tweet_id, image, footer_text, color))
+                self.embed_queue.append(self.__embed_generator(content=content, tweet_id=tweet_id, media=image, footer_text=footer_text, color=color))
 
         elif content:
             logging.info(f"{__name__} Plain content processing.")
-            self.embed_queue.append(self.__embed_generator(content, tweet_id, footer_text, color))
+            self.embed_queue.append(self.__embed_generator(content=content, tweet_id=tweet_id, footer_text=footer_text, color=color))
 
     def __del__(self) -> None:
         """
