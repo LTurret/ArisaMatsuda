@@ -56,7 +56,7 @@ debug_flag=0
 
 # Optional Tokens
 GPT_TOKEN=
-cdn_url=
+cdn_urls=url1, url2
 
 ## Channel Configuration
 bi_channel_1=
