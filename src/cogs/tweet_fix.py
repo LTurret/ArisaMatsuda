@@ -59,7 +59,9 @@ class TweetFix(Cog):
                     # Send embed
                     # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
                     logging.debug([content["videos"], embeds])
-                    await message.channel.send(files=content["videos"], embeds=embeds, reference=message, allowed_mentions=AllowedMentions(replied_user=False), silent=True)
+                    await message.channel.send(
+                        files=content["videos"], embeds=embeds, reference=message, allowed_mentions=AllowedMentions(replied_user=False), silent=True
+                    )
                     logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
 
 
