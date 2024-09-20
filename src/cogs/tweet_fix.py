@@ -5,7 +5,7 @@ from os import getenv
 from re import findall, search
 from typing import Final, List, Optional
 
-from discord import Embed
+from discord import AllowedMentions, Embed
 from discord.ext.commands import Bot, Cog
 from requests import patch
 
@@ -51,16 +51,16 @@ class TweetFix(Cog):
                         embeds: List[Embed] = EmbedUtil(content, tweet_id, "(*>△<)<").embed_queue
 
                     except Exception as exception:
-                        logging.critical(exception)
+                        logging.error(exception)
                         result: List[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", message.content)[0]
                         query: str = f"{result[0]}vxtwitter{result[-1]}"
                         await message.channel.send(query, reference=message, silent=True)
 
                     # Send embed
                     # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
-                    logging.debug(content["videos"])
+                    logging.debug([content["videos"], embeds])
+                    await message.channel.send(files=content["videos"], embeds=embeds, reference=message, allowed_mentions=AllowedMentions(replied_user=False), silent=True)
                     logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
-                    await message.channel.send(files=content["videos"], embeds=embeds, reference=message, allowed_mentions=None, silent=True)
 
 
 async def setup(Arisa):
