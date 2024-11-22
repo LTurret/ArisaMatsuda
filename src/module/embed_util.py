@@ -28,6 +28,7 @@ class EmbedUtil:
         content: Optional[dict] = None,
         tweet_id: Optional[str] = None,
         footer_text: Optional[str] = "樓梯的推特連結修復魔法",
+        original_link: Optional[str] = None,
         color: Optional[int] = 0x1DA0F2,
     ) -> None:
         """
@@ -49,11 +50,13 @@ class EmbedUtil:
             logging.info(f"{__name__} Media contents processing.")
 
             for image in content["images"]:
-                self.embed_queue.append(self.__embed_generator(content=content, tweet_id=tweet_id, media=image, footer_text=footer_text, color=color))
+                self.embed_queue.append(self.__embed_generator(content, tweet_id, image, original_link, footer_text, color))
 
         elif content:
             logging.info(f"{__name__} Plain content processing.")
-            self.embed_queue.append(self.__embed_generator(content=content, tweet_id=tweet_id, footer_text=footer_text, color=color))
+            self.embed_queue.append(
+                self.__embed_generator(content=content, tweet_id=tweet_id, original_link=original_link, footer_text=footer_text, color=color)
+            )
 
     def __del__(self) -> None:
         """
@@ -66,6 +69,7 @@ class EmbedUtil:
         content: dict,
         tweet_id: str,
         media: Optional[str] = None,
+        original_link: Optional[str] = None,
         footer_text: Optional[str] = None,
         color: int = 0x1DA0F2,
         icon_url: str = "https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
@@ -109,6 +113,9 @@ class EmbedUtil:
             embed.add_field(name="轉推數", value=f'{int(content["retweet_count"]):,}', inline=True)
 
         embed.add_field(name="推文傳送門", value=f"[點我！](https://fxtwitter.com/i/status/{tweet_id})", inline=True)
+
+        if original_link:
+            embed.add_field(name="原始訊息", value=f"[原始貼文]({original_link})", inline=True)
 
         if media:
             embed.set_image(url=media)

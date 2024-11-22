@@ -3,7 +3,7 @@ import logging
 from asyncio import sleep
 from os import getenv
 from re import findall, search
-from typing import Final, List, Optional
+from typing import Final, List
 
 from discord import AllowedMentions, Embed
 from discord.ext.commands import Bot, Cog
@@ -17,7 +17,6 @@ from module.content_util import ContentUtil
 class TweetFix(Cog):
     def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
-        self.channel: Optional[int] = None
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         logging.info(f"↳ Extension {__name__} created.")
 
@@ -36,6 +35,7 @@ class TweetFix(Cog):
                     "content-type": "application/json",
                 }
 
+                # Remove original message embedding object
                 await sleep(0.25)
                 patch(f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}", headers=headers, data='{"flags":4}')
 
@@ -48,7 +48,8 @@ class TweetFix(Cog):
                     try:
                         content_util: ContentUtil = ContentUtil()
                         content: dict = {**(await content_util.get_contents(api_callback))}
-                        embeds: List[Embed] = EmbedUtil(content, tweet_id, "(*>△<)<").embed_queue
+                        original_link: str = f"https://discord.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
+                        embeds: List[Embed] = EmbedUtil(content, tweet_id, footer_text="(*>△<)<", original_link=original_link).embed_queue
 
                     except Exception as exception:
                         logging.error(exception)
@@ -57,12 +58,21 @@ class TweetFix(Cog):
                         await message.channel.send(query, reference=message, silent=True)
 
                     # Send embed
-                    # credit - kenneth (https://discord.com/channels/789032594456576001/1141430904644964412)
                     logging.debug([content["videos"], embeds])
                     await message.channel.send(
                         files=content["videos"], embeds=embeds, reference=message, allowed_mentions=AllowedMentions(replied_user=False), silent=True
                     )
                     logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
+
+    @Cog.listener()
+    async def on_raw_message_delete(self, payload):
+        channel = await self.Arisa.fetch_channel(payload.channel_id)
+        pattern: str = rf".+\/({payload.message_id})"
+
+        async for message in channel.history(limit=20):
+            if message.author == self.Arisa.user:
+                if findall(pattern, message.embeds[0].fields[-1].value):
+                    await message.delete()
 
 
 async def setup(Arisa):
