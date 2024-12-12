@@ -16,7 +16,7 @@ class ContentUtil:
 
     Methods:
         get_contents(api_callback: dict, host: str): Retrieves content based on the provided host (e.g., "twitter" or "fx").
-        __video_upload(url: str): Downloads a video from the provided URL and prepares it for upload to Discord.
+        __video_upload(url: str): Download a video from the provided URL and prepares it for upload to Discord.
         __by_twitter(api_callback: dict): Processes Twitter-specific content.
         __by_fx(api_callback: dict): Processes fxTwitter-specific content.
     """

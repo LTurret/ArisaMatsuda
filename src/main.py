@@ -82,5 +82,5 @@ if __name__ == "__main__":
         format="%(levelname)-5s %(asctime)s %(message)s ",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logging.debug("🚧 Debug mode enable. 🚧")
+    logging.debug("🚧 Debug mode enabled. 🚧")
     run(main())
