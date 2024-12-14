@@ -49,9 +49,9 @@ async def main():
     if not path_db.is_file():
         logging.info(rf"Initializing database. Creating database {path_db}")
         database: TinyDB = TinyDB(path_db)
-        initial_coinfig: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
+        initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
 
-        for data in initial_coinfig:
+        for data in initial_config:
             database.insert(data)
 
     else:
