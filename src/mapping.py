@@ -1,6 +1,5 @@
 from enum import Enum
 from pathlib import Path
-from typing import List
 import tomllib
 
 
@@ -24,8 +23,8 @@ class MappingUtil:
         KEYWORDS: Path = RESOURCE / "keywords.json"
 
     class FileType(Enum):
-        SINGLE = "single"
-        COLLECTION = "collection"
+        SINGLE: str = NotImplemented
+        COLLECTION: str = NotImplemented
 
 
 if __name__ == "__main__":
