@@ -2,10 +2,11 @@ import logging
 
 from datetime import datetime
 from io import BytesIO
+from pathlib import Path
 from re import findall, search
-from typing import List
-
+from typing import List, Optional
 from aiohttp import ClientSession
+
 from discord import File
 
 
@@ -21,11 +22,16 @@ class ContentUtil:
         __by_fx(api_callback: dict): Processes fxTwitter-specific content.
     """
 
-    def __init__(self):
+    def __init__(self, file: Optional[Path] = None) -> File:
         """
         Initializes the ContentUtil class.
+
+        If `file` is provided, it will be used to create a Discord File object.
         """
         logging.debug(f"↳ Class {__name__} created.")
+
+        if file is not None:
+            return File(BytesIO(file), filename="attachment.mp4")
 
     def __del__(self) -> None:
         """
