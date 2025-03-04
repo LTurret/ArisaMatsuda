@@ -1,10 +1,10 @@
+import tomllib
 import logging
 
 from asyncio import run
 from typing import Dict
 from logging import Logger
-from os import environ, getenv, listdir, sep
-from pathlib import Path
+from os import getenv, listdir, sep
 
 from tinydb import TinyDB
 
@@ -12,25 +12,13 @@ from discord import Game, Intents, Status
 from discord.ext import commands
 from dotenv import load_dotenv
 
+from mapping import MappingUtil
+
 
 intents: Intents = Intents.default()
 intents.message_content = True
 Arisa: commands.Bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 Arisa.remove_command("help")
-
-# Define paths using Path
-root: Path = Path(__file__).resolve().parent
-cogs: Path = root / "cogs"
-resource: Path = root.parent / "res"
-path_db: Path = resource / "database.json"
-path_headers: Path = resource / "headers.json"
-
-# Convert Path objects to strings
-environ["root"] = str(root)
-environ["cogs"] = str(cogs)
-environ["resource"] = str(resource)
-environ["path_db"] = str(path_db)
-environ["path_headers"] = str(path_headers)
 
 
 @Arisa.event
@@ -42,24 +30,28 @@ async def on_ready():
 
 
 async def main():
-    # Initialize
-    if not path_headers.is_file():
-        raise FileNotFoundError(rf"{path_headers} does not exist!")
+    if not MappingUtil.Directory.HEADERS.value.is_file():
+        raise FileNotFoundError(rf"{MappingUtil.Directory.HEADERS.value} does not exist!")
 
-    if not path_db.is_file():
-        logging.info(rf"Initializing database. Creating database {path_db}")
-        database: TinyDB = TinyDB(path_db)
+    if not MappingUtil.Directory.DATABASE.value.is_file():
+        logging.info(rf"Initializing database. Creating database {MappingUtil.Directory.DATABASE.value}")
+        database: TinyDB = TinyDB(MappingUtil.Directory.DATABASE.value)
         initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
 
         for data in initial_config:
             database.insert(data)
 
     else:
-        logging.info(rf"Found database, Loading {path_db}")
-        database: TinyDB = TinyDB(path_db)
+        logging.info(rf"Found database, Loading {MappingUtil.Directory.DATABASE.value}")
+        database: TinyDB = TinyDB(MappingUtil.Directory.DATABASE.value)
+
+    # if path_keywords.is_file():
+    #     with open(path_keywords, "r") as keywords_fp:
+    #         keywords: dict = json.load(keywords_fp)
+    #         database.insert(keywords)
 
     async with Arisa:
-        for filename in listdir(f"{root}{sep}cogs"):
+        for filename in listdir(f"{MappingUtil.Directory.ROOT.value}{sep}cogs"):
             if filename.endswith(".py"):
                 logging.debug(rf"Loading file: cogs/{filename}")
                 await Arisa.load_extension(rf"cogs.{filename[:-3]}")
@@ -68,8 +60,13 @@ async def main():
 
 
 if __name__ == "__main__":
+    # Initailization
     load_dotenv()
-    manifest: Dict[str, str] = {"0": logging.INFO, "1": logging.DEBUG}
+    with open(MappingUtil.Directory.CONFIG.value, "rb") as config:
+        config = tomllib.load(config)
+        manifest: Dict[str, str] = {False: logging.INFO, True: logging.DEBUG}
+
+    # Logger Setup
     logger: Logger = logging.getLogger("discord")
     logger.setLevel(logging.WARNING)
     logger = logging.getLogger("urllib3")
@@ -78,7 +75,7 @@ if __name__ == "__main__":
         filename="service.log",
         encoding="utf-8",
         filemode="a",
-        level=manifest[getenv("debug_flag")],
+        level=manifest[config["debug_flag"]],
         format="%(levelname)-5s %(asctime)s %(message)s ",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
