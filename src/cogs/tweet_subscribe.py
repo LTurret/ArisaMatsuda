@@ -10,6 +10,7 @@ from discord import Embed
 from discord.ext.tasks import loop
 from discord.ext.commands import Bot, Cog
 
+from mapping import MappingUtil
 from module.fetch_tweet import fetch_tweet
 from module.html_parser import html_parser
 from module.tweets_segment import segment
@@ -20,9 +21,10 @@ from module.embed_util import EmbedUtil
 class TweetSubscribe(Cog):
     def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
-        self.config: TinyDB = TinyDB(getenv("path_db"))
+        self.database: TinyDB = TinyDB(MappingUtil.Directory.DATABASE.value)
         self.channel: Optional[int] = None
         self.pattern: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
+        self.manager: MappingUtil = MappingUtil()
         logging.info(f"↳ Extension {__name__} created.")
 
     def __del__(self) -> None:
@@ -35,10 +37,13 @@ class TweetSubscribe(Cog):
 
     @loop(seconds=20)
     async def retweet(self):
+        if not self.manager.config["features"]["tweet_retweet"]:
+            return
+
         logging.debug("Fetching subscription list.")
         urls: List[str] = getenv("cdn_urls").split(", ")
-        headers: dict = self.config.search(Query().name == "headers")[0]["value"]
-        current_snowflake: int = self.config.search(Query().name == "snowflake")[0]["value"]
+        headers: dict = self.database.search(Query().name == "headers")[0]["value"]
+        current_snowflake: int = self.database.search(Query().name == "snowflake")[0]["value"]
 
         for url in urls:
             async with ClientSession(headers=headers, trust_env=True) as session:
@@ -53,7 +58,7 @@ class TweetSubscribe(Cog):
                 logging.info("New tweet found in subscription channel, start sending to Discord.")
                 upper_snowflake: int = queue[-1]
                 snowflake_data: Dict[str, str | int] = {"name": "snowflake", "value": max(current_snowflake, upper_snowflake)}
-                self.config.update(snowflake_data, Query().name == "snowflake")
+                self.database.update(snowflake_data, Query().name == "snowflake")
                 logging.info(f"snowflake updated: {upper_snowflake}")
 
             for tweet_id in queue:
