@@ -14,7 +14,7 @@ from module.embed_util import EmbedUtil
 from module.content_util import ContentUtil
 
 
-class TweetFix(Cog):
+class TweetParser(Cog):
     def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
@@ -71,9 +71,10 @@ class TweetFix(Cog):
 
         async for message in channel.history(limit=20):
             if message.author == self.Arisa.user:
+                logging.debug(message.embeds[0].fields)
                 if findall(pattern, message.embeds[0].fields[-1].value):
                     await message.delete()
 
 
 async def setup(Arisa):
-    await Arisa.add_cog(TweetFix(Arisa))
+    await Arisa.add_cog(TweetParser(Arisa))
