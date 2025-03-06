@@ -5,7 +5,7 @@ import tomllib
 
 class MappingUtil:
     def __init__(self):
-        self.config = MappingUtil.__load_config(self)
+        self.config = MappingUtil.__load_config()
 
     @staticmethod
     def __load_config():
