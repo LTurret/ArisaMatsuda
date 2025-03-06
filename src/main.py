@@ -9,9 +9,9 @@ from os import getenv, listdir, sep
 from discord import Game, Intents, Status
 from discord.ext import commands
 from dotenv import load_dotenv
-from tinydb import TinyDB
 
 from mapping import Directory
+from database import DatabaseUtil
 
 
 intents: Intents = Intents.default()
@@ -19,30 +19,21 @@ intents.message_content = True
 Arisa: commands.Bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 Arisa.remove_command("help")
 
+with open(Directory.CONFIG.value, "rb") as CONFIG:
+    CONFIG: Dict[str, Any] = tomllib.load(CONFIG)
 
 @Arisa.event
 async def on_ready():
     await Arisa.change_presence(status=Status.online, activity=Game("⌒(*＞ｖ＜)b⌒"))
     # Syncing coulde cause 429 ratelimit, disable it when debugging.
-    await Arisa.tree.sync()
+    await Arisa.tree.sync() if CONFIG["sync_flag"] else None
     logging.info("Up!10sion♪ Everybody attention!!")
 
 
 async def main():
-    if not Directory.HEADERS.value.is_file():
-        raise FileNotFoundError(rf"{Directory.HEADERS.value} does not exist!")
+    assert Directory.HEADERS.value.is_file(), FileNotFoundError(rf"{Directory.HEADERS.value} not found!")
+    DatabaseUtil.processing() if Directory.DATABASE.value.is_file() else DatabaseUtil.initialization()
 
-    if not Directory.DATABASE.value.is_file():
-        logging.info(rf"Initializing database. Creating database {Directory.DATABASE.value}")
-        database: TinyDB = TinyDB(Directory.DATABASE.value)
-        initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
-
-        for data in initial_config:
-            database.insert(data)
-
-    else:
-        logging.info(rf"Found database, Loading {Directory.DATABASE.value}")
-        database: TinyDB = TinyDB(Directory.DATABASE.value)
 
     # if path_keywords.is_file():
     #     with open(path_keywords, "r") as keywords_fp:
@@ -61,9 +52,7 @@ async def main():
 if __name__ == "__main__":
     # Initailization
     load_dotenv()
-    with open(Directory.CONFIG.value, "rb") as config:
-        config: Dict[str, Any] = tomllib.load(config)
-        manifest: Dict[str, str] = {False: logging.INFO, True: logging.DEBUG}
+    manifest: Dict[str, str] = {False: logging.INFO, True: logging.DEBUG}
 
     # Logger Setup
     logger: Logger = logging.getLogger("discord")
@@ -74,7 +63,7 @@ if __name__ == "__main__":
         filename="service.log",
         encoding="utf-8",
         filemode="a",
-        level=manifest[config["debug_flag"]],
+        level=manifest[CONFIG["debug_flag"]],
         format="%(levelname)-5s %(asctime)s %(message)s ",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
