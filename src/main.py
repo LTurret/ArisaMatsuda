@@ -2,17 +2,16 @@ import tomllib
 import logging
 
 from asyncio import run
-from typing import Dict
+from typing import Any, Dict
 from logging import Logger
 from os import getenv, listdir, sep
-
-from tinydb import TinyDB
 
 from discord import Game, Intents, Status
 from discord.ext import commands
 from dotenv import load_dotenv
+from tinydb import TinyDB
 
-from mapping import MappingUtil
+from mapping import Directory
 
 
 intents: Intents = Intents.default()
@@ -30,20 +29,20 @@ async def on_ready():
 
 
 async def main():
-    if not MappingUtil.Directory.HEADERS.value.is_file():
-        raise FileNotFoundError(rf"{MappingUtil.Directory.HEADERS.value} does not exist!")
+    if not Directory.HEADERS.value.is_file():
+        raise FileNotFoundError(rf"{Directory.HEADERS.value} does not exist!")
 
-    if not MappingUtil.Directory.DATABASE.value.is_file():
-        logging.info(rf"Initializing database. Creating database {MappingUtil.Directory.DATABASE.value}")
-        database: TinyDB = TinyDB(MappingUtil.Directory.DATABASE.value)
+    if not Directory.DATABASE.value.is_file():
+        logging.info(rf"Initializing database. Creating database {Directory.DATABASE.value}")
+        database: TinyDB = TinyDB(Directory.DATABASE.value)
         initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
 
         for data in initial_config:
             database.insert(data)
 
     else:
-        logging.info(rf"Found database, Loading {MappingUtil.Directory.DATABASE.value}")
-        database: TinyDB = TinyDB(MappingUtil.Directory.DATABASE.value)
+        logging.info(rf"Found database, Loading {Directory.DATABASE.value}")
+        database: TinyDB = TinyDB(Directory.DATABASE.value)
 
     # if path_keywords.is_file():
     #     with open(path_keywords, "r") as keywords_fp:
@@ -51,7 +50,7 @@ async def main():
     #         database.insert(keywords)
 
     async with Arisa:
-        for filename in listdir(f"{MappingUtil.Directory.ROOT.value}{sep}cogs"):
+        for filename in listdir(f"{Directory.ROOT.value}{sep}cogs"):
             if filename.endswith(".py"):
                 logging.debug(rf"Loading file: cogs/{filename}")
                 await Arisa.load_extension(rf"cogs.{filename[:-3]}")
@@ -62,8 +61,8 @@ async def main():
 if __name__ == "__main__":
     # Initailization
     load_dotenv()
-    with open(MappingUtil.Directory.CONFIG.value, "rb") as config:
-        config = tomllib.load(config)
+    with open(Directory.CONFIG.value, "rb") as config:
+        config: Dict[str, Any] = tomllib.load(config)
         manifest: Dict[str, str] = {False: logging.INFO, True: logging.DEBUG}
 
     # Logger Setup
