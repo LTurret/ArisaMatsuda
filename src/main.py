@@ -22,6 +22,7 @@ Arisa.remove_command("help")
 with open(Directory.CONFIG.value, "rb") as CONFIG:
     CONFIG: Dict[str, Any] = tomllib.load(CONFIG)
 
+
 @Arisa.event
 async def on_ready():
     await Arisa.change_presence(status=Status.online, activity=Game("⌒(*＞ｖ＜)b⌒"))
@@ -33,7 +34,6 @@ async def on_ready():
 async def main():
     assert Directory.HEADERS.value.is_file(), FileNotFoundError(rf"{Directory.HEADERS.value} not found!")
     DatabaseUtil.processing() if Directory.DATABASE.value.is_file() else DatabaseUtil.initialization()
-
 
     # if path_keywords.is_file():
     #     with open(path_keywords, "r") as keywords_fp:

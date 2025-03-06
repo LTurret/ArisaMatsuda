@@ -16,7 +16,8 @@ class DatabaseUtil:
         logging.info(rf"Initializing database. Creating database {Directory.DATABASE.value}")
         database: TinyDB = TinyDB(Directory.DATABASE.value)
         initial_config: list = [{"name": "headers", "value": {}}, {"name": "snowflake", "value": 0}]
-        for data in initial_config: database.insert(data)
+        for data in initial_config:
+            database.insert(data)
         return database
 
     @staticmethod
