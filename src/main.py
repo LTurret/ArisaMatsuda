@@ -27,7 +27,7 @@ with open(Directory.CONFIG.value, "rb") as CONFIG:
 async def on_ready():
     await Arisa.change_presence(status=Status.online, activity=Game("⌒(*＞ｖ＜)b⌒"))
     # Syncing coulde cause 429 ratelimit, disable it when debugging.
-    await Arisa.tree.sync() if CONFIG["sync_flag"] else None
+    await Arisa.tree.sync() if CONFIG["debug"]["sync"] else None
     logging.info("Up!10sion♪ Everybody attention!!")
 
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
         filename="service.log",
         encoding="utf-8",
         filemode="a",
-        level=manifest[CONFIG["debug_flag"]],
+        level=manifest[CONFIG["debug"]["flag"]],
         format="%(levelname)-5s %(asctime)s %(message)s ",
         datefmt="%Y-%m-%d %H:%M:%S",
     )

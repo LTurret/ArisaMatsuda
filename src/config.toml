@@ -1,5 +1,6 @@
-debug_flag = false
-sync_flag = true
-
 [features]
 tweet_retweet = false
+
+[debug]
+flag = false
+sync = true
