@@ -2,10 +2,17 @@ from enum import Enum
 from pathlib import Path
 import tomllib
 
+from class_logger import initialization, deletion
+
 
 class MappingUtil:
+    @initialization
     def __init__(self):
         self.config = MappingUtil.__load_config()
+
+    @deletion
+    def __del__(self):
+        pass
 
     @staticmethod
     def __load_config():

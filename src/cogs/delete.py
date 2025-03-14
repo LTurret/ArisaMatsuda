@@ -4,6 +4,7 @@ from discord.ext.commands import has_permissions, command, Bot, Cog
 
 from class_logger import initialization, deletion
 
+
 class Delete(Cog):
     @initialization
     def __init__(self, Arisa: Bot):
