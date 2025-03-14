@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+
 import tomllib
 
 from class_logger import initialization, deletion
