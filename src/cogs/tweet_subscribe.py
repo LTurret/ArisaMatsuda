@@ -10,6 +10,7 @@ from discord import Embed
 from discord.ext.tasks import loop
 from discord.ext.commands import Bot, Cog
 
+from class_logger import initialization, deletion
 from mapping import Directory, MappingUtil
 from module.fetch_tweet import fetch_tweet
 from module.html_parser import html_parser
@@ -19,16 +20,17 @@ from module.embed_util import EmbedUtil
 
 
 class TweetSubscribe(Cog):
+    @initialization
     def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
         self.database: TinyDB = TinyDB(Directory.DATABASE.value)
         self.channel: Optional[int] = None
         self.pattern: str = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
         self.manager: MappingUtil = MappingUtil()
-        logging.info(f"↳ Extension {__name__} created.")
 
+    @deletion
     def __del__(self) -> None:
-        logging.info(f"↳ Extension {__name__} removed.")
+        pass
 
     @Cog.listener()
     async def on_ready(self):

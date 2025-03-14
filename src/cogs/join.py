@@ -7,11 +7,18 @@ from discord import app_commands, Role, Interaction, Object, SelectOption
 from discord.ext.commands import Bot, Cog
 from discord.ui import Select, View
 
+from class_logger import initialization, deletion
+
 
 class Join(Cog):
+    @initialization
     def __init__(self, Arisa: Bot) -> None:
         self.Arisa: Bot = Arisa
-        logging.info(f"↳ Extension {__name__} loaded.")
+        logging.debug(f"↳ Extension {__name__} loaded.")
+
+    @deletion
+    def __del__(self):
+        pass
 
     @app_commands.command(name="join", description="開關頻道的檢視模式")
     async def join(self, interaction: Interaction) -> None:

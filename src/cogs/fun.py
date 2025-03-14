@@ -7,17 +7,18 @@ from typing import Dict
 
 from discord.ext.commands import command, Bot, Cog
 
+from class_logger import initialization, deletion
 from mapping import MappingUtil
 
 
 class Fun(Cog):
+    @initialization
     def __init__(self, Arisa: Bot):
         self.Arisa: Bot = Arisa
-        logging.info(f"↳ Extension {__name__} loaded.")
-        logging.debug(f"")
 
+    @deletion
     def __del__(self) -> None:
-        logging.info(f"↳ Extension {__name__} removed.")
+        pass
 
     @Cog.listener()
     async def on_message(self, message: str):

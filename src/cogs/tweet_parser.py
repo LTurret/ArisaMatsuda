@@ -9,19 +9,21 @@ from discord import AllowedMentions, Embed
 from discord.ext.commands import Bot, Cog
 from requests import patch
 
+from class_logger import initialization, deletion
 from module.fetch_tweet import fetch_tweet
 from module.embed_util import EmbedUtil
 from module.content_util import ContentUtil
 
 
 class TweetParser(Cog):
+    @initialization
     def __init__(self, Arisa) -> None:
         self.Arisa: Bot = Arisa
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
-        logging.info(f"↳ Extension {__name__} created.")
 
+    @deletion
     def __del__(self) -> None:
-        logging.info(f"↳ Extension {__name__} removed.")
+        pass
 
     @Cog.listener()
     async def on_message(self, message: str):
