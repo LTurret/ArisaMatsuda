@@ -4,7 +4,8 @@ import logging
 from asyncio import run
 from typing import Any, Dict
 from logging import Logger
-from os import getenv, listdir, sep
+from os import getenv, listdir
+from pathlib import Path
 
 from discord import Game, Intents, Status
 from discord.ext import commands
@@ -41,7 +42,7 @@ async def main():
     #         database.insert(keywords)
 
     async with Arisa:
-        for filename in listdir(f"{Directory.ROOT.value}{sep}cogs"):
+        for filename in listdir(Path(Directory.ROOT.value / "cogs")):
             if filename.endswith(".py"):
                 logging.debug(rf"Loading file: cogs/{filename}")
                 await Arisa.load_extension(rf"cogs.{filename[:-3]}")
