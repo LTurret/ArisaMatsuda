@@ -72,9 +72,9 @@ class TweetParser(Cog):
         pattern: str = rf".+\/({payload.message_id})"
 
         async for message in channel.history(limit=20):
-            if message.author == self.Arisa.user:
+            if message.author.bot and message.embeds:
                 logging.debug(message.embeds[0].fields)
-                if findall(pattern, message.embeds[0].fields[-1].value):
+                if message.embeds and findall(pattern, message.embeds[0].fields[-1].value):
                     await message.delete()
 
 
