@@ -9,7 +9,6 @@ class Delete(Cog):
     @initialization
     def __init__(self, Arisa: Bot):
         self.Arisa: Bot = Arisa
-        logging.debug(f"↳ Extension {__name__} loaded.")
 
     @deletion
     def __del__(self):
