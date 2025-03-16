@@ -30,6 +30,7 @@ class FileType(Enum):
     COLLECTION: Final[Dict[str, str]] = {"dir": "collection", "ext": "collection"}
     IMAGE: Final[Dict[str, str]] = {"dir": "image", "ext": "png"}
     VIDEO: Final[Dict[str, str]] = {"dir": "video", "ext": "mp4"}
+    GIF: Final[Dict[str, str]] = {"dir": "image", "ext": "gif"}
 
 
 if __name__ == "__main__":

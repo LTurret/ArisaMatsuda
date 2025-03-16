@@ -1,5 +1,14 @@
 {
+    "ㄤ奈知道嗎": { "type": "COLLECTION", "dir": "anna" },
+    "跳嚇": { "type": "COLLECTION", "dir": "jumpscare" },
+    "白髮女人": { "type": "COLLECTION", "dir": "white_hair" },
+    "白髮女人影片": { "type": "VIDEO", "dir": "代餐天動瑠依.mp4" },
     "放假囉": { "type": "VIDEO", "dir": "休日だよ.mp4" },
     "上班上課": { "type": "VIDEO", "dir": "月曜が近いよ.mp4" },
-    "ㄤ奈知道嗎": { "type": "COLLECTION", "dir": "anna" }
+    "😠": { "type": "IMAGE", "dir": "fun/anna_mad.png" },
+    ">:)": { "type": "IMAGE", "dir": "fun/anna_yes.png" },
+    "晚ㄤ奈": { "type": "IMAGE", "dir": "fun/anna_sleep.jpg" },
+    "stonk": { "type": "IMAGE", "dir": "fun/stonks.jpg" },
+    "刀客": { "type": "IMAGE", "dir": "fun/anna_knife.png" },
+    "開扁": { "type": "GIF", "dir": "fun/sumire_punch.gif" }
 }
