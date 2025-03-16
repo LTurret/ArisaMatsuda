@@ -1,10 +1,13 @@
 # ArisaMatsuda
 
+[English｜[繁體中文](./README_zh-TW.md)]
+
 A discord bot for private server management.
 
 ## Configuration
 
 Before hosting this bot directly from this repo, There are few steps need to do, or the bot will not work properly.
+
 such as `channel_id` or `message_id` in `.env`, More detail is documented in [Secrets](#secrets) section
 
 ### Directory Structure
@@ -98,7 +101,7 @@ Also known as the bi-channel extension, this is a unique feature that enables th
 #### join.py
 
 > [!WARNING]
-> The roles are statically configured for my server; you will need to modify the source code to match your own roles.
+> The roles are statically configured for my server; you will need to modify the source code to enable this feature and match your own roles.
 
 This extension is designed for managing server members. A member with chat permissions can use this command to grant view access to selected channels.
 
