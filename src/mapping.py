@@ -1,7 +1,8 @@
+import tomllib
+
 from enum import Enum
 from pathlib import Path
-
-import tomllib
+from typing import Dict, Final
 
 
 class MappingUtil:
@@ -26,8 +27,9 @@ class Directory(Enum):
 
 
 class FileType(Enum):
-    SINGLE: str = NotImplemented
-    COLLECTION: str = NotImplemented
+    COLLECTION: Final[Dict[str, str]] = {"dir": "collection", "ext": "collection"}
+    IMAGE: Final[Dict[str, str]] = {"dir": "image", "ext": "png"}
+    VIDEO: Final[Dict[str, str]] = {"dir": "video", "ext": "mp4"}
 
 
 if __name__ == "__main__":
