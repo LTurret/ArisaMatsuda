@@ -29,8 +29,8 @@ class Fun(Cog):
         if not self.manager.config["features"]["fun"]:
             return
 
-        if message.content in self.keywords:
-            trigger: str = self.keywords[message.content]
+        if any((keyword := kw) in message.content for kw in self.keywords):
+            trigger: str = self.keywords[keyword]
             directory: Path = Path(Directory.RESOURCE.value) / FileType[trigger["type"]].value["dir"] / trigger["dir"]
 
             if directory.is_dir():

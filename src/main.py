@@ -74,5 +74,5 @@ if __name__ == "__main__":
         run(main())
     except KeyboardInterrupt:
         logging.info("Shutting down...")
-        Arisa.close()
+        run(Arisa.close())
         logging.info("Bye-bye!")
