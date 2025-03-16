@@ -76,4 +76,3 @@ if __name__ == "__main__":
         logging.info("Shutting down...")
         Arisa.close()
         logging.info("Bye-bye!")
-
