@@ -1,0 +1,11 @@
+[
+    {
+        "adapter": "Debugpy",
+        "label": "Debug Session for '/src/main.py'",
+        "request": "launch",
+        "python": "$ZED_CUSTOM_PYTHON_ACTIVE_ZED_TOOLCHAIN",
+        "args": ["-B"],
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "module": "$ZED_CUSTOM_PYTHON_MODULE_NAME"
+    }
+]
