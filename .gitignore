@@ -1,15 +1,3 @@
-/venv
-/.vscode
-
 .env
-service.log
-
-config.json
-database.json
-headers.json
-history.json
-pyrightconfig.json
-
-**/__pycache__
-cache
-typings/
+Cargo.lock
+target

@@ -1,7 +1,0 @@
-[features]
-tweet_retweet = false
-fun = true
-
-[debug]
-flag = false
-sync = false
