@@ -2,12 +2,13 @@ import tomllib
 
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Final
+
+from src.types import Config
 
 
 class MappingUtil:
     def __init__(self):
-        self.config = MappingUtil.__load_config()
+        self.config: Config = MappingUtil.__load_config()
 
     @staticmethod
     def __load_config():
@@ -17,28 +18,28 @@ class MappingUtil:
 
 
 class Directory(Enum):
-    ROOT: Path = Path(__file__).resolve().parent
-    COGS: Path = ROOT / "cogs"
-    CONFIG: Path = ROOT / "config.toml"
-    RESOURCE: Path = ROOT.parent / "res"
-    DATABASE: Path = RESOURCE / "database.json"
-    HEADERS: Path = RESOURCE / "headers.json"
-    KEYWORDS: Path = RESOURCE / "keywords.json"
+    ROOT = Path(__file__).resolve().parent
+    COGS = ROOT / "cogs"
+    CONFIG = ROOT / "config.toml"
+    RESOURCE = ROOT.parent / "res"
+    DATABASE = RESOURCE / "database.json"
+    HEADERS = RESOURCE / "headers.json"
+    KEYWORDS = RESOURCE / "keywords.json"
 
 
 class FileType(Enum):
-    COLLECTION: Final[Dict[str, str]] = {"dir": "collection", "ext": "collection"}
-    IMAGE: Final[Dict[str, str]] = {"dir": "image", "ext": "png"}
-    VIDEO: Final[Dict[str, str]] = {"dir": "video", "ext": "mp4"}
-    GIF: Final[Dict[str, str]] = {"dir": "image", "ext": "gif"}
+    COLLECTION = {"dir": "collection", "ext": "collection"}
+    IMAGE = {"dir": "image", "ext": "png"}
+    VIDEO = {"dir": "video", "ext": "mp4"}
+    GIF = {"dir": "image", "ext": "gif"}
 
 
 if __name__ == "__main__":
     for path in Directory:
         print(f"{path}: {path.value}")
 
-    for FileType in FileType:
-        print(f"{FileType}: {FileType.value}")
+    for theType in FileType:
+        print(f"{theType}: {theType.value}")
 
     manager = MappingUtil()
     print(manager.config)

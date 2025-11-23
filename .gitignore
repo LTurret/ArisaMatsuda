@@ -12,3 +12,4 @@ pyrightconfig.json
 
 **/__pycache__
 cache
+typings/

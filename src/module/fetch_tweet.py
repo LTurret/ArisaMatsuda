@@ -1,32 +1,33 @@
 from json import dumps
 from re import findall
-from typing import Dict
+from types import FunctionType
 
 from aiohttp import ClientSession
 from urllib.parse import quote
 
 from module.get_tokens import get_tokens
+from src.types import StandardJson
 
 
-async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "fx") -> dict:
-    parameter: dict = {"tweetId": tweetId, "query_id_token": query_id_token}
-    service_manifest: dict = {"twitter": by_twitter, "fx": by_fx}
-    callback: dict = await service_manifest[host](parameter)
+async def fetch_tweet(tweetId: int, query_id_token: str = "0hWvDhmW8YQ-S_ib3azIrw", host: str = "fx") -> dict[str, str]:
+    parameter: StandardJson = {"tweetId": tweetId, "query_id_token": query_id_token}
+    service_manifest: dict[str, FunctionType] = {"twitter": by_twitter, "fx": by_fx}
+    callback = await service_manifest[host](parameter)
 
     # Check if twitter api returns NsfwLoggedOut
     if findall(r"NsfwLoggedOut", str(callback)):
-        callback: dict = await by_fx(tweetId)
+        callback = await by_fx(tweetId)
 
     return callback
 
 
-async def by_twitter(parameter: dict) -> Dict[str, any]:
+async def by_twitter(parameter: dict[str, int]) -> Dict[str, any]:
     # API headers
-    tokens: dict = {**(await get_tokens())}
+    tokens = {**(await get_tokens())}
     tweetId: int = parameter["tweetId"]
-    query_id_token: str = parameter["query_id_token"]
+    query_id_token: int = parameter["query_id_token"]
 
-    features: dict = {
+    features: dict[str, bool] = {
         "responsive_web_graphql_exclude_directive_enabled": True,
         "verified_phone_label_enabled": False,
         "responsive_web_graphql_timeline_navigation_enabled": True,
@@ -52,13 +53,13 @@ async def by_twitter(parameter: dict) -> Dict[str, any]:
         "responsive_web_twitter_article_tweet_consumption_enabled": True,
         "creator_subscriptions_tweet_preview_api_enabled": True,
     }
-    variables: dict = {
+    variables: dict[str, bool] = {
         "includePromotedContent": False,
         "withCommunity": False,
         "withVoice": False,
     }
 
-    variables_reference: dict = {**variables}
+    variables_reference: dict[str, bool | int] = {**variables}
     variables_reference["tweetId"] = tweetId
 
     root: str = "https://twitter.com/i/api"
@@ -67,24 +68,24 @@ async def by_twitter(parameter: dict) -> Dict[str, any]:
     suffix: str = f"TweetResultByRestId?variables={quote(dumps(variables_reference))}&features={quote(dumps(features))}"
     api_url: str = f"{root}/{prefix}/{query}/{suffix}"
 
-    headers: dict = {
+    headers: dict[str, str] = {
         "authorization": f"Bearer {tokens['bearer_token']}",
         "x-guest-token": tokens["guest_token"],
     }
 
     async with ClientSession(headers=headers) as session:
         async with session.get(api_url) as response:
-            callback: dict = await response.json()
+            callback = await response.json()
 
     return callback
 
 
-async def by_fx(parameter: dict) -> Dict[str, any]:
+async def by_fx(parameter: dict[str, int]) -> StandardJson:
     tweetId: int = parameter["tweetId"]
     url: str = f"https://api.fxtwitter.com/i/status/{tweetId}"
 
     async with ClientSession() as session:
         async with session.get(url) as response:
-            callback: dict = await response.json()
+            callback = await response.json()
 
     return callback

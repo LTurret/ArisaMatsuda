@@ -1,8 +1,12 @@
 import logging
 from functools import wraps
+from typing import Callable, TypeVar, ParamSpec
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
-def initialization(func: callable) -> callable:
+def initialization(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
     def wrapper(*args, **kwargs):
         module_name = func.__module__
@@ -12,7 +16,7 @@ def initialization(func: callable) -> callable:
     return wrapper
 
 
-def deletion(func: callable) -> callable:
+def deletion(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
     def wrapper(*args, **kwargs):
         module_name = func.__module__

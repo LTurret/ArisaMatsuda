@@ -84,7 +84,9 @@ class ContentUtil:
             dict: A dictionary containing the processed Twitter content.
         """
         tweet_detail: dict = api_callback["data"]["tweetResult"]["result"]["legacy"]
-        user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"]["core"]["user_results"]["result"]["legacy"]
+        user_results_legacy: dict = api_callback["data"]["tweetResult"]["result"][
+            "core"
+        ]["user_results"]["result"]["legacy"]
 
         # Initialize fields
         author: str = user_results_legacy["author"]["screen_name"]
@@ -95,8 +97,8 @@ class ContentUtil:
         retweet_count: int = tweet_detail["retweets"]
         created_timestamp: int = 0  # Not plan to fix
 
-        images: List[str] = []
-        videos: List[File] = []
+        images: list[str] = []
+        videos: list[File] = []
 
         # Extract tweet content text
         if "full_text" in tweet_detail:
@@ -113,7 +115,9 @@ class ContentUtil:
         # Extract tweet media
         if "extended_entities" in tweet_detail:
             if "video_info" in tweet_detail["extended_entities"]["media"][0]:
-                variants: dict = tweet_detail["extended_entities"]["media"][0]["video_info"]["variants"]
+                variants: dict = tweet_detail["extended_entities"]["media"][0][
+                    "video_info"
+                ]["variants"]
 
                 # Find best bitrate
                 upper_bitrate: int = 0
@@ -166,8 +170,8 @@ class ContentUtil:
         retweet_count: int = tweet["retweets"]
         created_timestamp: datetime = datetime.fromtimestamp(tweet["created_timestamp"])
 
-        images: List[str] = []
-        videos: List[File] = []
+        images: list[str] = []
+        videos: list[File] = []
 
         if "media" in tweet:
             media = tweet["media"]

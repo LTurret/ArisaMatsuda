@@ -18,7 +18,7 @@ class Fun(Cog):
         self.Arisa: Bot = Arisa
         self.manager: MappingUtil = MappingUtil()
         with open(Directory.KEYWORDS.value, "r") as keywords_file:
-            self.keywords: Dict = json.load(keywords_file)
+            self.keywords: dict = json.load(keywords_file)
 
     @deletion
     def __del__(self) -> None:
@@ -31,10 +31,14 @@ class Fun(Cog):
 
         if any((keyword := kw) in message.content for kw in self.keywords):
             trigger: str = self.keywords[keyword]
-            directory: Path = Path(Directory.RESOURCE.value) / FileType[trigger["type"]].value["dir"] / trigger["dir"]
+            directory: Path = (
+                Path(Directory.RESOURCE.value)
+                / FileType[trigger["type"]].value["dir"]
+                / trigger["dir"]
+            )
 
             if directory.is_dir():
-                files: List[Path] = list(directory.glob("*"))
+                files: list[Path] = list(directory.glob("*"))
                 directory: Path = choice(files)
                 filetype: str = directory.suffix.lstrip(".")
             else:
@@ -44,9 +48,16 @@ class Fun(Cog):
                 with directory.open("rb") as file_binary:
                     file: File = File(file_binary, filename=f"attachment.{filetype}")
 
-                    await message.channel.send(file=file, reference=message, allowed_mentions=AllowedMentions(replied_user=False), silent=True)
+                    await message.channel.send(
+                        file=file,
+                        reference=message,
+                        allowed_mentions=AllowedMentions(replied_user=False),
+                        silent=True,
+                    )
 
-                    logging.info(f"{__name__}: Fun attachment succesfully sent to channel.")
+                    logging.info(
+                        f"{__name__}: Fun attachment succesfully sent to channel."
+                    )
 
 
 async def setup(Arisa):

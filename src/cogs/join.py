@@ -22,6 +22,7 @@ class Join(Cog):
     @app_commands.command(name="join", description="開關頻道的檢視模式")
     async def join(self, interaction: Interaction) -> None:
         NotImplemented
+
     #     logging.info(f'{__name__}: called by "{interaction.user.name}".')
     #     selection = Select(
     #         placeholder="選擇討論區（多選）",
@@ -41,11 +42,11 @@ class Join(Cog):
 
     #     async def join_callback(interaction: Interaction):
     #         async with interaction.channel.typing():
-    #             manifest_role_id: List[int] = [role.id for role in interaction.user.roles]
+    #             manifest_role_id: list[int] = [role.id for role in interaction.user.roles]
 
     #             for role in selection.values:
     #                 interaction_role: Optional[Role] = interaction.guild.get_role(int(role))
-    #                 result: List[bool] = [role_id == int(role) for role_id in manifest_role_id]
+    #                 result: list[bool] = [role_id == int(role) for role_id in manifest_role_id]
 
     #                 if any(result):
     #                     await interaction.user.remove_roles(interaction_role)

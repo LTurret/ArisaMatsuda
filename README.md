@@ -8,7 +8,7 @@ A discord bot for private server management.
 
 Before hosting this bot directly from this repo, There are few steps need to do, or the bot will not work properly.
 
-such as `channel_id` or `message_id` in `.env`, More detail is documented in [Secrets](#secrets) section
+such as `channel_id` or `message_id` in `.env`, More detail is documented in [Secrets](#secrets-and-configurations) section
 
 ### Directory Structure
 
@@ -115,7 +115,7 @@ These [requirements](./requirements.txt) are essential. You can install them usi
 
 #### Debugging
 
-launch.json:
+`launch.json`:
 
 ```json
 "launch": {
@@ -140,7 +140,7 @@ python3 -B src/main.py
 
 Hosting the bot with npm/pm2:
 
-> [!NOTE]  
+> [!NOTE]
 > The following arguments are examples of using `virtualenv`:
 
 ```shell

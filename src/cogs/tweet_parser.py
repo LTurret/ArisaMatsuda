@@ -1,23 +1,23 @@
 import logging
-
 from asyncio import sleep
 from os import getenv
 from re import findall, search
-from typing import Final, List
+from typing import Final
 
 from discord import AllowedMentions, Embed
 from discord.ext.commands import Bot, Cog
+from discord.message import Message
 from requests import patch
 
-from class_logger import initialization, deletion
-from module.fetch_tweet import fetch_tweet
-from module.embed_util import EmbedUtil
-from module.content_util import ContentUtil
+from src.class_logger import deletion, initialization
+from src.module.content_util import ContentUtil
+from src.module.embed_util import EmbedUtil
+from src.module.fetch_tweet import fetch_tweet
 
 
 class TweetParser(Cog):
     @initialization
-    def __init__(self, Arisa) -> None:
+    def __init__(self, Arisa: Bot) -> None:
         self.Arisa: Bot = Arisa
         self.pattern: Final[str] = r"https\:\/\/[x|twitter]+\.com\/.+\/status\/(\d+)"
 
@@ -26,12 +26,12 @@ class TweetParser(Cog):
         pass
 
     @Cog.listener()
-    async def on_message(self, message: str):
+    async def on_message(self, message: Message):
         if search(self.pattern, message.content):
             async with message.channel.typing():
-                channel_id: str = message.channel.id
-                message_id: str = message.id
-                headers: dict = {
+                channel_id: int = message.channel.id
+                message_id: int = message.id
+                headers: dict[str, str] = {
                     "accept": "*/*",
                     "authorization": f'Bot {getenv("BOT_TOKEN")}',
                     "content-type": "application/json",
@@ -39,7 +39,7 @@ class TweetParser(Cog):
 
                 # Remove original message embedding object
                 await sleep(0.25)
-                patch(f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}", headers=headers, data='{"flags":4}')
+                _ = patch(f"https://discord.com/api/v9/channels/{channel_id}/messages/{message_id}", headers=headers, data='{"flags":4}')
 
                 # Find keyword
                 if search(self.pattern, message.content):
@@ -51,11 +51,11 @@ class TweetParser(Cog):
                         content_util: ContentUtil = ContentUtil()
                         content: dict = {**(await content_util.get_contents(api_callback))}
                         original_link: str = f"https://discord.com/channels/{message.guild.id}/{message.channel.id}/{message.id}"
-                        embeds: List[Embed] = EmbedUtil(content, tweet_id, footer_text="(*>△<)<", original_link=original_link).embed_queue
+                        embeds: list[Embed] = EmbedUtil(content, tweet_id, footer_text="(*>△<)<", original_link=original_link).embed_queue
 
                     except Exception as exception:
                         logging.error(exception)
-                        result: List[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", message.content)[0]
+                        result: list[tuple] = findall(r"(https://)(twitter|x)(.com/.+/status/\d+)", message.content)[0]
                         query: str = f"{result[0]}vxtwitter{result[-1]}"
                         await message.channel.send(query, reference=message, silent=True)
 
@@ -67,9 +67,9 @@ class TweetParser(Cog):
                     logging.info(f"{__name__}: Tweet succesfully and sent to channel.")
 
     @Cog.listener()
-    async def on_raw_message_delete(self, payload):
-        channel = await self.Arisa.fetch_channel(payload.channel_id)
-        pattern: str = rf".+\/({payload.message_id})"
+    async def on_raw_message_delete(self, message: Message):
+        channel = await self.Arisa.fetch_channel(message.channel_id)
+        pattern: str = rf".+\/({message.message_id})"
 
         async for message in channel.history(limit=20):
             if message.author.bot and message.embeds:
