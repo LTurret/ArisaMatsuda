@@ -22,8 +22,13 @@ impl EventHandler for Handler {
         .unwrap();
 
         if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
-            let after = re.find(&msg.content).unwrap().as_str();
-            if let Err(why) = msg.channel_id.say(&ctx.http, after).await {
+            let caps = re.captures(&msg.content).unwrap();
+            let vals: Vec<&str> = ["protocol", "username", "snowflake"]
+                .iter()
+                .map(|para| caps.name(para).unwrap().as_str())
+                .collect();
+            let fix_msg = format!("{}fxtwitter.com/{}/status/{}", vals[0], vals[1], vals[2]);
+            if let Err(why) = msg.channel_id.say(&ctx.http, fix_msg).await {
                 println!("Error sending message: {why:?}");
             }
 
