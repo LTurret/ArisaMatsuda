@@ -22,11 +22,7 @@ impl EventHandler for Handler {
         .unwrap();
 
         if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
-            let after = re.replace_all(
-                &msg.content,
-                "${protocol}fxtwitter.com/${username}/status/${snowflake}",
-            );
-
+            let after = re.find(&msg.content).unwrap().as_str();
             if let Err(why) = msg.channel_id.say(&ctx.http, after).await {
                 println!("Error sending message: {why:?}");
             }
