@@ -16,7 +16,10 @@ struct Handler;
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
-        let re: Regex = Regex::new(r"(?<protocol>https://)(?<domain>x\.com)/(?<username>\w+)/status/(?<snowflake>\d+)(?<suffix>\?s=\d+)*").unwrap();
+        let re: Regex = Regex::new(
+            r"(?<protocol>https://)(?<domain>x\.com)/(?<username>\w+)/status/(?<snowflake>\d+)",
+        )
+        .unwrap();
 
         if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
             let after = re.replace_all(
