@@ -1,5 +1,5 @@
 [package]
-name = "kobayashi_rust"
+name = "arisa_rust"
 version = "0.1.0"
 authors = ["LTurret <a0919329@gmail.com>"]
 edition = "2024"
