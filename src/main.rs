@@ -17,7 +17,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
         let re: Regex = Regex::new(
-            r"(?<protocol>https://)(?<domain>x\.com)/(?<username>\w+)/status/(?<snowflake>\d+)",
+            r"(?<protocol>https://)(?<domain>(x|twitter)\.com)/(?<username>\w+)/status/(?<snowflake>\d+)",
         )
         .unwrap();
 
