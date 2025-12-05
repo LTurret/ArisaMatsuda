@@ -1,14 +1,14 @@
 use dotenv::dotenv;
 use regex::Regex;
-use reqwest::Client as HttpClient;
-use serde_json::json;
+use std::env;
+
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::model::id::UserId;
 use serenity::prelude::*;
-use std::env;
-use tokio::time::{sleep, Duration};
+
+use crate::commands::transcripter::transcripter_factory;
 
 struct Handler;
 
