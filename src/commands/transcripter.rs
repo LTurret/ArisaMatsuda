@@ -65,9 +65,10 @@ async fn remove_old_embed(msg: &Message) -> () {
 }
 
 pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
-    let re: Regex = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)").unwrap();
-    let caps: Captures = re.captures(&msg.content).unwrap();
-    let after_message = match caps.name("domain").unwrap().as_str() {
+    let re: Regex = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)")
+        .expect("Regex syntax invalid");
+    let caps: Captures = re.captures(&msg.content).expect("Pattern not matching");
+    let after_message = match caps.name("domain").as_str() {
         "x" | "twitter" => twitter(&caps),
         _ => twitter(&caps),
     };
