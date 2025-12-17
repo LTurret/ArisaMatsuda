@@ -1,41 +1,22 @@
 use regex::{Captures, Regex};
 use reqwest::Client as HttpClient;
 use serde_json::json;
+use serenity::{builder::CreateMessage, model::channel::Message, prelude::*};
 use std::env;
 use tokio::time::{sleep, Duration};
 
-use serenity::model::channel::Message;
-use serenity::prelude::*;
+use crate::commands::embed::new_embed;
 
-fn twitter(caps: &Captures) -> String {
-    let re = Regex::new(r"/(?<username>.+)/status/(?<snowflake>[0-9]+)(\?(s|t)=.+)*")
-        .expect("Passed a invalid haystack");
+async fn twitter(caps: &Captures<'_>) -> CreateMessage {
+    let embed_message = new_embed(
+        caps.name("endpoint")
+            .expect("Expacted a valid haystack")
+            .as_str()
+            .to_string(),
+    )
+    .await;
 
-    let properties: Captures = re
-        .captures(
-            caps.name("endpoint")
-                .expect("Passed a invalid haystack")
-                .as_str(),
-        )
-        .expect("Haystack not matching");
-
-    let second_slice: Vec<String> = ["username", "snowflake"]
-        .iter()
-        .map(|p| {
-            properties
-                .name(p)
-                .expect("One of the tag are not matching")
-                .as_str()
-                .to_string()
-        })
-        .collect();
-
-    let after_message: String = format!(
-        "https://fxtwitter.com/{}/status/{}",
-        second_slice[0], second_slice[1]
-    );
-
-    after_message
+    embed_message
 }
 
 async fn remove_old_embed(msg: &Message) -> () {
@@ -67,10 +48,18 @@ async fn remove_old_embed(msg: &Message) -> () {
 pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
     let re: Regex = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)")
         .expect("Regex syntax invalid");
-    let caps: Captures = re.captures(&msg.content).expect("Pattern not matching");
-    let after_message = match caps.name("domain").as_str() {
-        "x" | "twitter" => twitter(&caps),
-        _ => twitter(&caps),
+
+    let caps: Captures = re
+        .captures(&msg.content)
+        .expect("Expected a valid haystack");
+
+    let embed_message: CreateMessage = match caps
+        .name("domain")
+        .expect("Expected domain in haystack")
+        .as_str()
+    {
+        "x" | "twitter" => twitter(&caps).await,
+        _ => twitter(&caps).await,
     };
 
     if let Err(why) = msg.channel_id.say(&ctx.http, after_message).await {
