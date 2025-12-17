@@ -41,6 +41,30 @@ struct Tweet {
     timestamp: Result<Timestamp, InvalidTimestamp>,
 }
 
+impl Tweet {
+    async fn from_raw(raw_api_data: String) -> Self {
+        let json_api_data: Value =
+            from_str(raw_api_data.as_str()).expect("Expected a valid payload");
+
+        let content: String = json_api_data["tweet"]["text"]
+            .as_str()
+            .unwrap_or("")
+            .to_string();
+
+        let timestamp: Result<Timestamp, InvalidTimestamp> = Timestamp::from_unix_timestamp(
+            json_api_data["tweet"]["created_timestamp"]
+                .as_i64()
+                .unwrap_or(0),
+        );
+
+        Self {
+            author: Author::from_json(&json_api_data["tweet"]["author"]),
+            content: content,
+            timestamp: timestamp,
+        }
+    }
+}
+
 async fn fetch_tweet_json(raw_url: String) -> Result<String, reqwest::Error> {
     let re = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
         .expect("Expected a valid regex pattern");
@@ -72,30 +96,6 @@ async fn fetch_tweet_json(raw_url: String) -> Result<String, reqwest::Error> {
     Ok(api_json)
 }
 
-async fn tweet_handler(raw_api_data: String) -> Tweet {
-    let json_api_data: Value = from_str(raw_api_data.as_str()).expect("Expected a valid payload");
-    let author: Author = Author::from_json(&json_api_data["tweet"]["author"]);
-
-    let content: String = json_api_data["tweet"]["text"]
-        .as_str()
-        .unwrap_or("")
-        .to_string();
-
-    let timestamp: Result<Timestamp, InvalidTimestamp> = Timestamp::from_unix_timestamp(
-        json_api_data["tweet"]["created_timestamp"]
-            .as_i64()
-            .unwrap_or(0),
-    );
-
-    let tweet: Tweet = Tweet {
-        author: author,
-        content: content,
-        timestamp: timestamp,
-    };
-
-    tweet
-}
-
 async fn embed_composer(tweet: Tweet) -> CreateMessage {
     let embed: CreateEmbed = CreateEmbed::new()
         .color(Color::new(0x00b0f4))
@@ -125,7 +125,7 @@ pub async fn new_embed(raw_endpoint: String) -> CreateMessage {
         .await
         .expect("Expected a valid connection for fetching API data");
 
-    let tweet: Tweet = tweet_handler(raw_api_data).await;
+    let tweet: Tweet = Tweet::from_raw(raw_api_data).await;
     let embed_message: CreateMessage = embed_composer(tweet).await;
 
     embed_message
