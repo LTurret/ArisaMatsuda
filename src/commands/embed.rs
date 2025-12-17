@@ -2,7 +2,6 @@ use regex::Regex;
 use reqwest::header::USER_AGENT;
 use reqwest::Client as HttpClient;
 use serde_json::{from_str, Value};
-
 use serenity::{
     all::CreateEmbedFooter,
     builder::{CreateEmbed, CreateEmbedAuthor, CreateMessage},

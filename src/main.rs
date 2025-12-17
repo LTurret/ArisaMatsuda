@@ -1,14 +1,12 @@
 mod commands;
-
 use dotenv::dotenv;
 use regex::Regex;
+use serenity::{
+    async_trait,
+    model::{channel::Message, gateway::Ready, id::UserId},
+    prelude::*,
+};
 use std::env;
-
-use serenity::async_trait;
-use serenity::model::channel::Message;
-use serenity::model::gateway::Ready;
-use serenity::model::id::UserId;
-use serenity::prelude::*;
 
 use crate::commands::transcripter::transcripter_factory;
 
