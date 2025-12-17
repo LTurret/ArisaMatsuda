@@ -62,7 +62,7 @@ pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
         _ => twitter(&caps).await,
     };
 
-    if let Err(why) = msg.channel_id.say(&ctx.http, after_message).await {
+    if let Err(why) = msg.channel_id.send_message(&ctx.http, embed_message).await {
         println!("Error sending message: {why:?}");
     }
 
