@@ -1,6 +1,5 @@
 use regex::Regex;
-use reqwest::header::USER_AGENT;
-use reqwest::Client as HttpClient;
+use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serde_json::{from_str, Value};
 use serenity::{
     all::CreateEmbedFooter,
@@ -65,7 +64,7 @@ impl Tweet {
     }
 }
 
-async fn fetch_tweet_json(raw_url: String) -> Result<String, reqwest::Error> {
+async fn fetch_tweet_json(raw_url: String) -> Result<String, Error> {
     let re = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
         .expect("Expected a valid regex pattern");
 
