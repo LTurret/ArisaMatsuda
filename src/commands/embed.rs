@@ -2,8 +2,7 @@ use regex::Regex;
 use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serde_json::{from_str, Value};
 use serenity::{
-    all::CreateEmbedFooter,
-    builder::{CreateEmbed, CreateEmbedAuthor, CreateMessage},
+    builder::{CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage},
     model::{
         timestamp::{InvalidTimestamp, Timestamp},
         Color,
@@ -38,6 +37,7 @@ struct Tweet {
     author: Author,
     content: String,
     timestamp: Result<Timestamp, InvalidTimestamp>,
+    images: Vec<CreateEmbed>,
 }
 
 impl Tweet {
@@ -56,10 +56,28 @@ impl Tweet {
                 .unwrap_or(0),
         );
 
+        let images: Vec<CreateEmbed> = json_api_data["tweet"]["media"]["photos"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .map(|obj| {
+                CreateEmbed::new().url("https://lturret.xyz").image(
+                    Regex::new(r"(?<image_cdn_url>https://pbs.twimg.com/media/.+\.jpg)(\?.+)*")
+                        .expect("Expected a valid regex")
+                        .captures(&obj["url"].as_str().unwrap_or(""))
+                        .expect("Expected a valid haystack")
+                        .name("image_cdn_url")
+                        .expect("Expected a valid matchig")
+                        .as_str(),
+                )
+            })
+            .collect();
+
         Self {
             author: Author::from_json(&json_api_data["tweet"]["author"]),
             content: content,
             timestamp: timestamp,
+            images: images,
         }
     }
 }
@@ -114,7 +132,7 @@ async fn embed_composer(tweet: Tweet) -> CreateMessage {
         .url("https://lturret.xyz")
         .timestamp(&tweet.timestamp.expect("Expected a valid Tweet timestamp"));
 
-    let builder: CreateMessage = CreateMessage::new().embed(embed);
+    let builder: CreateMessage = CreateMessage::new().embed(embed).add_embeds(tweet.images);
 
     builder
 }
