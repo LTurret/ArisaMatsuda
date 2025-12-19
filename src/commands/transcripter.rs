@@ -47,6 +47,8 @@ async fn remove_old_embed(msg: &Message) -> () {
 }
 
 pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
+    let typing = Typing::start(ctx.http.clone(), msg.channel_id);
+
     let re: Regex = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)")
         .expect("Regex syntax invalid");
 
@@ -68,4 +70,5 @@ pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
     }
 
     let _ = remove_old_embed(&msg).await;
+    typing.stop();
 }
