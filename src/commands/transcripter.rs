@@ -7,8 +7,9 @@ use tokio::time::{sleep, Duration};
 
 use crate::commands::embed::new_embed;
 
-async fn twitter(caps: &Captures<'_>) -> CreateMessage {
+async fn twitter(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
     let embed_message = new_embed(
+        &ctx,
         caps.name("endpoint")
             .expect("Expacted a valid haystack")
             .as_str()
@@ -58,11 +59,11 @@ pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
         .expect("Expected domain in haystack")
         .as_str()
     {
-        "x" | "twitter" => twitter(&caps).await,
-        _ => twitter(&caps).await,
+        "x" | "twitter" => twitter(&ctx, &caps).await,
+        _ => twitter(&ctx, &caps).await,
     };
 
-    if let Err(why) = msg.channel_id.send_message(&ctx.http, embed_message).await {
+    if let Err(why) = msg.channel_id.send_message(ctx.http, embed_message).await {
         println!("Error sending message: {why:?}");
     }
 

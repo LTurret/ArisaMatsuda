@@ -2,12 +2,13 @@ use regex::Regex;
 use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serde_json::{from_str, Value};
 use serenity::{
-    all::CreateAllowedMentions,
+    all::{CreateAllowedMentions, CreateAttachment},
     builder::{CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage},
     model::{
         timestamp::{InvalidTimestamp, Timestamp},
         Color,
     },
+    prelude::*,
 };
 
 #[derive(Debug)]
@@ -39,11 +40,12 @@ struct Tweet {
     content: String,
     timestamp: Result<Timestamp, InvalidTimestamp>,
     images: Vec<CreateEmbed>,
-    videos: Vec<String>,
+    videos: Vec<CreateAttachment>,
+    videos_supplementary: String,
 }
 
 impl Tweet {
-    async fn from_raw(raw_api_data: String) -> Self {
+    async fn from_raw(ctx: &Context, raw_api_data: String) -> Self {
         let json_api_data: Value =
             from_str(raw_api_data.as_str()).expect("Expected a valid payload");
 
@@ -75,7 +77,7 @@ impl Tweet {
             })
             .collect();
 
-        let videos: Vec<String> = json_api_data["tweet"]["media"]["videos"]
+        let raw_videos: Vec<String> = json_api_data["tweet"]["media"]["videos"]
             .as_array()
             .unwrap_or(&vec![])
             .iter()
@@ -93,12 +95,24 @@ impl Tweet {
             })
             .collect();
 
+        let mut videos: Vec<CreateAttachment> = Vec::new();
+        for url in raw_videos.iter() {
+            videos.push(CreateAttachment::url(&ctx.http, url).await.unwrap());
+        }
+
+        let mut videos_supplementary: String = String::new();
+        let _ = raw_videos.iter().enumerate().for_each(|(i, url)| {
+            videos_supplementary
+                .push_str(format!("-# [推文影片連結 {}]({})\n", i + 1, url).as_str())
+        });
+
         Self {
             author: Author::from_json(&json_api_data["tweet"]["author"]),
             content: content,
             timestamp: timestamp,
             images: images,
             videos: videos,
+            videos_supplementary: videos_supplementary,
         }
     }
 }
@@ -153,26 +167,22 @@ async fn embed_composer(tweet: Tweet) -> CreateMessage {
         .url("https://lturret.xyz")
         .timestamp(&tweet.timestamp.expect("Expected a valid Tweet timestamp"));
 
-    let mut video_rich_text: String = String::new();
-    let _ = tweet.videos.iter().enumerate().for_each(|(i, url)| {
-        video_rich_text.push_str(format!("-# [推文影片連結 {}]({})\n", i, url).as_str())
-    });
-
     let builder: CreateMessage = CreateMessage::new()
-        .content(video_rich_text)
+        .content(tweet.videos_supplementary)
         .allowed_mentions(CreateAllowedMentions::new().empty_users())
         .embed(embed)
+        .add_files(tweet.videos)
         .add_embeds(tweet.images);
 
     builder
 }
 
-pub async fn new_embed(raw_endpoint: String) -> CreateMessage {
+pub async fn new_embed(ctx: &Context, raw_endpoint: String) -> CreateMessage {
     let raw_api_data: String = fetch_tweet_json(raw_endpoint)
         .await
         .expect("Expected a valid connection for fetching API data");
 
-    let tweet: Tweet = Tweet::from_raw(raw_api_data).await;
+    let tweet: Tweet = Tweet::from_raw(&ctx, raw_api_data).await;
     let embed_message: CreateMessage = embed_composer(tweet).await;
 
     embed_message
