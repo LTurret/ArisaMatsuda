@@ -2,8 +2,10 @@ use regex::Regex;
 use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serde_json::{from_str, Value};
 use serenity::{
-    all::{CreateAllowedMentions, CreateAttachment},
-    builder::{CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage},
+    builder::{
+        CreateAllowedMentions, CreateAttachment, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter,
+        CreateMessage,
+    },
     model::{
         timestamp::{InvalidTimestamp, Timestamp},
         Color,
