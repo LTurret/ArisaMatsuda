@@ -2,6 +2,7 @@ use regex::Regex;
 use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serde_json::{from_str, Value};
 use serenity::{
+    all::CreateAllowedMentions,
     builder::{CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage},
     model::{
         timestamp::{InvalidTimestamp, Timestamp},
@@ -38,6 +39,7 @@ struct Tweet {
     content: String,
     timestamp: Result<Timestamp, InvalidTimestamp>,
     images: Vec<CreateEmbed>,
+    videos: Vec<String>,
 }
 
 impl Tweet {
@@ -73,11 +75,30 @@ impl Tweet {
             })
             .collect();
 
+        let videos: Vec<String> = json_api_data["tweet"]["media"]["videos"]
+            .as_array()
+            .unwrap_or(&vec![])
+            .iter()
+            .filter_map(|arr| arr["url"].as_str())
+            .map(|url| url.to_string())
+            .map(|url| {
+                Regex::new(r"https://video.twimg.com/.+\.mp4")
+                    .unwrap()
+                    .captures(&url)
+                    .unwrap()
+                    .get(0)
+                    .unwrap()
+                    .as_str()
+                    .to_string()
+            })
+            .collect();
+
         Self {
             author: Author::from_json(&json_api_data["tweet"]["author"]),
             content: content,
             timestamp: timestamp,
             images: images,
+            videos: videos,
         }
     }
 }
@@ -132,7 +153,16 @@ async fn embed_composer(tweet: Tweet) -> CreateMessage {
         .url("https://lturret.xyz")
         .timestamp(&tweet.timestamp.expect("Expected a valid Tweet timestamp"));
 
-    let builder: CreateMessage = CreateMessage::new().embed(embed).add_embeds(tweet.images);
+    let mut video_rich_text: String = String::new();
+    let _ = tweet.videos.iter().enumerate().for_each(|(i, url)| {
+        video_rich_text.push_str(format!("-# [推文影片連結 {}]({})\n", i, url).as_str())
+    });
+
+    let builder: CreateMessage = CreateMessage::new()
+        .content(video_rich_text)
+        .allowed_mentions(CreateAllowedMentions::new().empty_users())
+        .embed(embed)
+        .add_embeds(tweet.images);
 
     builder
 }
