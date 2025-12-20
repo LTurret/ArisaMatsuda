@@ -49,10 +49,8 @@ async fn remove_old_embed(msg: &Message) -> () {
 pub async fn transcripter_factory(ctx: Context, msg: Message) -> () {
     let typing = Typing::start(ctx.http.clone(), msg.channel_id);
 
-    let re: Regex = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)")
-        .expect("Regex syntax invalid");
-
-    let caps: Captures = re
+    let caps: Captures = Regex::new(r"(http|https)://(?<domain>.+)\.com(?<endpoint>(/.+)*)")
+        .expect("Regex syntax invalid")
         .captures(&msg.content)
         .expect("Expected a valid haystack");
 
