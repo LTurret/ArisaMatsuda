@@ -188,35 +188,6 @@ async fn fetch_tweet_json(raw_url: String) -> Result<String, Error> {
     Ok(api_json)
 }
 
-async fn embed_composer(tweet: Tweet) -> CreateMessage {
-    let embed: CreateEmbed = CreateEmbed::new()
-        .color(Color::new(0x00b0f4))
-        .author(
-            CreateEmbedAuthor::new(format!(
-                "{}(@{})",
-                &tweet.author.name, &tweet.author.screen_name
-            ))
-            .icon_url(&tweet.author.icon_url)
-            .url(&tweet.author.url),
-        )
-        .description(&tweet.content)
-        .footer(
-            CreateEmbedFooter::new("Twitter (X)")
-                .icon_url("https://abs.twimg.com/icons/apple-touch-icon-192x192.png"),
-        )
-        .url("https://lturret.xyz")
-        .timestamp(&tweet.timestamp.expect("Expected a valid Tweet timestamp"));
-
-    let builder: CreateMessage = CreateMessage::new()
-        .content(tweet.videos_supplementary)
-        .allowed_mentions(CreateAllowedMentions::new().empty_users())
-        .embed(embed)
-        .add_files(tweet.videos)
-        .add_embeds(tweet.images);
-
-    builder
-}
-
 pub async fn new_embed(ctx: &Context, raw_endpoint: String) -> CreateMessage {
     let raw_api_data: String = fetch_tweet_json(raw_endpoint)
         .await
@@ -224,7 +195,6 @@ pub async fn new_embed(ctx: &Context, raw_endpoint: String) -> CreateMessage {
 
     let tweet: Tweet = Tweet::from_raw(&ctx, raw_api_data).await;
     let embed_message: CreateMessage = tweet.to_embed().await;
-
 
     embed_message
 }
