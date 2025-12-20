@@ -99,7 +99,12 @@ impl Tweet {
 
         let mut videos: Vec<CreateAttachment> = Vec::new();
         for url in raw_videos.iter() {
-            videos.push(CreateAttachment::url(&ctx.http, url).await.unwrap());
+            match CreateAttachment::url(&ctx.http, url).await {
+                Ok(attachment) => videos.push(attachment),
+                Err(err) => {
+                    eprintln!("Entity too large, reason: {}", err)
+                }
+            }
         }
 
         let mut videos_supplementary: String = String::new();
