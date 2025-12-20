@@ -1,11 +1,10 @@
+use crate::commands::embed::new_embed;
 use regex::{Captures, Regex};
 use reqwest::Client as HttpClient;
 use serde_json::json;
 use serenity::{builder::CreateMessage, http::Typing, model::channel::Message, prelude::*};
 use std::env;
 use tokio::time::{sleep, Duration};
-
-use crate::commands::embed::new_embed;
 
 async fn twitter(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
     let embed_message = new_embed(
