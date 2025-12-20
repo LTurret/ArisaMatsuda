@@ -1,7 +1,7 @@
 use regex::{Captures, Regex};
 use reqwest::Client as HttpClient;
 use serde_json::json;
-use serenity::{builder::CreateMessage, model::channel::Message, prelude::*};
+use serenity::{builder::CreateMessage, http::Typing, model::channel::Message, prelude::*};
 use std::env;
 use tokio::time::{sleep, Duration};
 

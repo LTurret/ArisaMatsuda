@@ -122,6 +122,39 @@ impl Tweet {
             videos_supplementary: videos_supplementary,
         }
     }
+
+    async fn to_embed(self) -> CreateMessage {
+        let embed: CreateEmbed = CreateEmbed::new()
+            .color(Color::new(0x00b0f4))
+            .author(
+                CreateEmbedAuthor::new(format!(
+                    "{}(@{})",
+                    self.author.name, self.author.screen_name
+                ))
+                .icon_url(self.author.icon_url)
+                .url(self.author.url),
+            )
+            .description(self.content)
+            .footer(
+                CreateEmbedFooter::new("Twitter (X)")
+                    .icon_url("https://abs.twimg.com/icons/apple-touch-icon-192x192.png"),
+            )
+            .url("https://lturret.xyz")
+            .timestamp(
+                self.timestamp
+                    .as_ref()
+                    .expect("Expected a valid Tweet timestamp"),
+            );
+
+        let builder: CreateMessage = CreateMessage::new()
+            .content(&self.videos_supplementary)
+            .allowed_mentions(CreateAllowedMentions::new().empty_users())
+            .embed(embed)
+            .add_files(self.videos)
+            .add_embeds(self.images);
+
+        builder
+    }
 }
 
 async fn fetch_tweet_json(raw_url: String) -> Result<String, Error> {
@@ -190,7 +223,8 @@ pub async fn new_embed(ctx: &Context, raw_endpoint: String) -> CreateMessage {
         .expect("Expected a valid connection for fetching API data");
 
     let tweet: Tweet = Tweet::from_raw(&ctx, raw_api_data).await;
-    let embed_message: CreateMessage = embed_composer(tweet).await;
+    let embed_message: CreateMessage = tweet.to_embed().await;
+
 
     embed_message
 }
