@@ -1,5 +1,5 @@
-use crate::commands::author::Author;
-use regex::Regex;
+use crate::commands::{author::Author, embed::Embed};
+use regex::{Captures, Regex};
 use serde_json::{from_str, Value};
 use serenity::{
     builder::{
@@ -132,4 +132,9 @@ impl Tweet {
 
         builder
     }
+}
+
+pub async fn handler(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
+    let embed_message = Embed.new_embed(ctx, caps).await;
+    embed_message
 }
