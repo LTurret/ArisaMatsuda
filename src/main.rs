@@ -1,4 +1,5 @@
 mod commands;
+use crate::commands::patcher::Patcher;
 use dotenv::dotenv;
 use regex::Regex;
 use serenity::{
@@ -8,8 +9,6 @@ use serenity::{
 };
 use std::env;
 
-use crate::commands::transcripter::transcripter_factory;
-
 struct Handler;
 
 #[async_trait]
@@ -18,7 +17,7 @@ impl EventHandler for Handler {
         let re: Regex = Regex::new(r"(http|https)://(www\.)*(?<domain>(x|twitter|instagram|facebook|threads|ppt)\.(cc|com))")
             .expect("Regex syntax invalid");
         if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
-            transcripter_factory(ctx, msg).await;
+            Patcher::new(ctx, msg).parse().await;
         }
     }
 
@@ -43,6 +42,6 @@ async fn main() {
         .expect("Err creating client");
 
     if let Err(why) = client.start().await {
-        println!("Client error: {why:?}");
+        eprintln!("Client error: {why:?}");
     }
 }
