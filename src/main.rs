@@ -15,7 +15,7 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        let re: Regex = Regex::new(r"(http|https)://(?<domain>(x|twitter)\.com)")
+        let re: Regex = Regex::new(r"(http|https)://(www\.)*(?<domain>(x|twitter|instagram|facebook|threads|ppt)\.(cc|com))")
             .expect("Regex syntax invalid");
         if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
             transcripter_factory(ctx, msg).await;
