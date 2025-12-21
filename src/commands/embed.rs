@@ -1,5 +1,5 @@
-use crate::commands::tweet::Tweet;
-use regex::Regex;
+use crate::commands::twitter::Tweet;
+use regex::{Captures, Regex};
 use reqwest::{header::USER_AGENT, Client as HttpClient, Error};
 use serenity::{builder::CreateMessage, prelude::*};
 
