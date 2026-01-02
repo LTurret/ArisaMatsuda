@@ -1,11 +1,8 @@
 # ArisaMatsuda
 
-[English｜[繁體中文](./README_zh-TW.md)]
+English｜[繁體中文](./README_zh-TW.md)
 
 A discord bot for private server management.
-
-> [!IMPORTANT]
-> Both Python and Rust build are development simultaneously.
 
 ## Configuration
 

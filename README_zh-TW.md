@@ -1,11 +1,8 @@
 # ArisaMatsuda
 
-[[English](./README.md)｜繁體中文]
+[English](./README.md)｜繁體中文
 
 私人伺服器管理用 Discord 機器人。
-
-> [!IMPORTANT]
-> Python 與 Rust 的建構工作正同時進行開發。
 
 ## 設定
 
