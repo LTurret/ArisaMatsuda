@@ -5,6 +5,7 @@ authors = ["LTurret <a0919329@gmail.com>"]
 edition = "2024"
 
 [dependencies]
+async-trait = "0.1.89"
 dotenv = "0.15.0"
 regex = "1.12.2"
 reqwest = "0.12.24"

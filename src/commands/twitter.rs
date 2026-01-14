@@ -1,5 +1,10 @@
-use crate::commands::{author::Author, embed::Embed};
+use crate::commands::{
+    author::Author,
+    embed::{ContentFetcher, Embed},
+};
+use async_trait::async_trait;
 use regex::{Captures, Regex};
+use reqwest::{header::USER_AGENT, Client as HttpClient};
 use serde_json::{from_str, Value};
 use serenity::{
     builder::{
@@ -131,6 +136,48 @@ impl Tweet {
             .add_embeds(self.images);
 
         builder
+    }
+}
+
+pub struct TweetFetcher;
+
+#[async_trait]
+impl ContentFetcher for TweetFetcher {
+    async fn fetch_json(&self, endpoint: &str, ctx: &Context) -> CreateMessage {
+        let caps: Captures<'_> = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
+            .expect("Expected a valid regex pattern")
+            .captures(endpoint)
+            .expect("Expected a valid haystack");
+
+        let api_url: String = format!(
+            "https://api.fxtwitter.com{}",
+            caps.name("tweet_endpoint")
+                .expect("Expected a valid haystack")
+                .as_str()
+        );
+
+        let client: HttpClient = HttpClient::new();
+        let response_result = client
+            .get(api_url)
+            .header(
+                USER_AGENT,
+                "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)",
+            )
+            .send()
+            .await;
+
+        let response = match response_result {
+            Ok(resp) => resp,
+            Err(err) => {
+                eprintln!("{}", err);
+                return CreateMessage::new().content("Failed to fetch tweet");
+            }
+        };
+
+        let api_json = response.text().await.expect("Failed to read response text");
+        let tweet: Tweet = Tweet::from_raw(&ctx, api_json).await;
+        let embed_message: CreateMessage = tweet.to_embed().await;
+        embed_message
     }
 }
 
