@@ -29,7 +29,7 @@ pub struct Tweet {
 }
 
 impl Tweet {
-    pub async fn from_raw(ctx: &Context, raw_api_data: String) -> Self {
+    pub async fn from_raw_api(ctx: &Context, raw_api_data: String) -> Self {
         let json_api_data: Value =
             from_str(raw_api_data.as_str()).expect("Expected a valid payload");
 
@@ -175,7 +175,7 @@ impl ContentFetcher for TweetFetcher {
         };
 
         let api_json = response.text().await.expect("Failed to read response text");
-        let tweet: Tweet = Tweet::from_raw(&ctx, api_json).await;
+        let tweet: Tweet = Tweet::from_raw_api(&ctx, api_json).await;
         let embed_message: CreateMessage = tweet.to_embed().await;
         embed_message
     }
