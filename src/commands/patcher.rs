@@ -25,6 +25,7 @@ impl Patcher {
                 .captures(&self.msg.content)
                 .expect("Expected a valid haystack");
 
+        // Decide domain
         let embed_message: CreateMessage = match caps
             .name("domain")
             .expect("Expected domain in haystack")
@@ -39,6 +40,7 @@ impl Patcher {
             _ => unimplemented!(),
         };
 
+        // Sending embed message
         if let Err(why) = self
             .msg
             .channel_id
