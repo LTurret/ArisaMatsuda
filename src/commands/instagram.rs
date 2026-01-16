@@ -1,36 +1,131 @@
-// use crate::commands::embed::ContentFetcher;
-// use async_trait::async_trait;
-// use regex::{Captures, Regex};
-use regex::Captures;
-// use reqwest::{Client as HttpClient, Error};
-use serenity::{builder::CreateMessage, prelude::*};
+use crate::commands::{
+    author::Author,
+    embed::{ContentFetcher, Embed},
+};
+use async_trait::async_trait;
+use html_escape::decode_html_entities;
+use regex::{Captures, Regex};
+use reqwest::{header::USER_AGENT, Client as HttpClient};
+use serde_json::{json, Value};
+use serenity::{
+    builder::{
+        CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
+    },
+    model::Color,
+    prelude::*,
+};
 
-// pub struct InstagramFetcher;
+#[derive(Debug)]
+pub struct InstagramPost {
+    pub author: Author,
+    pub content: String,
+    pub videos_supplementary: String,
+}
 
-// #[async_trait]
-// impl ContentFetcher for InstagramFetcher {
-//     async fn fetch_json(&self, endpoint: &str, ctx: &Context) -> Result<String, Error> {
-//         let clean_endpoint = format!(
-//             "https://www.instagram.com/{}/",
-//             Regex::new(r"(?<instagram_endpoint>(/p/.+)/(.+))")
-//                 .expect("Expected a valid regex pattern")
-//                 .captures(endpoint)
-//                 .expect("Expected a valid haystack")
-//                 .get(0)
-//                 .expect("Expected a valid matching")
-//                 .as_str()
-//                 .to_string()
-//         );
+impl InstagramPost {
+    async fn from_raw_response(raw_response: String) -> Self {
+        let author = Regex::new(
+            r#"<meta\sproperty="og:url"\scontent="https://www.instagram.com/(?<author>.+)/p/"#,
+        )
+        .unwrap()
+        .captures(&raw_response)
+        .unwrap()
+        .name("author")
+        .unwrap()
+        .as_str()
+        .to_string();
 
-//         let client: HttpClient = HttpClient::new();
-//         let api_json: String = client.get(clean_endpoint).send().await?.text().await?;
-//         println!("{:#?}", &api_json);
+        let content = Regex::new(
+            r#"(?s)<meta\sproperty="og:title"\scontent=".+on Instagram:(?<content>.+)".+><meta\sproperty="og:image""#,
+        )
+        .unwrap()
+        .captures(&raw_response)
+        .unwrap()
+        .name("content")
+        .unwrap()
+        .as_str();
 
-//         Ok(api_json)
-//     }
-// }
+        let content_chars: Vec<char> = decode_html_entities(&content).chars().collect();
+        let content: String = content_chars[2..content_chars.len() - 1].iter().collect();
 
-pub async fn handler(_ctx: &Context, _caps: &Captures<'_>) -> CreateMessage {
-    let message = CreateMessage::new();
-    message
+        let author_json: Value = json!({
+            "url": "https://www.instagram.com/p/DS71PSjiQIu/",
+            "name": author,
+            "screen_name": author,
+            "icon_url": "https://static.cdninstagram.com/rsrc.php/v4/yI/r/VsNE-OHk_8a.png",
+        });
+
+        let videos_supplementary: String = String::from("");
+
+        Self {
+            author: Author::from_json(&author_json),
+            content: content,
+            videos_supplementary: videos_supplementary,
+        }
+    }
+
+    async fn to_embed(self) -> CreateMessage {
+        let embed: CreateEmbed = CreateEmbed::new()
+            .color(Color::new(0xce0071))
+            .author(CreateEmbedAuthor::new(format!("{}", self.author.name)))
+            .description(self.content)
+            .footer(
+                CreateEmbedFooter::new("Instagram")
+                    .icon_url("https://images-ext-1.discordapp.net/external/C6jCIKlXguRhfmSp6USkbWsS11fnsbBgMXiclR2R4ps/https/www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"),
+            )
+            .url("https://lturret.xyz");
+
+        let builder: CreateMessage = CreateMessage::new()
+            .content(&self.videos_supplementary)
+            .allowed_mentions(CreateAllowedMentions::new().empty_users())
+            .embed(embed);
+
+        builder
+    }
+}
+
+pub struct InstagramFetcher;
+
+#[async_trait]
+impl ContentFetcher for InstagramFetcher {
+    async fn fetch_json(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
+        let clean_endpoint = format!(
+            "https://www.instagram.com/p/{}/",
+            Regex::new(r"/p/(?<post_id>.+)/")
+                .expect("Expected a valid regex pattern")
+                .captures(endpoint)
+                .expect("Expected a valid haystack")
+                .name("post_id")
+                .expect("Expected a valid matching")
+                .as_str()
+                .to_string()
+        );
+
+        let client: HttpClient = HttpClient::new();
+        let response_result = client
+            .get(clean_endpoint)
+            .header(
+                USER_AGENT,
+                "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)",
+            )
+            .send()
+            .await;
+
+        let response: String = match response_result {
+            Ok(resp) => resp.text().await.expect("Failed to read response text"),
+            Err(err) => {
+                eprintln!("{}", err);
+                return CreateMessage::new().content("Failed to fetch post");
+            }
+        };
+
+        let instagram_post: InstagramPost = InstagramPost::from_raw_response(response).await;
+        let embed_message: CreateMessage = instagram_post.to_embed().await;
+        embed_message
+    }
+}
+
+pub async fn handler(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
+    let embed_message = Embed.new_embed(ctx, caps).await;
+    embed_message
 }

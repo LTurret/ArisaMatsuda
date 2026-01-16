@@ -1,5 +1,4 @@
-// use crate::commands::{instagram::InstagramFetcher, twitter::TweetFetcher};
-use crate::commands::twitter::TweetFetcher;
+use crate::commands::{instagram::InstagramFetcher, twitter::TweetFetcher};
 use async_trait::async_trait;
 use regex::Captures;
 use serenity::{builder::CreateMessage, prelude::*};
@@ -25,7 +24,7 @@ impl Embed {
             .as_str()
         {
             "x" | "twitter" => Box::new(TweetFetcher),
-            // "instagram" => Box::new(InstagramFetcher),
+            "instagram" => Box::new(InstagramFetcher),
             _ => unimplemented!(),
         };
 
