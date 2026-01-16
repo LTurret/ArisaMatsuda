@@ -29,7 +29,7 @@ pub struct Tweet {
 }
 
 impl Tweet {
-    pub async fn from_raw_api(ctx: &Context, raw_api_data: String) -> Self {
+    async fn from_raw_api(ctx: &Context, raw_api_data: String) -> Self {
         let json_api_data: Value =
             from_str(raw_api_data.as_str()).expect("Expected a valid payload");
 
@@ -105,7 +105,7 @@ impl Tweet {
         }
     }
 
-    pub async fn to_embed(self) -> CreateMessage {
+    async fn to_embed(self) -> CreateMessage {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0x00b0f4))
             .author(
