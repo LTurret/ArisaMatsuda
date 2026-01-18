@@ -88,7 +88,7 @@ pub struct InstagramFetcher;
 
 #[async_trait]
 impl ContentFetcher for InstagramFetcher {
-    async fn fetch_json(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
+    async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
         let clean_endpoint = format!(
             "https://www.instagram.com/p/{}/",
             Regex::new(r"/p/(?<post_id>.+)/")

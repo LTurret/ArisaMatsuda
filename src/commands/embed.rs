@@ -7,7 +7,7 @@ pub struct Embed;
 
 #[async_trait]
 pub trait ContentFetcher: Send + Sync {
-    async fn fetch_json(&self, endpoint: &str, ctx: &Context) -> CreateMessage;
+    async fn embed_message(&self, endpoint: &str, ctx: &Context) -> CreateMessage;
 }
 
 impl Embed {
@@ -29,7 +29,7 @@ impl Embed {
             _ => unimplemented!(),
         };
 
-        let embed_message: CreateMessage = fetcher.fetch_json(&endpoint, ctx).await;
+        let embed_message: CreateMessage = fetcher.embed_message(&endpoint, ctx).await;
 
         embed_message
     }

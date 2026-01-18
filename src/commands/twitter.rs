@@ -143,7 +143,7 @@ pub struct TweetFetcher;
 
 #[async_trait]
 impl ContentFetcher for TweetFetcher {
-    async fn fetch_json(&self, endpoint: &str, ctx: &Context) -> CreateMessage {
+    async fn embed_message(&self, endpoint: &str, ctx: &Context) -> CreateMessage {
         let caps: Captures<'_> = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
             .expect("Expected a valid regex pattern")
             .captures(endpoint)
