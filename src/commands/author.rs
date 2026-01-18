@@ -21,4 +21,13 @@ impl Author {
             icon_url: get_string(json_data, "avatar_url"),
         }
     }
+
+    pub fn from_str(url: &String, name: &String, screen_name: &String, icon_url: &String) -> Self {
+        Self {
+            url: String::from(url),
+            name: String::from(name),
+            screen_name: String::from(screen_name),
+            icon_url: String::from(icon_url),
+        }
+    }
 }
