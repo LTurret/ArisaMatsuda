@@ -23,6 +23,7 @@ impl Embed {
             .expect("Expacted a valid haystack")
             .as_str()
         {
+            // ContentFetcher selector by domain
             "x" | "twitter" => Box::new(TweetFetcher),
             "instagram" => Box::new(InstagramFetcher),
             _ => unimplemented!(),
