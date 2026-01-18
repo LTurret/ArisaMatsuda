@@ -6,7 +6,6 @@ use async_trait::async_trait;
 use html_escape::decode_html_entities;
 use regex::{Captures, Regex};
 use reqwest::{header::USER_AGENT, Client as HttpClient};
-use serde_json::{json, Value};
 use serenity::{
     builder::{
         CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
@@ -24,7 +23,7 @@ pub struct InstagramPost {
 
 impl InstagramPost {
     async fn from_raw_response(raw_response: String) -> Self {
-        let author = Regex::new(
+        let author: String = Regex::new(
             r#"<meta\sproperty="og:url"\scontent="https://www.instagram.com/(?<author>.+)/p/"#,
         )
         .unwrap()
@@ -35,7 +34,7 @@ impl InstagramPost {
         .as_str()
         .to_string();
 
-        let content = Regex::new(
+        let raw_content: &str = Regex::new(
             r#"(?s)<meta\sproperty="og:title"\scontent=".+on Instagram:(?<content>.+)".+><meta\sproperty="og:image""#,
         )
         .unwrap()
@@ -45,20 +44,12 @@ impl InstagramPost {
         .unwrap()
         .as_str();
 
-        let content_chars: Vec<char> = decode_html_entities(&content).chars().collect();
+        let content_chars: Vec<char> = decode_html_entities(&raw_content).chars().collect();
         let content: String = content_chars[2..content_chars.len() - 1].iter().collect();
-
-        let author_json: Value = json!({
-            "url": "https://www.instagram.com/p/DS71PSjiQIu/",
-            "name": author,
-            "screen_name": author,
-            "icon_url": "https://static.cdninstagram.com/rsrc.php/v4/yI/r/VsNE-OHk_8a.png",
-        });
-
         let videos_supplementary: String = String::from("");
 
         Self {
-            author: Author::from_json(&author_json),
+            author: Author::from_str(&String::from(""), &author, &author, &String::from("")),
             content: content,
             videos_supplementary: videos_supplementary,
         }
