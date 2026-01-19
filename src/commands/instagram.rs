@@ -92,8 +92,7 @@ impl ContentFetcher for InstagramFetcher {
                 .to_string()
         );
 
-        let client: HttpClient = HttpClient::new();
-        let response_result = client
+        let response_result: Result<reqwest::Response, reqwest::Error> = HttpClient::new()
             .get(clean_endpoint)
             .header(
                 USER_AGENT,
