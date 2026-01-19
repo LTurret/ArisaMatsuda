@@ -103,9 +103,9 @@ impl ContentFetcher for InstagramFetcher {
             .await;
 
         let response: String = match response_result {
-            Ok(resp) => resp.text().await.expect("Failed to read response text"),
-            Err(err) => {
-                eprintln!("{}", err);
+            Ok(res) => res.text().await.expect("Failed to read response text"),
+            Err(e) => {
+                eprintln!("{}", e);
                 return CreateMessage::new().content("Failed to fetch post");
             }
         };
