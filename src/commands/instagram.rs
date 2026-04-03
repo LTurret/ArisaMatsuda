@@ -28,7 +28,7 @@ pub struct InstagramPost {
 impl InstagramPost {
     async fn from_raw_response(raw_response: String) -> Self {
         let author: String = Regex::new(
-            r#"<meta\sproperty="og:url"\scontent="https://www.instagram.com/(?<author>.+)/p/"#,
+            r#"<meta\sproperty="og:url"\scontent="https:\/\/www\.instagram\.com/(?<author>.+)\/p\/"#,
         )
         .unwrap()
         .captures(&raw_response)
@@ -189,7 +189,7 @@ impl ContentFetcher for InstagramFetcher {
     async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
         let clean_endpoint = format!(
             "https://www.instagram.com/p/{}/",
-            Regex::new(r"/p/(?<post_id>.+)/")
+            Regex::new(r"\/p\/(?<post_id>.+)\/")
                 .expect("Expected a valid regex pattern")
                 .captures(endpoint)
                 .expect("Expected a valid haystack")
