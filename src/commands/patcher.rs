@@ -32,7 +32,8 @@ impl Patcher {
             .as_str()
         {
             "x" | "twitter" => twitter::handler(&self.ctx, &caps).await,
-            "instagram" => instagram::handler(&self.ctx, &caps).await,
+            // "instagram" => instagram::handler(&self.ctx, &caps).await,
+            "instagram" => unimplemented!(),
             "facebook" => unimplemented!(),
             "threads" => unimplemented!(),
             "youtube" => unimplemented!(),
