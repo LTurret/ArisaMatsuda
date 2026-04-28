@@ -1,15 +1,8 @@
-use crate::commands::{
-    author::Author,
-    embed::{ContentFetcher, Embed},
-};
+use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use html_escape::decode_html_entities;
-use regex::{Captures, Regex};
-use reqwest::{
-    header::{HeaderMap, HeaderValue, USER_AGENT},
-    Client as HttpClient,
-};
-use serde_json::Value;
+use regex::Regex;
+use reqwest::{header::USER_AGENT, Client as HttpClient};
 use serenity::{
     builder::{
         CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
@@ -38,8 +31,8 @@ impl InstagramPost {
         .as_str()
         .to_string();
 
-        let url: &String = &String::from(format!("https://www.instagram.com/{}", &author));
-        let icon_url: String = InstagramPost::get_profile_pic_url(&author).await;
+        let url: &String = &format!("https://www.instagram.com/{}", &author);
+        // let icon_url: String = InstagramPost::get_profile_pic_url(&author).await;
 
         let raw_content: &str = Regex::new(
             r#"(?s)<meta\sproperty="og:title"\scontent=".+on Instagram:(?<content>.+)".+><meta\sproperty="og:image""#,
@@ -56,12 +49,14 @@ impl InstagramPost {
         let videos_supplementary: String = String::from("");
 
         Self {
-            author: Author::from_str(url, &author, &author, &icon_url),
-            content: content,
-            videos_supplementary: videos_supplementary,
+            author: Author::from_str(url, &author, &author, None),
+            content,
+            videos_supplementary,
         }
     }
 
+    #[deprecated = "Meta API changes make this don't work anymore, too shame :("]
+    #[cfg(false)]
     async fn get_profile_pic_url(username: &String) -> String {
         let mut headers = HeaderMap::new();
         headers.insert("x-ig-app-id", HeaderValue::from_static("936619743392459"));
@@ -124,10 +119,16 @@ impl InstagramPost {
             })
             .expect("csrftoken not found");
 
-        let body = format!("variables=%7B%22enable_integrity_filters%22%3Atrue%2C%22id%22%3A%22{}%22%2C%22render_surface%22%3A%22PROFILE%22%2C%22__relay_internal__pv__PolarisCannesGuardianExperienceEnabledrelayprovider%22%3Atrue%2C%22__relay_internal__pv__PolarisCASB976ProfileEnabledrelayprovider%22%3Afalse%2C%22__relay_internal__pv__PolarisRepostsConsumptionEnabledrelayprovider%22%3Afalse%7D&doc_id=25980296051578533", user_id);
+        let body = format!(
+            "variables=%7B%22enable_integrity_filters%22%3Atrue%2C%22id%22%3A%22{}%22%2C%22render_surface%22%3A%22PROFILE%22%2C%22__relay_internal__pv__PolarisCannesGuardianExperienceEnabledrelayprovider%22%3Atrue%2C%22__relay_internal__pv__PolarisCASB976ProfileEnabledrelayprovider%22%3Afalse%2C%22__relay_internal__pv__PolarisRepostsConsumptionEnabledrelayprovider%22%3Afalse%7D&doc_id=25980296051578533",
+            user_id
+        );
 
         let mut headers = HeaderMap::new();
-        let cookie = format!("ig_did=B9C9BB5D-2753-46D0-9784-3C94B0FAD0C9;csrftoken={};datr=rl40aad9n6XXVIcGcEsaMfZU;mid=aTRergALAAGAj_Wk-MQWM3oJJrI3;ps_l=1; ps_n=1; ig_nrcb=1; wd=958x944", csrftoken);
+        let cookie = format!(
+            "ig_did=B9C9BB5D-2753-46D0-9784-3C94B0FAD0C9;csrftoken={};datr=rl40aad9n6XXVIcGcEsaMfZU;mid=aTRergALAAGAj_Wk-MQWM3oJJrI3;ps_l=1; ps_n=1; ig_nrcb=1; wd=958x944",
+            csrftoken
+        );
 
         headers.insert(
             HeaderName::from_static("cookie"),
@@ -158,18 +159,17 @@ impl InstagramPost {
             }
         }
 
-        let response = String::from("gay");
         response
     }
 
-    async fn to_embed(self) -> CreateMessage {
+    async fn into_embed(self) -> CreateMessage {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0xce0071))
-            .author(CreateEmbedAuthor::new(format!("{}", self.author.name)).icon_url(self.author.icon_url).url(self.author.url))
+            .author(CreateEmbedAuthor::new(self.author.name).url(self.author.url))
             .description(self.content)
             .footer(
                 CreateEmbedFooter::new("Instagram")
-                    .icon_url("https://images-ext-1.discordapp.net/external/C6jCIKlXguRhfmSp6USkbWsS11fnsbBgMXiclR2R4ps/https/www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"),
+                    .icon_url("https://cdn-icons-png.flaticon.com/512/15707/15707749.png"),
             )
             .url("https://lturret.xyz");
 
@@ -182,21 +182,20 @@ impl InstagramPost {
     }
 }
 
-pub struct InstagramFetcher;
+pub struct InstagramBuilder;
 
 #[async_trait]
-impl ContentFetcher for InstagramFetcher {
+impl ContentBuilder for InstagramBuilder {
     async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
         let clean_endpoint = format!(
             "https://www.instagram.com/p/{}/",
-            Regex::new(r"\/p\/(?<post_id>.+)\/")
+            Regex::new(r"/p/(?<post_id>.+)/?")
                 .expect("Expected a valid regex pattern")
                 .captures(endpoint)
                 .expect("Expected a valid haystack")
                 .name("post_id")
                 .expect("Expected a valid matching")
                 .as_str()
-                .to_string()
         );
 
         let response_result: Result<reqwest::Response, reqwest::Error> = HttpClient::new()
@@ -217,12 +216,7 @@ impl ContentFetcher for InstagramFetcher {
         };
 
         let instagram_post: InstagramPost = InstagramPost::from_raw_response(response).await;
-        let embed_message: CreateMessage = instagram_post.to_embed().await;
+        let embed_message: CreateMessage = instagram_post.into_embed().await;
         embed_message
     }
-}
-
-pub async fn handler(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
-    let embed_message = Embed.new_embed(ctx, caps).await;
-    embed_message
 }

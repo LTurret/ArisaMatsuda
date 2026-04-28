@@ -1,7 +1,4 @@
-use crate::commands::{
-    author::Author,
-    embed::{ContentFetcher, Embed},
-};
+use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use regex::{Captures, Regex};
 use reqwest::{header::USER_AGENT, Client as HttpClient};
@@ -52,7 +49,7 @@ impl Tweet {
                 CreateEmbed::new().url("https://lturret.xyz").image(
                     Regex::new(r"(?<image_cdn_url>https://pbs.twimg.com/media/.+\.jpg)(\?.+)*")
                         .expect("Expected a valid regex")
-                        .captures(&obj["url"].as_str().unwrap_or(""))
+                        .captures(obj["url"].as_str().unwrap_or(""))
                         .expect("Expected a valid haystack")
                         .name("image_cdn_url")
                         .expect("Expected a valid matchig")
@@ -90,22 +87,22 @@ impl Tweet {
         }
 
         let mut videos_supplementary: String = String::new();
-        let _ = raw_videos.iter().enumerate().for_each(|(i, url)| {
+        raw_videos.iter().enumerate().for_each(|(i, url)| {
             videos_supplementary
                 .push_str(format!("-# [推文影片連結 {}]({})\n", i + 1, url).as_str())
         });
 
         Self {
             author: Author::from_json(&json_api_data["tweet"]["author"]),
-            content: content,
-            timestamp: timestamp,
-            images: images,
-            videos: videos,
-            videos_supplementary: videos_supplementary,
+            content,
+            timestamp,
+            images,
+            videos,
+            videos_supplementary,
         }
     }
 
-    async fn to_embed(self) -> CreateMessage {
+    async fn into_embed(self) -> CreateMessage {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0x00b0f4))
             .author(
@@ -113,7 +110,7 @@ impl Tweet {
                     "{}(@{})",
                     self.author.name, self.author.screen_name
                 ))
-                .icon_url(self.author.icon_url)
+                .icon_url(self.author.icon_url.unwrap())
                 .url(self.author.url),
             )
             .description(self.content)
@@ -139,10 +136,10 @@ impl Tweet {
     }
 }
 
-pub struct TweetFetcher;
+pub struct TweetBuilder;
 
 #[async_trait]
-impl ContentFetcher for TweetFetcher {
+impl ContentBuilder for TweetBuilder {
     async fn embed_message(&self, endpoint: &str, ctx: &Context) -> CreateMessage {
         let caps: Captures<'_> = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
             .expect("Expected a valid regex pattern")
@@ -175,13 +172,8 @@ impl ContentFetcher for TweetFetcher {
         };
 
         let api_json = response.text().await.expect("Failed to read response text");
-        let tweet: Tweet = Tweet::from_raw_api(&ctx, api_json).await;
-        let embed_message: CreateMessage = tweet.to_embed().await;
+        let tweet: Tweet = Tweet::from_raw_api(ctx, api_json).await;
+        let embed_message: CreateMessage = tweet.into_embed().await;
         embed_message
     }
-}
-
-pub async fn handler(ctx: &Context, caps: &Captures<'_>) -> CreateMessage {
-    let embed_message = Embed.new_embed(ctx, caps).await;
-    embed_message
 }

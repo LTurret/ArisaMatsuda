@@ -1,5 +1,5 @@
 mod commands;
-use crate::commands::patcher::Patcher;
+use crate::commands::embed::Embed;
 use dotenv::dotenv;
 use regex::Regex;
 use serenity::{
@@ -14,10 +14,15 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        let re: Regex = Regex::new(r"(http|https)://(www\.)*(?<domain>(x|twitter|instagram|facebook|threads|ppt)\.(cc|com))")
-            .expect("Regex syntax invalid");
-        if msg.author.id != UserId::new(1441446989362626772) && re.is_match(&msg.content) {
-            Patcher::new(ctx, msg).parse().await;
+        let re: Regex = Regex::new(
+            r"(http|https)://(www\.)*(?<domain>(instagram|twitter|threads|x))\.(cc|com)(?<endpoint>(/.+)*)",
+        )
+        .expect("Regex syntax invalid");
+
+        if let Some(caps) = re.captures(&msg.content)
+            && msg.author.id != UserId::new(1441446989362626772)
+        {
+            let _ = Embed::process_url(&ctx, &msg, &caps).await;
         }
     }
 
