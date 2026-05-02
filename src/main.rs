@@ -35,14 +35,17 @@ impl EventHandler for Handler {
 async fn main() {
     dotenv().ok();
 
-    let token: String = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+    let token: String =
+        env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
     let intents: GatewayIntents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
-    let mut client =
-        Client::builder(&token, intents).event_handler(Handler).await.expect("Err creating client");
+    let mut client = Client::builder(&token, intents)
+        .event_handler(Handler)
+        .await
+        .expect("Err creating client");
 
     if let Err(why) = client.start().await {
         eprintln!("Client error: {why:?}");

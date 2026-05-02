@@ -9,7 +9,7 @@ use serenity::{
     builder::CreateMessage, http::Typing, model::channel::Message, prelude::*,
 };
 use std::env;
-use tokio::time::{sleep, Duration};
+use tokio::time::{Duration, sleep};
 
 pub struct Embed;
 

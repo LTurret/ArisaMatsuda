@@ -1,16 +1,16 @@
 use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use regex::{Captures, Regex};
-use reqwest::{header::USER_AGENT, Client as HttpClient};
-use serde_json::{from_str, Value};
+use reqwest::{Client as HttpClient, header::USER_AGENT};
+use serde_json::{Value, from_str};
 use serenity::{
     builder::{
-        CreateAllowedMentions, CreateAttachment, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter,
-        CreateMessage,
+        CreateAllowedMentions, CreateAttachment, CreateEmbed,
+        CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
     },
     model::{
-        timestamp::{InvalidTimestamp, Timestamp},
         Color,
+        timestamp::{InvalidTimestamp, Timestamp},
     },
     prelude::*,
 };
@@ -30,16 +30,15 @@ impl Tweet {
         let json_api_data: Value =
             from_str(raw_api_data.as_str()).expect("Expected a valid payload");
 
-        let content: String = json_api_data["tweet"]["text"]
-            .as_str()
-            .unwrap_or("")
-            .to_string();
+        let content: String =
+            json_api_data["tweet"]["text"].as_str().unwrap_or("").to_string();
 
-        let timestamp: Result<Timestamp, InvalidTimestamp> = Timestamp::from_unix_timestamp(
-            json_api_data["tweet"]["created_timestamp"]
-                .as_i64()
-                .unwrap_or(0),
-        );
+        let timestamp: Result<Timestamp, InvalidTimestamp> =
+            Timestamp::from_unix_timestamp(
+                json_api_data["tweet"]["created_timestamp"]
+                    .as_i64()
+                    .unwrap_or(0),
+            );
 
         let images: Vec<CreateEmbed> = json_api_data["tweet"]["media"]["photos"]
             .as_array()
@@ -88,8 +87,9 @@ impl Tweet {
 
         let mut videos_supplementary: String = String::new();
         raw_videos.iter().enumerate().for_each(|(i, url)| {
-            videos_supplementary
-                .push_str(format!("-# [推文影片連結 {}]({})\n", i + 1, url).as_str())
+            videos_supplementary.push_str(
+                format!("-# [推文影片連結 {}]({})\n", i + 1, url).as_str(),
+            )
         });
 
         Self {
@@ -114,10 +114,9 @@ impl Tweet {
                 .url(self.author.url),
             )
             .description(self.content)
-            .footer(
-                CreateEmbedFooter::new("Twitter (X)")
-                    .icon_url("https://abs.twimg.com/icons/apple-touch-icon-192x192.png"),
-            )
+            .footer(CreateEmbedFooter::new("Twitter (X)").icon_url(
+                "https://abs.twimg.com/icons/apple-touch-icon-192x192.png",
+            ))
             .url("https://lturret.xyz")
             .timestamp(
                 self.timestamp
@@ -140,11 +139,16 @@ pub struct TweetBuilder;
 
 #[async_trait]
 impl ContentBuilder for TweetBuilder {
-    async fn embed_message(&self, endpoint: &str, ctx: &Context) -> CreateMessage {
-        let caps: Captures<'_> = Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
-            .expect("Expected a valid regex pattern")
-            .captures(endpoint)
-            .expect("Expected a valid haystack");
+    async fn embed_message(
+        &self,
+        endpoint: &str,
+        ctx: &Context,
+    ) -> CreateMessage {
+        let caps: Captures<'_> =
+            Regex::new(r"(?<tweet_endpoint>/.+/status/[0-9]+)(\?.=.+)*")
+                .expect("Expected a valid regex pattern")
+                .captures(endpoint)
+                .expect("Expected a valid haystack");
 
         let api_url: String = format!(
             "https://api.fxtwitter.com{}",
@@ -171,7 +175,8 @@ impl ContentBuilder for TweetBuilder {
             }
         };
 
-        let api_json = response.text().await.expect("Failed to read response text");
+        let api_json =
+            response.text().await.expect("Failed to read response text");
         let tweet: Tweet = Tweet::from_raw_api(ctx, api_json).await;
         let embed_message: CreateMessage = tweet.into_embed().await;
         embed_message

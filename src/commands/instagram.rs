@@ -2,7 +2,7 @@ use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use html_escape::decode_html_entities;
 use regex::Regex;
-use reqwest::{header::USER_AGENT, Client as HttpClient};
+use reqwest::{Client as HttpClient, header::USER_AGENT};
 use serenity::{
     builder::{
         CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor,
@@ -87,9 +87,9 @@ impl InstagramPost {
     #[cfg(false)]
     async fn get_icon_url(author: &String) -> String {
         use reqwest::{
+            Url,
             cookie::{CookieStore, Jar},
             header::HeaderName,
-            Url,
         };
         use std::sync::Arc;
 

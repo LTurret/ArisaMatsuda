@@ -2,10 +2,11 @@ use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use html_escape::decode_html_entities;
 use regex::Regex;
-use reqwest::{header::USER_AGENT, Client as HttpClient};
+use reqwest::{Client as HttpClient, header::USER_AGENT};
 use serenity::{
     builder::{
-        CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
+        CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor,
+        CreateEmbedFooter, CreateMessage,
     },
     model::Color,
     prelude::*,
@@ -19,18 +20,21 @@ pub struct Thread {
 
 impl Thread {
     async fn from_raw_response(raw_response: String) -> Self {
-        let author: String =
-            Regex::new(r"https://www\.threads\.com/(?<author>&#064;[a-zA-Z0-9._-]+)/")
-                .expect("Regex syntax invalid")
-                .captures(&raw_response)
-                .expect("Expected a valid haystack")
-                .name("author")
-                .expect("String not match")
-                .as_str()
-                .to_string();
+        let author: String = Regex::new(
+            r"https://www\.threads\.com/(?<author>&#064;[a-zA-Z0-9._-]+)/",
+        )
+        .expect("Regex syntax invalid")
+        .captures(&raw_response)
+        .expect("Expected a valid haystack")
+        .name("author")
+        .expect("String not match")
+        .as_str()
+        .to_string();
 
-        let decoded_author_name: String = decode_html_entities(&author).to_string();
-        let url: &String = &format!("https://www.threads.com/{}", decoded_author_name);
+        let decoded_author_name: String =
+            decode_html_entities(&author).to_string();
+        let url: &String =
+            &format!("https://www.threads.com/{}", decoded_author_name);
         let profile: String = HttpClient::new()
             .get(url)
             .header(
@@ -44,15 +48,16 @@ impl Thread {
             .await
             .expect("Failed to read response text");
 
-        let author_alias: String =
-            Regex::new(r"<title>(?<author_alias>.+)\s\(&#064;.+\)\s.\s.+</title>")
-                .expect("Regex syntax invalid")
-                .captures(&profile)
-                .expect("Expected a valid haystack")
-                .name("author_alias")
-                .expect("String not match")
-                .as_str()
-                .to_string();
+        let author_alias: String = Regex::new(
+            r"<title>(?<author_alias>.+)\s\(&#064;.+\)\s.\s.+</title>",
+        )
+        .expect("Regex syntax invalid")
+        .captures(&profile)
+        .expect("Expected a valid haystack")
+        .name("author_alias")
+        .expect("String not match")
+        .as_str()
+        .to_string();
 
         let content: String = Regex::new(r"<title>(?<content>[\s\S]+)</title>")
             .expect("Regex syntax invalid")
@@ -64,7 +69,12 @@ impl Thread {
             .to_string();
 
         Self {
-            author: Author::from_str(url, &decoded_author_name, &author_alias, None),
+            author: Author::from_str(
+                url,
+                &decoded_author_name,
+                &author_alias,
+                None,
+            ),
             content,
         }
     }
@@ -80,10 +90,9 @@ impl Thread {
                 .url(self.author.url),
             )
             .description(self.content)
-            .footer(
-                CreateEmbedFooter::new("Threads")
-                    .icon_url("https://cdn-icons-png.flaticon.com/512/12105/12105338.png"),
-            )
+            .footer(CreateEmbedFooter::new("Threads").icon_url(
+                "https://cdn-icons-png.flaticon.com/512/12105/12105338.png",
+            ))
             .url("https://lturret.xyz");
 
         let builder: CreateMessage = CreateMessage::new()
@@ -98,7 +107,11 @@ pub struct ThreadBuilder;
 
 #[async_trait]
 impl ContentBuilder for ThreadBuilder {
-    async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
+    async fn embed_message(
+        &self,
+        endpoint: &str,
+        _ctx: &Context,
+    ) -> CreateMessage {
         let clean_url = format!(
             "https://www.threads.com/{}",
             Regex::new(r"(?<thread_endpoint>@.+/post/[\w]+)/?")
