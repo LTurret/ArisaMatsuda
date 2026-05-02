@@ -10,12 +10,20 @@ Before hosting this bot directly from this repo, There are few steps need to do,
 
 ```plain
 ArisaMatsuda/
-├── src
-│   └── main.rs
+.
 ├── Cargo.toml
 ├── LICENSE
 ├── README.md
-└── README_zh-TW.md
+├── rustfmt.toml
+└── src
+    ├── main.rs
+    └── commands
+        ├── author.rs
+        ├── embed.rs
+        ├── instagram.rs
+        ├── mod.rs
+        ├── threads.rs
+        └── twitter.rs
 ```
 
 ### Secrets
