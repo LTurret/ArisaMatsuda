@@ -76,9 +76,9 @@ pub struct ThreadBuilder;
 #[async_trait]
 impl ContentBuilder for ThreadBuilder {
     async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
-        let clean_endpoint = format!(
-            "https://www.threads.com/{}/",
-            Regex::new(r"(?<thread_endpoint>@.+/post/.+)")
+        let clean_url = format!(
+            "https://www.threads.com/{}",
+            Regex::new(r"(?<thread_endpoint>@.+/post/[\w]+)/?")
                 .expect("Expected a valid regex pattern")
                 .captures(endpoint)
                 .expect("Expected a valid haystack")
