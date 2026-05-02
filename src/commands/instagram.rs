@@ -24,11 +24,11 @@ impl InstagramPost {
         let author: String = Regex::new(
             r#"<meta\sproperty="og:url"\scontent="https:\/\/www\.instagram\.com/(?<author>.+)\/p\/"#,
         )
-        .unwrap()
+        .expect("Regex syntax invalid")
         .captures(&raw_response)
-        .unwrap()
+        .expect("Expected a valid haystack")
         .name("author")
-        .unwrap()
+        .expect("String not match")
         .as_str()
         .to_string();
 
@@ -38,11 +38,11 @@ impl InstagramPost {
         let raw_content: &str = Regex::new(
             r#"(?s)<meta\sproperty="og:title"\scontent=".+on Instagram:(?<content>.+)".+><meta\sproperty="og:image""#,
         )
-        .unwrap()
+        .expect("Regex syntax invalid")
         .captures(&raw_response)
-        .unwrap()
+        .expect("Expected a valid haystack")
         .name("content")
-        .unwrap()
+        .expect("String not match")
         .as_str();
 
         let content_chars: Vec<char> =
