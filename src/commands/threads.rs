@@ -15,7 +15,6 @@ use serenity::{
 pub struct Thread {
     pub author: Author,
     pub content: String,
-    pub videos_supplementary: String,
 }
 
 impl Thread {
@@ -26,35 +25,60 @@ impl Thread {
                 .captures(&raw_response)
                 .expect("Expected a valid haystack")
                 .name("author")
-                .unwrap()
+                .expect("String not match")
                 .as_str()
                 .to_string();
 
         let decoded_author_name: String = decode_html_entities(&author).to_string();
         let url: &String = &format!("https://www.threads.com/{}", decoded_author_name);
-        let raw_content: &str = Regex::new(r"<title>(?<content>[\s\S]+)</title>")
+        let profile: String = HttpClient::new()
+            .get(url)
+            .header(
+                USER_AGENT,
+                "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)",
+            )
+            .send()
+            .await
+            .expect("Connection error")
+            .text()
+            .await
+            .expect("Failed to read response text");
+
+        let author_alias: String =
+            Regex::new(r"<title>(?<author_alias>.+)\s\(&#064;.+\)\s.\s.+</title>")
+                .expect("Regex syntax invalid")
+                .captures(&profile)
+                .expect("Expected a valid haystack")
+                .name("author_alias")
+                .expect("String not match")
+                .as_str()
+                .to_string();
+
+        let content: String = Regex::new(r"<title>(?<content>[\s\S]+)</title>")
             .expect("Regex syntax invalid")
             .captures(&raw_response)
             .expect("Expected a valid haystack")
             .name("content")
-            .unwrap()
-            .as_str();
-
-        let content_chars: Vec<char> = decode_html_entities(&raw_content).chars().collect();
-        let content: String = content_chars[2..content_chars.len()].iter().collect();
-        let videos_supplementary: String = String::from("");
+            .expect("String not match")
+            .as_str()
+            .to_string();
 
         Self {
-            author: Author::from_str(url, &decoded_author_name, &decoded_author_name, None),
+            author: Author::from_str(url, &decoded_author_name, &author_alias, None),
             content,
-            videos_supplementary,
         }
     }
 
     async fn into_embed(self) -> CreateMessage {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0x181818))
-            .author(CreateEmbedAuthor::new(self.author.name).url(self.author.url))
+            .author(
+                CreateEmbedAuthor::new(format!(
+                    "{} ({})",
+                    self.author.screen_name, self.author.name
+                ))
+                .url(self.author.url),
+            )
             .description(self.content)
             .footer(
                 CreateEmbedFooter::new("Threads")
@@ -63,7 +87,6 @@ impl Thread {
             .url("https://lturret.xyz");
 
         let builder: CreateMessage = CreateMessage::new()
-            .content(&self.videos_supplementary)
             .allowed_mentions(CreateAllowedMentions::new().empty_users())
             .embed(embed);
 
@@ -88,7 +111,7 @@ impl ContentBuilder for ThreadBuilder {
         );
 
         let response_result: Result<reqwest::Response, reqwest::Error> = HttpClient::new()
-            .get(clean_endpoint)
+            .get(clean_url)
             .header(
                 USER_AGENT,
                 "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)",
@@ -104,8 +127,9 @@ impl ContentBuilder for ThreadBuilder {
             }
         };
 
-        let thread_post: Thread = Thread::from_raw_response(response).await;
-        let embed_message: CreateMessage = thread_post.into_embed().await;
+        let embed_message: CreateMessage =
+            Thread::from_raw_response(response).await.into_embed().await;
+
         embed_message
     }
 }

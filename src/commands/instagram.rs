@@ -5,7 +5,8 @@ use regex::Regex;
 use reqwest::{header::USER_AGENT, Client as HttpClient};
 use serenity::{
     builder::{
-        CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor, CreateEmbedFooter, CreateMessage,
+        CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor,
+        CreateEmbedFooter, CreateMessage,
     },
     model::Color,
     prelude::*,
@@ -44,8 +45,10 @@ impl InstagramPost {
         .unwrap()
         .as_str();
 
-        let content_chars: Vec<char> = decode_html_entities(&raw_content).chars().collect();
-        let content: String = content_chars[2..content_chars.len() - 1].iter().collect();
+        let content_chars: Vec<char> =
+            decode_html_entities(&raw_content).chars().collect();
+        let content: String =
+            content_chars[2..content_chars.len() - 1].iter().collect();
         let videos_supplementary: String = String::from("");
 
         Self {
@@ -59,7 +62,8 @@ impl InstagramPost {
     #[cfg(false)]
     async fn get_profile_pic_url(username: &String) -> String {
         let mut headers = HeaderMap::new();
-        headers.insert("x-ig-app-id", HeaderValue::from_static("936619743392459"));
+        headers
+            .insert("x-ig-app-id", HeaderValue::from_static("936619743392459"));
 
         let response = reqwest::Client::new()
             .get(format!(
@@ -103,7 +107,12 @@ impl InstagramPost {
 
         let cookie_val: HeaderValue = jar
             .as_ref()
-            .cookies(&Url::parse(format!("https://www.instagram.com/{}", author).as_str()).unwrap())
+            .cookies(
+                &Url::parse(
+                    format!("https://www.instagram.com/{}", author).as_str(),
+                )
+                .unwrap(),
+            )
             .ok_or("no cookies found")
             .unwrap();
 
@@ -112,10 +121,7 @@ impl InstagramPost {
             .split(';')
             .find(|c| c.trim().starts_with("csrftoken="))
             .map(|c| {
-                c.trim()
-                    .strip_prefix("csrftoken=")
-                    .unwrap_or("")
-                    .to_string()
+                c.trim().strip_prefix("csrftoken=").unwrap_or("").to_string()
             })
             .expect("csrftoken not found");
 
@@ -165,12 +171,13 @@ impl InstagramPost {
     async fn into_embed(self) -> CreateMessage {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0xce0071))
-            .author(CreateEmbedAuthor::new(self.author.name).url(self.author.url))
-            .description(self.content)
-            .footer(
-                CreateEmbedFooter::new("Instagram")
-                    .icon_url("https://cdn-icons-png.flaticon.com/512/15707/15707749.png"),
+            .author(
+                CreateEmbedAuthor::new(self.author.name).url(self.author.url),
             )
+            .description(self.content)
+            .footer(CreateEmbedFooter::new("Instagram").icon_url(
+                "https://cdn-icons-png.flaticon.com/512/15707/15707749.png",
+            ))
             .url("https://lturret.xyz");
 
         let builder: CreateMessage = CreateMessage::new()
@@ -186,7 +193,11 @@ pub struct InstagramBuilder;
 
 #[async_trait]
 impl ContentBuilder for InstagramBuilder {
-    async fn embed_message(&self, endpoint: &str, _ctx: &Context) -> CreateMessage {
+    async fn embed_message(
+        &self,
+        endpoint: &str,
+        _ctx: &Context,
+    ) -> CreateMessage {
         let clean_endpoint = format!(
             "https://www.instagram.com/p/{}/",
             Regex::new(r"/p/(?<post_id>.+)/?")
@@ -200,10 +211,7 @@ impl ContentBuilder for InstagramBuilder {
 
         let response_result: Result<reqwest::Response, reqwest::Error> = HttpClient::new()
             .get(clean_endpoint)
-            .header(
-                USER_AGENT,
-                "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)",
-            )
+            .header(USER_AGENT, "Rust Discord Bot (https://github.com/LTurret/ArisaMatsuda)")
             .send()
             .await;
 
@@ -215,7 +223,8 @@ impl ContentBuilder for InstagramBuilder {
             }
         };
 
-        let instagram_post: InstagramPost = InstagramPost::from_raw_response(response).await;
+        let instagram_post: InstagramPost =
+            InstagramPost::from_raw_response(response).await;
         let embed_message: CreateMessage = instagram_post.into_embed().await;
         embed_message
     }
