@@ -114,7 +114,7 @@ impl ContentBuilder for ThreadBuilder {
     ) -> CreateMessage {
         let clean_url = format!(
             "https://www.threads.com/{}",
-            Regex::new(r"(?<thread_endpoint>@.+/post/[\w]+)/?")
+            Regex::new(r"(?<thread_endpoint>@.+/post/[a-zA-Z0-9._-]+)/?")
                 .expect("Expected a valid regex pattern")
                 .captures(endpoint)
                 .expect("Expected a valid haystack")
