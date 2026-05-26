@@ -1,3 +1,4 @@
 .env
+.zed
 Cargo.lock
 target

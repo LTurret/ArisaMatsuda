@@ -5,7 +5,7 @@ pub struct Author {
     pub url: String,
     pub name: String,
     pub screen_name: String,
-    pub icon_url: String,
+    pub icon_url: Option<String>,
 }
 
 impl Author {
@@ -18,7 +18,21 @@ impl Author {
             url: get_string(json_data, "url"),
             name: get_string(json_data, "name"),
             screen_name: get_string(json_data, "screen_name"),
-            icon_url: get_string(json_data, "avatar_url"),
+            icon_url: json_data["avatar_url"].as_str().map(|s| s.to_string()),
+        }
+    }
+
+    pub fn from_str(
+        url: &String,
+        name: &String,
+        screen_name: &String,
+        icon_url: Option<String>,
+    ) -> Self {
+        Self {
+            url: String::from(url),
+            name: String::from(name),
+            screen_name: String::from(screen_name),
+            icon_url,
         }
     }
 }

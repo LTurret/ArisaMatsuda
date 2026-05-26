@@ -1,8 +1,6 @@
 # ArisaMatsuda
 
-English｜[繁體中文](./README_zh-TW.md)
-
-A discord bot for private server management.
+A discord bot for help domain content embedding.
 
 ## Configuration
 
@@ -12,12 +10,20 @@ Before hosting this bot directly from this repo, There are few steps need to do,
 
 ```plain
 ArisaMatsuda/
-├── src
-│   └── main.rs
+.
 ├── Cargo.toml
 ├── LICENSE
 ├── README.md
-└── README_zh-TW.md
+├── rustfmt.toml
+└── src
+    ├── main.rs
+    └── commands
+        ├── author.rs
+        ├── embed.rs
+        ├── instagram.rs
+        ├── mod.rs
+        ├── threads.rs
+        └── twitter.rs
 ```
 
 ### Secrets
@@ -52,31 +58,6 @@ cargo build --release
     ```sh
     ./target/release/arisa_rust &
     ```
-
-- Docker:
-
-    ```sh
-    wip
-    ```
-
-## Roadmap
-
-> [!NOTE]
-> Some of features are removed from the list since the last Python build.
-> Please refer to the main branch for more information.
-
-There would be more tracks in the project tab!
-
-| **File**         | **Status**       |
-|------------------|------------------|
-| **tweet_fix.py** | Work in Progress |
-| _emotes.py_      | Not implemented  |
-| _goods.py_       | Not implemented  |
-| _ping.py_        | Not implemented  |
-| fun.py           | Not implemented  |
-| tweet_subscribe  | Not implemented  |
-| ~~delete.py~~    | Despreated       |
-| ~~join.py~~      | Despreated       |
 
 ## License
 
