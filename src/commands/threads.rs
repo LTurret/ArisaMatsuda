@@ -48,16 +48,21 @@ impl Thread {
             .await
             .expect("Failed to read response text");
 
-        let author_alias: String = Regex::new(
-            r"<title>(?<author_alias>.+)\s\(&#064;.+\)\s.\s.+</title>",
+        let author_alias_caps = Regex::new(
+            r"<title>(?<author_alias>.+)\s\(?<user>&#064;.+\)\s.\s.+</title>",
         )
-        .expect("Regex syntax invalid")
-        .captures(&profile)
-        .expect("Expected a valid haystack")
-        .name("author_alias")
-        .expect("String not match")
-        .as_str()
-        .to_string();
+        .expect("Expected a valid regex")
+        .captures(&profile);
+
+        let author_alias: String = match author_alias_caps.name("author_alias")
+        {
+            Some(m) => m.as_str().to_string(),
+            None => author_alias_caps
+                .name("user")
+                .expect("String not match")
+                .as_str()
+                .to_string(),
+        };
 
         let content: String = Regex::new(r"<title>(?<content>[\s\S]+)</title>")
             .expect("Regex syntax invalid")
