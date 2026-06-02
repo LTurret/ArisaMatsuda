@@ -20,21 +20,23 @@ pub struct Thread {
 
 impl Thread {
     async fn from_raw_response(raw_response: String) -> Self {
-        let author: String = Regex::new(
+        let raw_author_name: String = Regex::new(
             r"https://www\.threads\.com/(?<author>&#064;[a-zA-Z0-9._-]+)/",
         )
         .expect("Regex syntax invalid")
         .captures(&raw_response)
         .expect("Expected a valid haystack")
         .name("author")
-        .expect("String not match")
+        .expect("Not a valid tag")
         .as_str()
         .to_string();
 
-        let decoded_author_name: String =
-            decode_html_entities(&author).to_string();
+        let safe_author_name: String =
+            decode_html_entities(&raw_author_name).to_string();
+
         let url: &String =
-            &format!("https://www.threads.com/{}", decoded_author_name);
+            &format!("https://www.threads.com/{}", safe_author_name);
+
         let profile: String = HttpClient::new()
             .get(url)
             .header(
@@ -48,21 +50,16 @@ impl Thread {
             .await
             .expect("Failed to read response text");
 
-        let author_alias_caps = Regex::new(
-            r"<title>(?<author_alias>.+)\s\(?<user>&#064;.+\)\s.\s.+</title>",
-        )
-        .expect("Expected a valid regex")
-        .captures(&profile);
-
-        let author_alias: String = match author_alias_caps.name("author_alias")
-        {
-            Some(m) => m.as_str().to_string(),
-            None => author_alias_caps
-                .name("user")
-                .expect("String not match")
+        let author_rich_name: String =
+            Regex::new(r"<title>(?<author>.+)\s•\s.+</title>")
+                .expect("Expected a valid regex")
+                .captures(&profile)
+                .expect("Expected a valid haystack")
+                .name("author")
+                .expect("Not a valid tag")
                 .as_str()
-                .to_string(),
-        };
+                .to_string()
+                .replace("&#064;", "@");
 
         let content: String = Regex::new(r"<title>(?<content>[\s\S]+)</title>")
             .expect("Regex syntax invalid")
@@ -76,8 +73,8 @@ impl Thread {
         Self {
             author: Author::from_str(
                 url,
-                &decoded_author_name,
-                &author_alias,
+                &String::from(""),
+                &author_rich_name,
                 None,
             ),
             content,
@@ -88,11 +85,8 @@ impl Thread {
         let embed: CreateEmbed = CreateEmbed::new()
             .color(Color::new(0x181818))
             .author(
-                CreateEmbedAuthor::new(format!(
-                    "{} ({})",
-                    self.author.screen_name, self.author.name
-                ))
-                .url(self.author.url),
+                CreateEmbedAuthor::new(self.author.screen_name)
+                    .url(self.author.url),
             )
             .description(self.content)
             .footer(CreateEmbedFooter::new("Threads").icon_url(
