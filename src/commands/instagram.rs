@@ -2,7 +2,7 @@ use crate::commands::{author::Author, embed::ContentBuilder};
 use async_trait::async_trait;
 use html_escape::decode_html_entities;
 use regex::Regex;
-use reqwest::{Client as HttpClient, header::USER_AGENT};
+use reqwest::{header::USER_AGENT, Client as HttpClient};
 use serenity::{
     builder::{
         CreateAllowedMentions, CreateEmbed, CreateEmbedAuthor,
@@ -58,7 +58,7 @@ impl InstagramPost {
         }
     }
 
-    #[deprecated = "Meta API changes make this don't work anymore, too shame :("]
+    #[deprecated = "Meta API changes make this don't work anymore, what a shame :("]
     #[cfg(false)]
     async fn get_profile_pic_url(username: &String) -> String {
         let mut headers = HeaderMap::new();
@@ -87,9 +87,9 @@ impl InstagramPost {
     #[cfg(false)]
     async fn get_icon_url(author: &String) -> String {
         use reqwest::{
-            Url,
             cookie::{CookieStore, Jar},
             header::HeaderName,
+            Url,
         };
         use std::sync::Arc;
 
