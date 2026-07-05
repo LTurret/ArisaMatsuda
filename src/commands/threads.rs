@@ -3,8 +3,8 @@ use async_trait::async_trait;
 use html_escape::decode_html_entities;
 use regex::Regex;
 use reqwest::{
-    header::{HeaderMap, HeaderValue, USER_AGENT},
     Client as HttpClient,
+    header::{HeaderMap, HeaderValue, USER_AGENT},
 };
 use serenity::{
     builder::{
